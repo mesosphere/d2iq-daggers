@@ -29,6 +29,12 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory) 
 		Exec(dagger.ContainerExecOpts{
 			Args: []string{
 				"python", "/usr/local/bin/pre-commit-2.20.0.pyz",
+				"install-hooks",
+			},
+		}).
+		Exec(dagger.ContainerExecOpts{
+			Args: []string{
+				"python", "/usr/local/bin/pre-commit-2.20.0.pyz",
 				"run", "--all-files", "--show-diff-on-failure",
 			},
 		})
