@@ -10,9 +10,7 @@ import (
 )
 
 const (
-	baseImage                    = "ghcr.io/caarlos0/svu:v1.9.0"
-	versionInfoFile              = ".svu_version"
-	versionWithoutPrefixInfoFile = ".svu_version.without_prefix"
+	baseImage = "ghcr.io/caarlos0/svu:v1.9.0"
 )
 
 // Output is svu command output
