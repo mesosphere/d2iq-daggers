@@ -27,6 +27,7 @@ const (
 )
 
 type config struct {
+	version    string
 	metadata   bool
 	prerelease bool
 	build      bool
@@ -39,6 +40,7 @@ type config struct {
 
 func defaultConfig() config {
 	return config{
+		version:    "v1.9.0",
 		metadata:   true,
 		prerelease: true,
 		build:      true,
@@ -51,6 +53,16 @@ func defaultConfig() config {
 }
 
 type Option func(config) config
+
+// SVUVersion specifies the version of svu to use. Defaults to v1.9.0. This should be one of the
+// released image tags - see https://github.com/caarlos0/svu/pkgs/container/svu for available
+// tags.
+func SVUVersion(v string) Option {
+	return func(c config) config {
+		c.version = v
+		return c
+	}
+}
 
 // WithMetadata controls whether to include pre-release and build metadata in the version. Defaults to true.
 func WithMetadata(b bool) Option {

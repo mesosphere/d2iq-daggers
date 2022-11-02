@@ -2,13 +2,14 @@ package svu
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"dagger.io/dagger"
 )
 
 const (
-	baseImage = "ghcr.io/caarlos0/svu:v1.9.0"
+	baseImage = "ghcr.io/caarlos0/svu"
 )
 
 // Output is svu command output
@@ -33,7 +34,7 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 	}
 
 	container := client.Container().
-		From(baseImage).
+		From(fmt.Sprintf("%s:%s", baseImage, cfg.version)).
 		WithMountedDirectory("/src", srcDirID).
 		WithWorkdir("/src")
 
