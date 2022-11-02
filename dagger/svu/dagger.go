@@ -4,8 +4,6 @@ import (
 	"context"
 	"strings"
 
-	_ "embed"
-
 	"dagger.io/dagger"
 )
 
