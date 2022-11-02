@@ -28,7 +28,7 @@ const (
 
 type config struct {
 	metadata   bool
-	preRelease bool
+	prerelease bool
 	build      bool
 	command    Command
 	pattern    string
@@ -40,7 +40,7 @@ type config struct {
 func defaultConfig() config {
 	return config{
 		metadata:   true,
-		preRelease: true,
+		prerelease: true,
 		build:      true,
 		command:    CommandNext,
 		pattern:    "*",
@@ -63,7 +63,7 @@ func WithMetadata(b bool) Option {
 // WithPreRelease controls whether to include pre-release metadata in the version. Defaults to true.
 func WithPreRelease(b bool) Option {
 	return func(c config) config {
-		c.preRelease = b
+		c.prerelease = b
 		return c
 	}
 }

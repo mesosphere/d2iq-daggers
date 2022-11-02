@@ -2,16 +2,12 @@ package svu
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	_ "embed"
 
 	"dagger.io/dagger"
 )
-
-//go:embed scripts/entrypoint.sh
-var entrypointScript string
 
 const (
 	baseImage                    = "ghcr.io/caarlos0/svu:v1.9.0"
@@ -33,15 +29,7 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 		cfg = o(cfg)
 	}
 
-	// Create a directory for scripts we need to use in container
-	scriptsDir := client.
-		Directory().
-		WithNewFile("entrypoint.sh", dagger.DirectoryWithNewFileOpts{Contents: entrypointScript})
-
-	scriptsDirID, err := scriptsDir.ID(ctx)
-	if err != nil {
-		return nil, err
-	}
+	svuFlags := flagsFromConfig(cfg)
 
 	srcDirID, err := workdir.ID(ctx)
 	if err != nil {
@@ -50,34 +38,30 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 
 	container := client.Container().
 		From(baseImage).
-		WithMountedDirectory("/scrips", scriptsDirID).
 		WithMountedDirectory("/src", srcDirID).
-		WithWorkdir("/src").
-		WithEnvVariable("SVU_COMMAND", string(cfg.command)).
-		WithEnvVariable("SVU_METADATA", fmt.Sprintf("%v", cfg.metadata)).
-		WithEnvVariable("SVU_PATTERN", cfg.pattern).
-		WithEnvVariable("SVU_PRE_RELEASE", fmt.Sprintf("%v", cfg.preRelease)).
-		WithEnvVariable("SVU_BUILD", fmt.Sprintf("%v", cfg.build)).
-		WithEnvVariable("SVU_PREFIX", cfg.prefix).
-		WithEnvVariable("SVU_SUFFIX", cfg.suffix).
-		WithEnvVariable("SVU_TAG_MODE", string(cfg.tagMode)).
-		WithEnvVariable("SVU_VERSION_INFO_FILE", versionInfoFile).
-		WithEnvVariable("SVU_VERSION_WITHOUT_PREFIX_INFO_FILE", versionWithoutPrefixInfoFile).
-		WithEntrypoint([]string{"ash"}).
-		Exec(dagger.ContainerExecOpts{Args: []string{"/scrips/entrypoint.sh"}})
+		WithWorkdir("/src")
 
+	container = container.Exec(dagger.ContainerExecOpts{Args: append([]string{"svu"}, svuFlags...)})
 	// Run container and get Exit code
 	_, err = container.ExitCode(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	version, err := container.Directory("/src").File(versionInfoFile).Contents(ctx)
+	version, err := container.Stdout().Contents(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	versionWithoutPrefix, err := container.Directory("/src").File(versionWithoutPrefixInfoFile).Contents(ctx)
+	svuFlags = append(svuFlags, "--strip-prefix")
+	container = container.Exec(dagger.ContainerExecOpts{Args: append([]string{"svu"}, svuFlags...)})
+	// Run container and get Exit code
+	_, err = container.ExitCode(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	versionWithoutPrefix, err := container.Stdout().Contents(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -86,4 +70,38 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 		Version:              strings.TrimSpace(version),
 		VersionWithoutPrefix: strings.TrimSpace(versionWithoutPrefix),
 	}, nil
+}
+
+func flagsFromConfig(cfg config) []string {
+	var flags []string
+
+	if cfg.pattern != "" {
+		flags = append(flags, "--pattern", cfg.pattern)
+	}
+	if cfg.prefix != "" {
+		flags = append(flags, "--prefix", cfg.prefix)
+	}
+	if cfg.suffix != "" {
+		flags = append(flags, "--suffix", cfg.suffix)
+	}
+	if cfg.tagMode != "" {
+		flags = append(flags, "--tag-mode", string(cfg.tagMode))
+	}
+	if cfg.metadata {
+		flags = append(flags, "--metadata")
+	} else {
+		flags = append(flags, "--no-metadata")
+	}
+	if cfg.prerelease {
+		flags = append(flags, "--pre-release")
+	} else {
+		flags = append(flags, "--no-pre-release")
+	}
+	if cfg.build {
+		flags = append(flags, "--build")
+	} else {
+		flags = append(flags, "--no-build")
+	}
+
+	return flags
 }
