@@ -1,10 +1,10 @@
 package precommit
 
-import "dagger.io/dagger"
+import "github.com/aweris/tools/dagger/options"
 
 type config struct {
 	baseImage            string
-	containerCustomizers []ContainerCustomizer
+	containerCustomizers []options.ContainerCustomizer
 }
 
 func defaultConfig() config {
@@ -15,8 +15,6 @@ func defaultConfig() config {
 
 type Option func(config) config
 
-type ContainerCustomizer func(*dagger.Container) *dagger.Container
-
 func BaseImage(img string) Option {
 	return func(c config) config {
 		c.baseImage = img
@@ -24,7 +22,7 @@ func BaseImage(img string) Option {
 	}
 }
 
-func CustomizeContainer(customizers ...ContainerCustomizer) Option {
+func CustomizeContainer(customizers ...options.ContainerCustomizer) Option {
 	return func(c config) config {
 		c.containerCustomizers = append(c.containerCustomizers, customizers...)
 		return c
