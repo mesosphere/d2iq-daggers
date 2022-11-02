@@ -38,15 +38,20 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 
 	// Create a pre-commit container
 	container := client.
-		Container().From(cfg.baseImage).
-		Exec(dagger.ContainerExecOpts{
-			Args: []string{
-				"curl",
-				"--location", "--fail", "--silent", "--show-error",
-				"--output", "/usr/local/bin/pre-commit-2.20.0.pyz",
-				"https://github.com/pre-commit/pre-commit/releases/download/v2.20.0/pre-commit-2.20.0.pyz",
-			},
-		}).
+		Container().From(cfg.baseImage)
+
+	for _, c := range cfg.containerCustomizers {
+		container = c(container)
+	}
+
+	container = container.Exec(dagger.ContainerExecOpts{
+		Args: []string{
+			"curl",
+			"--location", "--fail", "--silent", "--show-error",
+			"--output", "/usr/local/bin/pre-commit-2.20.0.pyz",
+			"https://github.com/pre-commit/pre-commit/releases/download/v2.20.0/pre-commit-2.20.0.pyz",
+		},
+	}).
 		WithEnvVariable(precommitHomeEnvVar, cacheDir).
 		WithMountedCache(cacheID, cacheDir).
 		WithMountedDirectory("/src", srcDirID).WithWorkdir("/src").
