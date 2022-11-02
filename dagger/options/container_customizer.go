@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"dagger.io/dagger"
-	"github.com/aweris/tools/utils"
+	"github.com/mesosphere/daggers/utils"
 )
 
 type ContainerCustomizer func(*dagger.Container, *dagger.Client) (*dagger.Container, error)
