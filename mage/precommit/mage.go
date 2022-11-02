@@ -6,7 +6,7 @@ import (
 
 	"dagger.io/dagger"
 
-	precommitdagger "github.com/aweris/tools/dagger/precommit"
+	precommitdagger "github.com/mesosphere/daggers/dagger/precommit"
 )
 
 const (

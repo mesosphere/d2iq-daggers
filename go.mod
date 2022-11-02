@@ -1,4 +1,4 @@
-module github.com/aweris/tools
+module github.com/mesosphere/daggers
 
 go 1.19
 

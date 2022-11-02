@@ -1,6 +1,6 @@
 package precommit
 
-import "github.com/aweris/tools/dagger/options"
+import "github.com/mesosphere/daggers/dagger/options"
 
 type config struct {
 	baseImage            string
