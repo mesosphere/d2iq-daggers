@@ -6,18 +6,39 @@ import (
 	"context"
 
 	"dagger.io/dagger"
+	"github.com/aweris/tools/utils"
 )
 
-func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory) error {
+const (
+	configFileName      = ".pre-commit-config.yaml"
+	cacheDir            = "/pre-commit-cache"
+	precommitHomeEnvVar = "PRE_COMMIT_HOME"
+)
+
+func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, options ...Option) error {
+	cfg := defaultConfig()
+	for _, o := range options {
+		cfg = o(cfg)
+	}
+
 	srcDirID, err := workdir.ID(ctx)
+	if err != nil {
+		return err
+	}
+
+	configFileHash, err := utils.SHA256SumFile(configFileName)
+	if err != nil {
+		return err
+	}
+	cacheKey := "precommit-hooks-" + configFileHash
+	cacheID, err := client.CacheVolume(cacheKey).ID(ctx)
 	if err != nil {
 		return err
 	}
 
 	// Create a pre-commit container
 	container := client.
-		Container().From("python:3.12.0a1-bullseye").
-		WithMountedDirectory("/src", srcDirID).WithWorkdir("/src").
+		Container().From(cfg.baseImage).
 		Exec(dagger.ContainerExecOpts{
 			Args: []string{
 				"curl",
@@ -26,12 +47,9 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory) 
 				"https://github.com/pre-commit/pre-commit/releases/download/v2.20.0/pre-commit-2.20.0.pyz",
 			},
 		}).
-		Exec(dagger.ContainerExecOpts{
-			Args: []string{
-				"python", "/usr/local/bin/pre-commit-2.20.0.pyz",
-				"install-hooks",
-			},
-		}).
+		WithEnvVariable(precommitHomeEnvVar, cacheDir).
+		WithMountedCache(cacheID, cacheDir).
+		WithMountedDirectory("/src", srcDirID).WithWorkdir("/src").
 		Exec(dagger.ContainerExecOpts{
 			Args: []string{
 				"python", "/usr/local/bin/pre-commit-2.20.0.pyz",
