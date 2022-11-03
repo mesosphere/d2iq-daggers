@@ -4,7 +4,10 @@ go 1.19
 
 replace github.com/docker/docker => github.com/docker/docker v20.10.3-0.20220414164044-61404de7df1a+incompatible
 
-require dagger.io/dagger v0.3.1
+require (
+	dagger.io/dagger v0.3.1
+	github.com/magefile/mage v1.14.0
+)
 
 require (
 	github.com/Khan/genqlient v0.5.0 // indirect

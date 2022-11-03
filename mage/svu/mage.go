@@ -7,6 +7,9 @@ import (
 
 	"dagger.io/dagger"
 
+	"github.com/magefile/mage/mg"
+
+	loggerdagger "github.com/mesosphere/daggers/dagger/logger"
 	svudagger "github.com/mesosphere/daggers/dagger/svu"
 )
 
@@ -41,7 +44,14 @@ func Patch(ctx context.Context) error {
 
 // SVUWithOptions runs svu with specific options.
 func SVUWithOptions(ctx context.Context, opts ...svudagger.Option) error {
-	client, err := dagger.Connect(ctx, dagger.WithLogOutput(os.Stdout))
+	verbose := mg.Verbose() || mg.Debug()
+
+	logger, err := loggerdagger.NewLogger(verbose)
+	if err != nil {
+		return err
+	}
+
+	client, err := dagger.Connect(ctx, dagger.WithLogOutput(logger))
 	if err != nil {
 		return err
 	}
