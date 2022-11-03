@@ -4,6 +4,18 @@
 
 ## What's Changed
 ### Exciting New Features 🎉
+* feat: Add configuration options to svu via env by @aweris in https://github.com/mesosphere/daggers/pull/18
+* feat: Add help targets for mage by @aweris in https://github.com/mesosphere/daggers/pull/19
+
+
+**Full Changelog**: https://github.com/mesosphere/daggers/compare/v0.1.0...v0.2.0
+
+## Changelog
+
+<!-- Release notes generated using configuration in .github/release.yaml at main -->
+
+## What's Changed
+### Exciting New Features 🎉
 * feat: Add go build and mod cache by @jimmidyson in https://github.com/mesosphere/daggers/pull/9
 * feat: add dagger svu by @aweris in https://github.com/mesosphere/daggers/pull/10
 * feat: Add mage targets for svu by @jimmidyson in https://github.com/mesosphere/daggers/pull/14
