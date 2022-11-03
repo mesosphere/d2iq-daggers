@@ -4,5 +4,5 @@
 // is optional during mage import.
 //
 // The only limitation of this package is that it can only be imported once in a magefile and it should be under the
-// help namespace(eg // mage:import help).
+// help namespace (eg `//mage:import help`).
 package help
