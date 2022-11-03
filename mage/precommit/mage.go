@@ -16,9 +16,6 @@ const (
 )
 
 // Precommit runs all the precommit checks.
-// Configurable via the following environment variables:
-//
-//	PRECOMMIT_BASE_IMAGE - The base image to run pre-commit in.
 func Precommit(ctx context.Context) error {
 	return PrecommitWithOptions(ctx)
 }
