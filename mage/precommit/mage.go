@@ -18,12 +18,6 @@ const (
 //
 //	PRECOMMIT_BASE_IMAGE - The base image to run pre-commit in.
 func Precommit(ctx context.Context) error {
-	client, err := dagger.Connect(ctx, dagger.WithLogOutput(os.Stdout))
-	if err != nil {
-		return err
-	}
-	defer client.Close()
-
 	return PrecommitWithOptions(ctx)
 }
 
