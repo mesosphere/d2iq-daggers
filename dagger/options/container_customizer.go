@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"dagger.io/dagger"
+
 	"github.com/mesosphere/daggers/utils"
 )
 
@@ -82,7 +83,10 @@ func CacheDirectory(ctx context.Context, cacheDir, cacheKey string) ContainerCus
 	}
 }
 
-func CacheDirectoryWithKeyFromFileHash(ctx context.Context, cacheDir, cacheKeyPrefix, fileToHash string) ContainerCustomizer {
+func CacheDirectoryWithKeyFromFileHash(
+	ctx context.Context,
+	cacheDir, cacheKeyPrefix, fileToHash string,
+) ContainerCustomizer {
 	return func(c *dagger.Container, client *dagger.Client) (*dagger.Container, error) {
 		fileHash, err := utils.SHA256SumFile(fileToHash)
 		if err != nil {

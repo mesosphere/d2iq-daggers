@@ -22,7 +22,7 @@ type TagMode string
 const (
 	// TagModeAllBranches is the value for the --tag-mode flag that will use all branches.
 	TagModeAllBranches TagMode = "all-branches"
-	// TagModeCurrentBranch is the value for the --tag-mode flag that will only use current branch tags
+	// TagModeCurrentBranch is the value for the --tag-mode flag that will only use current branch tags.
 	TagModeCurrentBranch TagMode = "current-branch"
 )
 

@@ -12,7 +12,7 @@ const (
 	baseImage = "ghcr.io/caarlos0/svu"
 )
 
-// Output is svu command output
+// Output is svu command output.
 type Output struct {
 	// Version
 	Version string
@@ -26,7 +26,7 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 		cfg = o(cfg)
 	}
 
-	svuFlags := flagsFromConfig(cfg)
+	svuFlags := flagsFromConfig(&cfg)
 
 	srcDirID, err := workdir.ID(ctx)
 	if err != nil {
@@ -69,7 +69,7 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 	}, nil
 }
 
-func flagsFromConfig(cfg config) []string {
+func flagsFromConfig(cfg *config) []string {
 	var flags []string
 
 	if cfg.pattern != "" {
