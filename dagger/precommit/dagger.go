@@ -1,11 +1,10 @@
 package precommit
 
 import (
-	_ "embed"
-
 	"context"
 
 	"dagger.io/dagger"
+
 	"github.com/mesosphere/daggers/dagger/options"
 )
 
