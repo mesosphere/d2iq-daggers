@@ -6,6 +6,9 @@ import (
 
 	"dagger.io/dagger"
 
+	"github.com/magefile/mage/mg"
+
+	loggerdagger "github.com/mesosphere/daggers/dagger/logger"
 	precommitdagger "github.com/mesosphere/daggers/dagger/precommit"
 )
 
@@ -23,7 +26,18 @@ func Precommit(ctx context.Context) error {
 
 // PrecommitWithOptions runs all the precommit checks with Dagger options.
 func PrecommitWithOptions(ctx context.Context, opts ...precommitdagger.Option) error {
-	client, err := dagger.Connect(ctx, dagger.WithLogOutput(os.Stdout))
+	verbose := mg.Verbose() || mg.Debug()
+
+	logger, err := loggerdagger.NewLogger(verbose)
+	if err != nil {
+		return err
+	}
+
+	client, err := dagger.Connect(ctx, dagger.WithLogOutput(logger))
+	if err != nil {
+		return err
+	}
+	defer client.Close()
 	if err != nil {
 		return err
 	}
