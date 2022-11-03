@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"dagger.io/dagger"
-
 	"github.com/magefile/mage/mg"
 
 	loggerdagger "github.com/mesosphere/daggers/dagger/logger"
