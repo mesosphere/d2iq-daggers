@@ -4,6 +4,17 @@
 
 ## What's Changed
 ### Fixes 🔧
+* fix: Print command output if mage is not running in verbose mode by @aweris in https://github.com/mesosphere/daggers/pull/23
+
+
+**Full Changelog**: https://github.com/mesosphere/daggers/compare/v0.2.1...v0.2.2
+
+## Changelog
+
+<!-- Release notes generated using configuration in .github/release.yaml at main -->
+
+## What's Changed
+### Fixes 🔧
 * fix: Use correct package name for mage/svu by @aweris in https://github.com/mesosphere/daggers/pull/21
 
 
