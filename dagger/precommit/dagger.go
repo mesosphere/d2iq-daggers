@@ -2,7 +2,6 @@ package precommit
 
 import (
 	"context"
-
 	"dagger.io/dagger"
 
 	"github.com/mesosphere/daggers/dagger/options"
@@ -14,7 +13,7 @@ const (
 	precommitHomeEnvVar = "PRE_COMMIT_HOME"
 )
 
-func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, opts ...Option) error {
+func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, opts ...Option) (string, error) {
 	cfg := defaultConfig()
 	for _, o := range opts {
 		cfg = o(cfg)
@@ -22,7 +21,7 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 
 	srcDirID, err := workdir.ID(ctx)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// Create a pre-commit container
@@ -32,7 +31,7 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 	for _, c := range cfg.containerCustomizers {
 		container, err = c(container, client)
 		if err != nil {
-			return err
+			return "", err
 		}
 	}
 
@@ -42,14 +41,14 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 		"/usr/local/bin/pre-commit-2.20.0.pyz",
 	)(container, client)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	container, err = options.CacheDirectoryWithKeyFromFileHash(
 		ctx, cacheDir, "precommit-hooks-", configFileName,
 	)(container, client)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	container = container.WithEnvVariable(precommitHomeEnvVar, cacheDir).
@@ -62,10 +61,5 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 		})
 
 	// Run container and get Exit code
-	_, err = container.ExitCode(ctx)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return container.Stdout().Contents(ctx)
 }

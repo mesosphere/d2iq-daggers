@@ -2,6 +2,7 @@ package precommit
 
 import (
 	"context"
+	"fmt"
 	"os"
 
 	"dagger.io/dagger"
@@ -43,5 +44,17 @@ func PrecommitWithOptions(ctx context.Context, opts ...precommitdagger.Option) e
 		opts = append([]precommitdagger.Option{precommitdagger.BaseImage(baseImage)}, opts...)
 	}
 
-	return precommitdagger.Run(ctx, client, client.Host().Workdir().Read(), opts...)
+	cmdOut, err := precommitdagger.Run(ctx, client, client.Host().Workdir().Read(), opts...)
+
+	// When verbose flag is false, the output is not printed to the console, only redirected to the log file.
+	// To work around this, we print the output to the console if the verbose flag is not set.
+	if !verbose {
+		fmt.Println(cmdOut)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
