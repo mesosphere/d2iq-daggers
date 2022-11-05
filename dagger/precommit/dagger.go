@@ -32,7 +32,6 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 	}
 
 	container, err = options.DownloadFile(
-		ctx,
 		"https://github.com/pre-commit/pre-commit/releases/download/v2.20.0/pre-commit-2.20.0.pyz",
 		"/usr/local/bin/pre-commit-2.20.0.pyz",
 	)(container, client)
@@ -41,7 +40,7 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 	}
 
 	container, err = options.CacheDirectoryWithKeyFromFileHash(
-		ctx, cacheDir, "precommit-hooks-", configFileName,
+		cacheDir, "precommit-hooks-", configFileName,
 	)(container, client)
 	if err != nil {
 		return "", err

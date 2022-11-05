@@ -37,16 +37,16 @@ func InstallGo(ctx context.Context) ContainerCustomizer {
 
 		c = c.WithEnvVariable("GOCACHE", "/go/build-cache").WithEnvVariable("GOMODCACHE", "/go/mod-cache")
 
-		c, err = CacheDirectoryWithKeyFromFileHash(ctx, "/go/build-cache", "go-build-", "go.sum")(c, client)
+		c, err = CacheDirectoryWithKeyFromFileHash("/go/build-cache", "go-build-", "go.sum")(c, client)
 		if err != nil {
 			return nil, err
 		}
 
-		return CacheDirectoryWithKeyFromFileHash(ctx, "/go/mod-cache", "go-mod-", "go.sum")(c, client)
+		return CacheDirectoryWithKeyFromFileHash("/go/mod-cache", "go-mod-", "go.sum")(c, client)
 	}
 }
 
-func DownloadFile(ctx context.Context, url, destFile string) ContainerCustomizer {
+func DownloadFile(url, destFile string) ContainerCustomizer {
 	return func(c *dagger.Container, _ *dagger.Client) (*dagger.Container, error) {
 		return c.Exec(dagger.ContainerExecOpts{
 			Args: []string{
@@ -59,9 +59,9 @@ func DownloadFile(ctx context.Context, url, destFile string) ContainerCustomizer
 	}
 }
 
-func DownloadExecutableFile(ctx context.Context, url, destFile string) ContainerCustomizer {
+func DownloadExecutableFile(url, destFile string) ContainerCustomizer {
 	return func(c *dagger.Container, _ *dagger.Client) (*dagger.Container, error) {
-		c, err := DownloadFile(ctx, url, destFile)(c, nil)
+		c, err := DownloadFile(url, destFile)(c, nil)
 		if err != nil {
 			return nil, err
 		}
@@ -73,7 +73,7 @@ func DownloadExecutableFile(ctx context.Context, url, destFile string) Container
 	}
 }
 
-func CacheDirectory(ctx context.Context, cacheDir, cacheKey string) ContainerCustomizer {
+func CacheDirectory(cacheDir, cacheKey string) ContainerCustomizer {
 	return func(c *dagger.Container, client *dagger.Client) (*dagger.Container, error) {
 		cacheID := client.CacheVolume(cacheKey)
 
@@ -81,16 +81,13 @@ func CacheDirectory(ctx context.Context, cacheDir, cacheKey string) ContainerCus
 	}
 }
 
-func CacheDirectoryWithKeyFromFileHash(
-	ctx context.Context,
-	cacheDir, cacheKeyPrefix, fileToHash string,
-) ContainerCustomizer {
+func CacheDirectoryWithKeyFromFileHash(cacheDir, cacheKeyPrefix, fileToHash string) ContainerCustomizer {
 	return func(c *dagger.Container, client *dagger.Client) (*dagger.Container, error) {
 		fileHash, err := utils.SHA256SumFile(fileToHash)
 		if err != nil {
 			return nil, err
 		}
 
-		return CacheDirectory(ctx, cacheDir, cacheKeyPrefix+fileHash)(c, client)
+		return CacheDirectory(cacheDir, cacheKeyPrefix+fileHash)(c, client)
 	}
 }
