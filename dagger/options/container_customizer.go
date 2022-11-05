@@ -10,13 +10,13 @@ import (
 
 type ContainerCustomizer func(*dagger.Container, *dagger.Client) (*dagger.Container, error)
 
-func AppendToPATH(ctx context.Context, dir string) ContainerCustomizer {
+func AppendToPATH(ctx context.Context, path string) ContainerCustomizer {
 	return func(c *dagger.Container, _ *dagger.Client) (*dagger.Container, error) {
 		existingPATH, err := c.EnvVariable(ctx, "PATH")
 		if err != nil {
 			return nil, err
 		}
-		return c.WithEnvVariable("PATH", existingPATH+":/usr/local/go/bin"), nil
+		return c.WithEnvVariable("PATH", existingPATH+":"+path), nil
 	}
 }
 
