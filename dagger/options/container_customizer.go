@@ -75,11 +75,9 @@ func DownloadExecutableFile(ctx context.Context, url, destFile string) Container
 
 func CacheDirectory(ctx context.Context, cacheDir, cacheKey string) ContainerCustomizer {
 	return func(c *dagger.Container, client *dagger.Client) (*dagger.Container, error) {
-		cacheID, err := client.CacheVolume(cacheKey).ID(ctx)
-		if err != nil {
-			return nil, err
-		}
-		return c.WithMountedCache(cacheID, cacheDir), nil
+		cacheID := client.CacheVolume(cacheKey)
+
+		return c.WithMountedCache(cacheDir, cacheID), nil
 	}
 }
 

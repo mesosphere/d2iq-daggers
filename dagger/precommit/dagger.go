@@ -19,14 +19,10 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 		cfg = o(cfg)
 	}
 
-	srcDirID, err := workdir.ID(ctx)
-	if err != nil {
-		return "", err
-	}
-
 	// Create a pre-commit container
-	container := client.
-		Container().From(cfg.baseImage)
+	container := client.Container().From(cfg.baseImage)
+
+	var err error
 
 	for _, c := range cfg.containerCustomizers {
 		container, err = c(container, client)
@@ -52,7 +48,7 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 	}
 
 	container = container.WithEnvVariable(precommitHomeEnvVar, cacheDir).
-		WithMountedDirectory("/src", srcDirID).WithWorkdir("/src").
+		WithMountedDirectory("/src", workdir).WithWorkdir("/src").
 		Exec(dagger.ContainerExecOpts{
 			Args: []string{
 				"python", "/usr/local/bin/pre-commit-2.20.0.pyz",

@@ -44,7 +44,7 @@ func PrecommitWithOptions(ctx context.Context, opts ...precommitdagger.Option) e
 		opts = append([]precommitdagger.Option{precommitdagger.BaseImage(baseImage)}, opts...)
 	}
 
-	cmdOut, err := precommitdagger.Run(ctx, client, client.Host().Workdir().Read(), opts...)
+	cmdOut, err := precommitdagger.Run(ctx, client, client.Host().Workdir(), opts...)
 
 	// When verbose flag is false, the output is not printed to the console, only redirected to the log file.
 	// To work around this, we print the output to the console if the verbose flag is not set.

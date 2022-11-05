@@ -76,7 +76,7 @@ func SVUWithOptions(ctx context.Context, opts ...svudagger.Option) error {
 	combinedOpts = append(combinedOpts, optsFromEnv...)
 	combinedOpts = append(combinedOpts, opts...)
 
-	output, err := svudagger.Run(ctx, client, client.Host().Workdir().Read(), combinedOpts...)
+	output, err := svudagger.Run(ctx, client, client.Host().Workdir(), combinedOpts...)
 	if err != nil {
 		return err
 	}
