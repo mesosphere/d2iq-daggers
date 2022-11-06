@@ -25,6 +25,7 @@ linters:
     - misspell
     - nolintlint
     - prealloc
+    - revive
     - staticcheck
     - stylecheck
     - tenv
@@ -61,8 +62,16 @@ linters-settings:
     extra-rules: true
   lll:
     line-length: 120
+  revive:
+    rules:
+      - name: exported
+        arguments:
+          - disableStutteringCheck
 
 issues:
+  include:
+    - EXC0012
+    - EXC0014
   exclude-rules:
     # ignore errcheck for code under a /test folder
     - path: "test/*"
