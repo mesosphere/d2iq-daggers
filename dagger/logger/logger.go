@@ -52,10 +52,12 @@ func NewLogger(verbose bool) (Logger, error) {
 	return logger, nil
 }
 
+// Write writes the given bytes to the underlying writer.
 func (l Logger) Write(p []byte) (n int, err error) {
 	return fmt.Fprint(l.w, string(p))
 }
 
+// Close closes the underlying writer.
 func (l Logger) Close() error {
 	if closer, ok := l.w.(io.Closer); ok {
 		return closer.Close()

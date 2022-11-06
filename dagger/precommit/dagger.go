@@ -13,6 +13,7 @@ const (
 	precommitHomeEnvVar = "PRE_COMMIT_HOME"
 )
 
+// Run runs the precommit checks.
 func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, opts ...Option) (string, error) {
 	cfg := defaultConfig()
 	for _, o := range opts {

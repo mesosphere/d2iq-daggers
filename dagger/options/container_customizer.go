@@ -8,8 +8,10 @@ import (
 	"github.com/mesosphere/daggers/utils"
 )
 
+// ContainerCustomizer is a function that customizes a container.
 type ContainerCustomizer func(*dagger.Container, *dagger.Client) (*dagger.Container, error)
 
+// AppendToPATH appends the given path to the PATH environment variable.
 func AppendToPATH(ctx context.Context, path string) ContainerCustomizer {
 	return func(c *dagger.Container, _ *dagger.Client) (*dagger.Container, error) {
 		existingPATH, err := c.EnvVariable(ctx, "PATH")
@@ -20,6 +22,7 @@ func AppendToPATH(ctx context.Context, path string) ContainerCustomizer {
 	}
 }
 
+// InstallGo installs Go in the container. Currently it's using hardcoded version 1.19.3 for installation.
 func InstallGo(ctx context.Context) ContainerCustomizer {
 	return func(c *dagger.Container, client *dagger.Client) (*dagger.Container, error) {
 		c = c.Exec(dagger.ContainerExecOpts{
@@ -46,6 +49,7 @@ func InstallGo(ctx context.Context) ContainerCustomizer {
 	}
 }
 
+// DownloadFile downloads the given URL to the given destination file.
 func DownloadFile(url, destFile string) ContainerCustomizer {
 	return func(c *dagger.Container, _ *dagger.Client) (*dagger.Container, error) {
 		return c.Exec(dagger.ContainerExecOpts{
@@ -59,6 +63,7 @@ func DownloadFile(url, destFile string) ContainerCustomizer {
 	}
 }
 
+// DownloadExecutableFile downloads the given URL to the given destination file and makes it executable.
 func DownloadExecutableFile(url, destFile string) ContainerCustomizer {
 	return func(c *dagger.Container, _ *dagger.Client) (*dagger.Container, error) {
 		c, err := DownloadFile(url, destFile)(c, nil)
@@ -73,6 +78,7 @@ func DownloadExecutableFile(url, destFile string) ContainerCustomizer {
 	}
 }
 
+// CacheDirectory creates a cache volume with given key and mounts it to the given directory.
 func CacheDirectory(cacheDir, cacheKey string) ContainerCustomizer {
 	return func(c *dagger.Container, client *dagger.Client) (*dagger.Container, error) {
 		cacheID := client.CacheVolume(cacheKey)
@@ -81,6 +87,8 @@ func CacheDirectory(cacheDir, cacheKey string) ContainerCustomizer {
 	}
 }
 
+// CacheDirectoryWithKeyFromFileHash creates a cache volume with a key and hash of the given file and mounts
+// it to the given directory.
 func CacheDirectoryWithKeyFromFileHash(cacheDir, cacheKeyPrefix, fileToHash string) ContainerCustomizer {
 	return func(c *dagger.Container, client *dagger.Client) (*dagger.Container, error) {
 		fileHash, err := utils.SHA256SumFile(fileToHash)
