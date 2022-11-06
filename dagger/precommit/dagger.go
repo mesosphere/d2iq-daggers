@@ -42,7 +42,7 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 	}
 
 	container, err = options.CacheDirectoryWithKeyFromFileHash(
-		cacheDir, "precommit-hooks-", configFileName,
+		ctx, cacheDir, "precommit-hooks-", configFileName,
 	)(container, client)
 	if err != nil {
 		return "", err

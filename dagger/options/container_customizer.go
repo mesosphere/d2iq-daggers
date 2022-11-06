@@ -5,7 +5,7 @@ import (
 
 	"dagger.io/dagger"
 
-	"github.com/mesosphere/daggers/utils"
+	"github.com/mesosphere/daggers/dagger/common"
 )
 
 // ContainerCustomizer is a function that customizes a container.
@@ -40,12 +40,12 @@ func InstallGo(ctx context.Context) ContainerCustomizer {
 
 		c = c.WithEnvVariable("GOCACHE", "/go/build-cache").WithEnvVariable("GOMODCACHE", "/go/mod-cache")
 
-		c, err = CacheDirectoryWithKeyFromFileHash("/go/build-cache", "go-build-", "go.sum")(c, client)
+		c, err = CacheDirectoryWithKeyFromFileHash(ctx, "/go/build-cache", "go-build-", "go.sum")(c, client)
 		if err != nil {
 			return nil, err
 		}
 
-		return CacheDirectoryWithKeyFromFileHash("/go/mod-cache", "go-mod-", "go.sum")(c, client)
+		return CacheDirectoryWithKeyFromFileHash(ctx, "/go/mod-cache", "go-mod-", "go.sum")(c, client)
 	}
 }
 
@@ -78,24 +78,15 @@ func DownloadExecutableFile(url, destFile string) ContainerCustomizer {
 	}
 }
 
-// CacheDirectory creates a cache volume with given key and mounts it to the given directory.
-func CacheDirectory(cacheDir, cacheKey string) ContainerCustomizer {
-	return func(c *dagger.Container, client *dagger.Client) (*dagger.Container, error) {
-		cacheID := client.CacheVolume(cacheKey)
-
-		return c.WithMountedCache(cacheDir, cacheID), nil
-	}
-}
-
 // CacheDirectoryWithKeyFromFileHash creates a cache volume with a key and hash of the given file and mounts
 // it to the given directory.
-func CacheDirectoryWithKeyFromFileHash(cacheDir, cacheKeyPrefix, fileToHash string) ContainerCustomizer {
+func CacheDirectoryWithKeyFromFileHash(ctx context.Context, cacheDir, cacheKeyPrefix string, filesToHash ...string) ContainerCustomizer {
 	return func(c *dagger.Container, client *dagger.Client) (*dagger.Container, error) {
-		fileHash, err := utils.SHA256SumFile(fileToHash)
+		cacheVol, err := common.NewCacheVolumeWithFileHashKeys(ctx, client, client.Host().Workdir(), cacheKeyPrefix, filesToHash...)
 		if err != nil {
 			return nil, err
 		}
 
-		return CacheDirectory(cacheDir, cacheKeyPrefix+fileHash)(c, client)
+		return c.WithMountedCache(cacheDir, cacheVol), nil
 	}
 }
