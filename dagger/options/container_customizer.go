@@ -38,8 +38,14 @@ func InstallGo(ctx context.Context) ContainerCustomizer {
 			return nil, err
 		}
 
-		workDir := client.Host().Workdir()
+		return WithMountedGoCache(ctx, client.Host().Workdir())(c, client)
+	}
+}
 
+// WithMountedGoCache mounts a cache volume for the container's GOCACHE and GOMODCACHE environment variables using
+// the contents of the go.mod and go.sum files in the given directory.
+func WithMountedGoCache(ctx context.Context, workDir *dagger.Directory) ContainerCustomizer {
+	return func(c *dagger.Container, client *dagger.Client) (*dagger.Container, error) {
 		// Configure go to use the cache volume for the go build cache.
 		buildCache, err := common.NewCacheVolumeWithFileHashKeys(ctx, client, workDir, "go-build", "go.mod", "go.sum")
 		if err != nil {
