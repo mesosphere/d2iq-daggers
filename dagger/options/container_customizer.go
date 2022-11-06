@@ -38,14 +38,25 @@ func InstallGo(ctx context.Context) ContainerCustomizer {
 			return nil, err
 		}
 
-		c = c.WithEnvVariable("GOCACHE", "/go/build-cache").WithEnvVariable("GOMODCACHE", "/go/mod-cache")
+		workDir := client.Host().Workdir()
 
-		c, err = CacheDirectoryWithKeyFromFileHash(ctx, "/go/build-cache", "go-build-", "go.sum")(c, client)
+		// Configure go to use the cache volume for the go build cache.
+		buildCache, err := common.NewCacheVolumeWithFileHashKeys(ctx, client, workDir, "go-build", "go.mod", "go.sum")
 		if err != nil {
 			return nil, err
 		}
 
-		return CacheDirectoryWithKeyFromFileHash(ctx, "/go/mod-cache", "go-mod-", "go.sum")(c, client)
+		c = c.WithEnvVariable("GOCACHE", "/go/build-cache").WithMountedCache("/go/build-cache", buildCache)
+
+		// Configure go to use the cache volume for the go build cache.
+		modCache, err := common.NewCacheVolumeWithFileHashKeys(ctx, client, workDir, "go-mod", "go.mod", "go.sum")
+		if err != nil {
+			return nil, err
+		}
+
+		c = c.WithEnvVariable("GOMODCACHE", "/go/mod-cache").WithMountedCache("/go/mod-cache", modCache)
+
+		return c, nil
 	}
 }
 
@@ -75,18 +86,5 @@ func DownloadExecutableFile(url, destFile string) ContainerCustomizer {
 				"chmod", "755", destFile,
 			},
 		}), nil
-	}
-}
-
-// CacheDirectoryWithKeyFromFileHash creates a cache volume with a key and hash of the given file and mounts
-// it to the given directory.
-func CacheDirectoryWithKeyFromFileHash(ctx context.Context, cacheDir, cacheKeyPrefix string, filesToHash ...string) ContainerCustomizer {
-	return func(c *dagger.Container, client *dagger.Client) (*dagger.Container, error) {
-		cacheVol, err := common.NewCacheVolumeWithFileHashKeys(ctx, client, client.Host().Workdir(), cacheKeyPrefix, filesToHash...)
-		if err != nil {
-			return nil, err
-		}
-
-		return c.WithMountedCache(cacheDir, cacheVol), nil
 	}
 }
