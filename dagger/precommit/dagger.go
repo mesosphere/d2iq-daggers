@@ -5,6 +5,7 @@ import (
 
 	"dagger.io/dagger"
 
+	"github.com/mesosphere/daggers/dagger/common"
 	"github.com/mesosphere/daggers/dagger/options"
 )
 
@@ -41,15 +42,15 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 		return "", err
 	}
 
-	container, err = options.CacheDirectoryWithKeyFromFileHash(
-		cacheDir, "precommit-hooks-", configFileName,
-	)(container, client)
+	// Configure pre-commit to use the cache volume
+	cacheVol, err := common.NewCacheVolumeWithFileHashKeys(ctx, client, "pre-commit-", workdir, configFileName)
 	if err != nil {
 		return "", err
 	}
 
-	container = container.WithEnvVariable(precommitHomeEnvVar, cacheDir).
-		WithMountedDirectory("/src", workdir).WithWorkdir("/src").
+	container = container.WithEnvVariable(precommitHomeEnvVar, cacheDir).WithMountedCache(precommitHomeEnvVar, cacheVol)
+
+	container = container.WithMountedDirectory("/src", workdir).WithWorkdir("/src").
 		Exec(dagger.ContainerExecOpts{
 			Args: []string{
 				"python", "/usr/local/bin/pre-commit-2.20.0.pyz",

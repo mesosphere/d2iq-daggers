@@ -5,7 +5,7 @@ import (
 
 	"dagger.io/dagger"
 
-	"github.com/mesosphere/daggers/utils"
+	"github.com/mesosphere/daggers/dagger/common"
 )
 
 // ContainerCustomizer is a function that customizes a container.
@@ -38,14 +38,31 @@ func InstallGo(ctx context.Context) ContainerCustomizer {
 			return nil, err
 		}
 
-		c = c.WithEnvVariable("GOCACHE", "/go/build-cache").WithEnvVariable("GOMODCACHE", "/go/mod-cache")
+		return WithMountedGoCache(ctx, client.Host().Workdir())(c, client)
+	}
+}
 
-		c, err = CacheDirectoryWithKeyFromFileHash("/go/build-cache", "go-build-", "go.sum")(c, client)
+// WithMountedGoCache mounts a cache volume for the container's GOCACHE and GOMODCACHE environment variables using
+// the contents of the go.mod and go.sum files in the given directory.
+func WithMountedGoCache(ctx context.Context, workDir *dagger.Directory) ContainerCustomizer {
+	return func(c *dagger.Container, client *dagger.Client) (*dagger.Container, error) {
+		// Configure go to use the cache volume for the go build cache.
+		buildCache, err := common.NewCacheVolumeWithFileHashKeys(ctx, client, "go-build-", workDir, "go.mod", "go.sum")
 		if err != nil {
 			return nil, err
 		}
 
-		return CacheDirectoryWithKeyFromFileHash("/go/mod-cache", "go-mod-", "go.sum")(c, client)
+		c = c.WithEnvVariable("GOCACHE", "/go/build-cache").WithMountedCache("/go/build-cache", buildCache)
+
+		// Configure go to use the cache volume for the go build cache.
+		modCache, err := common.NewCacheVolumeWithFileHashKeys(ctx, client, "go-mod-", workDir, "go.mod", "go.sum")
+		if err != nil {
+			return nil, err
+		}
+
+		c = c.WithEnvVariable("GOMODCACHE", "/go/mod-cache").WithMountedCache("/go/mod-cache", modCache)
+
+		return c, nil
 	}
 }
 
@@ -75,27 +92,5 @@ func DownloadExecutableFile(url, destFile string) ContainerCustomizer {
 				"chmod", "755", destFile,
 			},
 		}), nil
-	}
-}
-
-// CacheDirectory creates a cache volume with given key and mounts it to the given directory.
-func CacheDirectory(cacheDir, cacheKey string) ContainerCustomizer {
-	return func(c *dagger.Container, client *dagger.Client) (*dagger.Container, error) {
-		cacheID := client.CacheVolume(cacheKey)
-
-		return c.WithMountedCache(cacheDir, cacheID), nil
-	}
-}
-
-// CacheDirectoryWithKeyFromFileHash creates a cache volume with a key and hash of the given file and mounts
-// it to the given directory.
-func CacheDirectoryWithKeyFromFileHash(cacheDir, cacheKeyPrefix, fileToHash string) ContainerCustomizer {
-	return func(c *dagger.Container, client *dagger.Client) (*dagger.Container, error) {
-		fileHash, err := utils.SHA256SumFile(fileToHash)
-		if err != nil {
-			return nil, err
-		}
-
-		return CacheDirectory(cacheDir, cacheKeyPrefix+fileHash)(c, client)
 	}
 }
