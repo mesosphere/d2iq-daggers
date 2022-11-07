@@ -13,8 +13,10 @@ func defaultConfig() config {
 	}
 }
 
+// Option is a function that configures the precommit checks.
 type Option func(config) config
 
+// BaseImage sets the base image for the precommit container.
 func BaseImage(img string) Option {
 	return func(c config) config {
 		c.baseImage = img
@@ -22,6 +24,7 @@ func BaseImage(img string) Option {
 	}
 }
 
+// CustomizeContainer adds a customizer function to the precommit container.
 func CustomizeContainer(customizers ...options.ContainerCustomizer) Option {
 	return func(c config) config {
 		c.containerCustomizers = append(c.containerCustomizers, customizers...)

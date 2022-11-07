@@ -8,6 +8,7 @@ import (
 	"os"
 )
 
+// SHA256SumFile returns the SHA256 sum of the given file.
 func SHA256SumFile(file string) (string, error) {
 	f, err := os.Open(file)
 	if err != nil {

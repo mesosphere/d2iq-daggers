@@ -50,6 +50,8 @@ func Patch(ctx context.Context) error {
 }
 
 // SVUWithOptions runs svu with specific options.
+//
+//nolint:revive // Stuttering is fine here to provide a functional options variant of SVU call.
 func SVUWithOptions(ctx context.Context, opts ...svudagger.Option) error {
 	verbose := mg.Verbose() || mg.Debug()
 
@@ -64,7 +66,7 @@ func SVUWithOptions(ctx context.Context, opts ...svudagger.Option) error {
 	}
 	defer client.Close()
 
-	optsFromEnv, err := loadEnvVars()
+	optsFromEnv, err := optsFromEnvVars()
 	if err != nil {
 		return err
 	}
@@ -86,53 +88,64 @@ func SVUWithOptions(ctx context.Context, opts ...svudagger.Option) error {
 	return nil
 }
 
-// loads environment variables into options.
-func loadEnvVars() ([]svudagger.Option, error) {
+// optsFromEnvVars loads environment variables into options.
+func optsFromEnvVars() ([]svudagger.Option, error) {
 	var opts []svudagger.Option
 
-	if svuVersion, ok := os.LookupEnv(svuVersionEnvVar); ok {
-		opts = append([]svudagger.Option{svudagger.SVUVersion(svuVersion)}, opts...)
-	}
+	opts = append(stringOptFromEnvVar(svuVersionEnvVar, svudagger.SVUVersion), opts...)
+	opts = append(stringOptFromEnvVar(svuPatternEnvVar, svudagger.WithPattern), opts...)
+	opts = append(stringOptFromEnvVar(svuPrefixEnvVar, svudagger.WithPrefix), opts...)
+	opts = append(stringOptFromEnvVar(svuSuffixEnvVar, svudagger.WithSuffix), opts...)
+	opts = append(stringOptFromEnvVar(svuTagModeEnvVar, withTagModeString), opts...)
 
-	if svuMetadata, ok := os.LookupEnv(svuMetadataEnvVar); ok {
-		metadata, err := strconv.ParseBool(svuMetadata)
-		if err != nil {
-			return nil, fmt.Errorf("failed to parse %q as a boolean: %w", svuMetadataEnvVar, err)
-		}
-		opts = append([]svudagger.Option{svudagger.WithMetadata(metadata)}, opts...)
+	boolOpt, err := boolOptFromEnvVar(svuMetadataEnvVar, svudagger.WithMetadata)
+	if err != nil {
+		return nil, err
 	}
+	opts = append(boolOpt, opts...)
 
-	if svuPreRelease, ok := os.LookupEnv(svuPreReleaseEnvVar); ok {
-		preRelease, err := strconv.ParseBool(svuPreRelease)
-		if err != nil {
-			return nil, fmt.Errorf("failed to parse %q as a boolean: %w", svuPreReleaseEnvVar, err)
-		}
-		opts = append([]svudagger.Option{svudagger.WithPreRelease(preRelease)}, opts...)
+	boolOpt, err = boolOptFromEnvVar(svuPreReleaseEnvVar, svudagger.WithPreRelease)
+	if err != nil {
+		return nil, err
 	}
+	opts = append(boolOpt, opts...)
 
-	if svuBuild, ok := os.LookupEnv(svuBuildEnvVar); ok {
-		build, err := strconv.ParseBool(svuBuild)
-		if err != nil {
-			return nil, fmt.Errorf("failed to parse %q as a boolean: %w", svuBuildEnvVar, err)
-		}
-		opts = append([]svudagger.Option{svudagger.WithBuild(build)}, opts...)
+	boolOpt, err = boolOptFromEnvVar(svuBuildEnvVar, svudagger.WithBuild)
+	if err != nil {
+		return nil, err
 	}
-
-	if svuPattern, ok := os.LookupEnv(svuPatternEnvVar); ok {
-		opts = append([]svudagger.Option{svudagger.WithPattern(svuPattern)}, opts...)
-	}
-
-	if svuPrefix, ok := os.LookupEnv(svuPrefixEnvVar); ok {
-		opts = append([]svudagger.Option{svudagger.WithPrefix(svuPrefix)}, opts...)
-	}
-
-	if svuSuffix, ok := os.LookupEnv(svuSuffixEnvVar); ok {
-		opts = append([]svudagger.Option{svudagger.WithSuffix(svuSuffix)}, opts...)
-	}
-
-	if svuTagMode, ok := os.LookupEnv(svuTagModeEnvVar); ok {
-		opts = append([]svudagger.Option{svudagger.WithTagMode(svudagger.TagMode(svuTagMode))}, opts...)
-	}
+	opts = append(boolOpt, opts...)
 
 	return opts, nil
+}
+
+// stringOptFromEnvVar returns a slice containing a single option if the specified environment variable is set.
+// This function returns a slice to make it easier to chain calls in optsFromEnvVars.
+// Returns a nil slice if the env var is not set.
+func stringOptFromEnvVar(envVarName string, optFn func(string) svudagger.Option) []svudagger.Option {
+	if envVarValue, ok := os.LookupEnv(envVarName); ok {
+		return []svudagger.Option{optFn(envVarValue)}
+	}
+
+	return nil
+}
+
+// boolOptFromEnvVar returns a slice containing a single option if the specified environment variable is set.
+// This function returns a slice to make it easier to chain calls in optsFromEnvVars.
+// Returns a nil slice if the env var is not set.
+func boolOptFromEnvVar(envVarName string, optFn func(bool) svudagger.Option) ([]svudagger.Option, error) {
+	if envVarValue, ok := os.LookupEnv(envVarName); ok {
+		boolVal, err := strconv.ParseBool(envVarValue)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse %q as a boolean: %w", envVarName, err)
+		}
+		return []svudagger.Option{optFn(boolVal)}, nil
+	}
+
+	return nil, nil
+}
+
+// withTagModeString sets the tag mode to use when searching for tags set via a string.
+func withTagModeString(tagMode string) svudagger.Option {
+	return svudagger.WithTagMode(svudagger.TagMode(tagMode))
 }

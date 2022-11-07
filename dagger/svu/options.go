@@ -52,11 +52,14 @@ func defaultConfig() config {
 	}
 }
 
+// Option is a function that configures the svu action.
 type Option func(config) config
 
 // SVUVersion specifies the version of svu to use. Defaults to v1.9.0. This should be one of the
 // released image tags - see https://github.com/caarlos0/svu/pkgs/container/svu for available
 // tags.
+//
+//nolint:revive // Disable stuttering check.
 func SVUVersion(v string) Option {
 	return func(c config) config {
 		c.version = v

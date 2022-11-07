@@ -20,6 +20,7 @@ type Output struct {
 	VersionWithoutPrefix string
 }
 
+// Run runs the svu command with the given options.
 func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, options ...Option) (*Output, error) {
 	cfg := defaultConfig()
 	for _, o := range options {
