@@ -28,19 +28,14 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 
 	svuFlags := flagsFromConfig(&cfg)
 
-	srcDirID, err := workdir.ID(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	container := client.Container().
 		From(fmt.Sprintf("%s:%s", baseImage, cfg.version)).
-		WithMountedDirectory("/src", srcDirID).
+		WithMountedDirectory("/src", workdir).
 		WithWorkdir("/src")
 
 	container = container.Exec(dagger.ContainerExecOpts{Args: append([]string{string(cfg.command)}, svuFlags...)})
 	// Run container and get Exit code
-	_, err = container.ExitCode(ctx)
+	_, err := container.ExitCode(ctx)
 	if err != nil {
 		return nil, err
 	}
