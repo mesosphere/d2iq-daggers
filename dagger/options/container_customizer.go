@@ -47,7 +47,7 @@ func InstallGo(ctx context.Context) ContainerCustomizer {
 func WithMountedGoCache(ctx context.Context, workDir *dagger.Directory) ContainerCustomizer {
 	return func(c *dagger.Container, client *dagger.Client) (*dagger.Container, error) {
 		// Configure go to use the cache volume for the go build cache.
-		buildCache, err := common.NewCacheVolumeWithFileHashKeys(ctx, client, workDir, "go-build", "go.mod", "go.sum")
+		buildCache, err := common.NewCacheVolumeWithFileHashKeys(ctx, client, "go-build-", workDir, "go.mod", "go.sum")
 		if err != nil {
 			return nil, err
 		}
@@ -55,7 +55,7 @@ func WithMountedGoCache(ctx context.Context, workDir *dagger.Directory) Containe
 		c = c.WithEnvVariable("GOCACHE", "/go/build-cache").WithMountedCache("/go/build-cache", buildCache)
 
 		// Configure go to use the cache volume for the go build cache.
-		modCache, err := common.NewCacheVolumeWithFileHashKeys(ctx, client, workDir, "go-mod", "go.mod", "go.sum")
+		modCache, err := common.NewCacheVolumeWithFileHashKeys(ctx, client, "go-mod-", workDir, "go.mod", "go.sum")
 		if err != nil {
 			return nil, err
 		}

@@ -43,7 +43,7 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 	}
 
 	// Configure pre-commit to use the cache volume
-	cacheVol, err := common.NewCacheVolumeWithFileHashKeys(ctx, client, workdir, "pre-commit", configFileName)
+	cacheVol, err := common.NewCacheVolumeWithFileHashKeys(ctx, client, "pre-commit-", workdir, configFileName)
 	if err != nil {
 		return "", err
 	}
