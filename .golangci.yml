@@ -21,7 +21,6 @@ linters:
     - gosimple
     - govet
     - ineffassign
-    - lll
     - misspell
     - nolintlint
     - prealloc
@@ -60,13 +59,19 @@ linters-settings:
   gofumpt:
     lang-version: "1.17"
     extra-rules: true
-  lll:
-    line-length: 120
   revive:
+    max-open-files: 2048
+    severity: error
     rules:
+      - name: cognitive-complexity
+        arguments: [7]
+      - name: cyclomatic
+        arguments: [10]
       - name: exported
-        arguments:
-          - disableStutteringCheck
+      - name: function-result-limit
+        arguments: [3]
+      - name: line-length-limit
+        arguments: [120]
 
 issues:
   include:

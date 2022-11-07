@@ -22,6 +22,8 @@ func Precommit(ctx context.Context) error {
 }
 
 // PrecommitWithOptions runs all the precommit checks with Dagger options.
+//
+//nolint:revive // Stuttering is fine here to provide a functional options variant of Precommit function above.
 func PrecommitWithOptions(ctx context.Context, opts ...precommitdagger.Option) error {
 	verbose := mg.Verbose() || mg.Debug()
 
