@@ -3,6 +3,20 @@
 <!-- Release notes generated using configuration in .github/release.yaml at main -->
 
 ## What's Changed
+### Exciting New Features 🎉
+* feat: add WithMountedGoCache dagger option by @aweris in https://github.com/mesosphere/daggers/pull/28
+### Other Changes
+* build: Bump dagger to version 0.4.0 by @aweris in https://github.com/mesosphere/daggers/pull/25
+* ci: Add dependabot config to repository by @aweris in https://github.com/mesosphere/daggers/pull/26
+
+
+**Full Changelog**: https://github.com/mesosphere/daggers/compare/v0.2.2...v0.3.0
+
+## Changelog
+
+<!-- Release notes generated using configuration in .github/release.yaml at main -->
+
+## What's Changed
 ### Fixes 🔧
 * fix: Print command output if mage is not running in verbose mode by @aweris in https://github.com/mesosphere/daggers/pull/23
 
