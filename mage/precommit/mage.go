@@ -2,12 +2,9 @@ package precommit
 
 import (
 	"context"
-	"fmt"
 	"os"
 
 	"dagger.io/dagger"
-	"github.com/magefile/mage/mg"
-
 	loggerdagger "github.com/mesosphere/daggers/dagger/logger"
 	precommitdagger "github.com/mesosphere/daggers/dagger/precommit"
 )
@@ -25,9 +22,10 @@ func Precommit(ctx context.Context) error {
 //
 //nolint:revive // Stuttering is fine here to provide a functional options variant of Precommit function above.
 func PrecommitWithOptions(ctx context.Context, opts ...precommitdagger.Option) error {
-	verbose := mg.Verbose() || mg.Debug()
-
-	logger, err := loggerdagger.NewLogger(verbose)
+	// There is a known issue in dagger, if exec command is failed, dagger will not return stdout or stderr.
+	// So we need to set verbose to true to see the output of the command until the issue is fixed.
+	// issue: https://github.com/dagger/dagger/issues/3192.
+	logger, err := loggerdagger.NewLogger(true)
 	if err != nil {
 		return err
 	}
@@ -46,14 +44,9 @@ func PrecommitWithOptions(ctx context.Context, opts ...precommitdagger.Option) e
 		opts = append([]precommitdagger.Option{precommitdagger.BaseImage(baseImage)}, opts...)
 	}
 
-	cmdOut, err := precommitdagger.Run(ctx, client, client.Host().Workdir(), opts...)
-
-	// When verbose flag is false, the output is not printed to the console, only redirected to the log file.
-	// To work around this, we print the output to the console if the verbose flag is not set.
-	if !verbose {
-		fmt.Println(cmdOut)
-	}
-
+	// Print the command output to stdout when the issue https://github.com/dagger/dagger/issues/3192. is fixed.
+	// Currently, we set verbose to true to see the output of the command.
+	_, err = precommitdagger.Run(ctx, client, client.Host().Workdir(), opts...)
 	if err != nil {
 		return err
 	}
