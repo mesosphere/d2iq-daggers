@@ -3,6 +3,17 @@
 <!-- Release notes generated using configuration in .github/release.yaml at main -->
 
 ## What's Changed
+### Fixes 🔧
+* fix: Use verbose logging always to see precommit output. by @aweris in https://github.com/mesosphere/daggers/pull/30
+
+
+**Full Changelog**: https://github.com/mesosphere/daggers/compare/v0.3.0...v0.3.1
+
+## Changelog
+
+<!-- Release notes generated using configuration in .github/release.yaml at main -->
+
+## What's Changed
 ### Exciting New Features 🎉
 * feat: add WithMountedGoCache dagger option by @aweris in https://github.com/mesosphere/daggers/pull/28
 ### Other Changes
