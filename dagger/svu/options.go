@@ -1,5 +1,7 @@
 package svu
 
+import "github.com/caarlos0/env/v6"
+
 // Command is represents the svu sub-command.
 type Command string
 
@@ -27,29 +29,25 @@ const (
 )
 
 type config struct {
-	Version    string
-	Metadata   bool
-	Prerelease bool
-	Build      bool
-	Command    Command
-	Pattern    string
-	Prefix     string
-	Suffix     string
-	TagMode    TagMode
+	Version    string `env:"VERSION" envDefault:"v1.9.0"`
+	Metadata   bool   `env:"METADATA" envDefault:"true"`
+	Prerelease bool   `env:"PRERELEASE" envDefault:"true"`
+	Build      bool   `env:"BUILD" envDefault:"true"`
+	Command    string `env:"COMMAND" envDefault:"next"`
+	Pattern    string `env:"PATTERN"`
+	Prefix     string `env:"PREFIX"`
+	Suffix     string `env:"SUFFIX"`
+	TagMode    string `env:"TAG_MODE" envDefault:"all-branches"`
 }
 
-func defaultConfig() config {
-	return config{
-		Version:    "v1.9.0",
-		Metadata:   true,
-		Prerelease: true,
-		Build:      true,
-		Command:    CommandNext,
-		Pattern:    "*",
-		Prefix:     "v",
-		Suffix:     "",
-		TagMode:    TagModeAllBranches,
+func loadConfigFromEnv() (config, error) {
+	cfg := config{}
+
+	if err := env.Parse(&cfg, env.Options{Prefix: "SVU_"}); err != nil {
+		return cfg, err
 	}
+
+	return cfg, nil
 }
 
 // Option is a function that configures the svu action.
@@ -94,7 +92,7 @@ func WithBuild(b bool) Option {
 // WithCommand sets the svu sub-command to run. Defaults to "next".
 func WithCommand(cmd Command) Option {
 	return func(c config) config {
-		c.Command = cmd
+		c.Command = string(cmd)
 		return c
 	}
 }
@@ -126,7 +124,7 @@ func WithSuffix(suffix string) Option {
 // WithTagMode sets the tag mode to use when searching for tags. Defaults to TagModeAllBranches.
 func WithTagMode(tagMode TagMode) Option {
 	return func(c config) config {
-		c.TagMode = tagMode
+		c.TagMode = string(tagMode)
 		return c
 	}
 }

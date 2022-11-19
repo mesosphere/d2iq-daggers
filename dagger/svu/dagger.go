@@ -8,10 +8,6 @@ import (
 	"dagger.io/dagger"
 )
 
-const (
-	baseImage = "ghcr.io/caarlos0/svu"
-)
-
 // Output is svu command output.
 type Output struct {
 	// Version
@@ -22,7 +18,11 @@ type Output struct {
 
 // Run runs the svu command with the given options.
 func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, options ...Option) (*Output, error) {
-	cfg := defaultConfig()
+	cfg, err := loadConfigFromEnv()
+	if err != nil {
+		return nil, err
+	}
+
 	for _, o := range options {
 		cfg = o(cfg)
 	}
@@ -30,13 +30,13 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 	svuFlags := flagsFromConfig(&cfg)
 
 	container := client.Container().
-		From(fmt.Sprintf("%s:%s", baseImage, cfg.Version)).
+		From(fmt.Sprintf("ghcr.io/caarlos0/svu:%s", cfg.Version)).
 		WithMountedDirectory("/src", workdir).
 		WithWorkdir("/src")
 
-	container = container.Exec(dagger.ContainerExecOpts{Args: append([]string{string(cfg.Command)}, svuFlags...)})
+	container = container.Exec(dagger.ContainerExecOpts{Args: append([]string{cfg.Command}, svuFlags...)})
 	// Run container and get Exit code
-	_, err := container.ExitCode(ctx)
+	_, err = container.ExitCode(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 	}
 
 	svuFlags = append(svuFlags, "--strip-prefix")
-	container = container.Exec(dagger.ContainerExecOpts{Args: append([]string{string(cfg.Command)}, svuFlags...)})
+	container = container.Exec(dagger.ContainerExecOpts{Args: append([]string{cfg.Command}, svuFlags...)})
 	// Run container and get Exit code
 	_, err = container.ExitCode(ctx)
 	if err != nil {
@@ -78,7 +78,7 @@ func flagsFromConfig(cfg *config) []string {
 		flags = append(flags, "--suffix", cfg.Suffix)
 	}
 	if cfg.TagMode != "" {
-		flags = append(flags, "--tag-mode", string(cfg.TagMode))
+		flags = append(flags, "--tag-mode", cfg.TagMode)
 	}
 	if cfg.Metadata {
 		flags = append(flags, "--metadata")
