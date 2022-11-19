@@ -30,11 +30,11 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 	svuFlags := flagsFromConfig(&cfg)
 
 	container := client.Container().
-		From(fmt.Sprintf("%s:%s", baseImage, cfg.version)).
+		From(fmt.Sprintf("%s:%s", baseImage, cfg.Version)).
 		WithMountedDirectory("/src", workdir).
 		WithWorkdir("/src")
 
-	container = container.Exec(dagger.ContainerExecOpts{Args: append([]string{string(cfg.command)}, svuFlags...)})
+	container = container.Exec(dagger.ContainerExecOpts{Args: append([]string{string(cfg.Command)}, svuFlags...)})
 	// Run container and get Exit code
 	_, err := container.ExitCode(ctx)
 	if err != nil {
@@ -47,7 +47,7 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 	}
 
 	svuFlags = append(svuFlags, "--strip-prefix")
-	container = container.Exec(dagger.ContainerExecOpts{Args: append([]string{string(cfg.command)}, svuFlags...)})
+	container = container.Exec(dagger.ContainerExecOpts{Args: append([]string{string(cfg.Command)}, svuFlags...)})
 	// Run container and get Exit code
 	_, err = container.ExitCode(ctx)
 	if err != nil {
@@ -68,29 +68,29 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 func flagsFromConfig(cfg *config) []string {
 	var flags []string
 
-	if cfg.pattern != "" {
-		flags = append(flags, "--pattern", cfg.pattern)
+	if cfg.Pattern != "" {
+		flags = append(flags, "--pattern", cfg.Pattern)
 	}
-	if cfg.prefix != "" {
-		flags = append(flags, "--prefix", cfg.prefix)
+	if cfg.Prefix != "" {
+		flags = append(flags, "--prefix", cfg.Prefix)
 	}
-	if cfg.suffix != "" {
-		flags = append(flags, "--suffix", cfg.suffix)
+	if cfg.Suffix != "" {
+		flags = append(flags, "--suffix", cfg.Suffix)
 	}
-	if cfg.tagMode != "" {
-		flags = append(flags, "--tag-mode", string(cfg.tagMode))
+	if cfg.TagMode != "" {
+		flags = append(flags, "--tag-mode", string(cfg.TagMode))
 	}
-	if cfg.metadata {
+	if cfg.Metadata {
 		flags = append(flags, "--metadata")
 	} else {
 		flags = append(flags, "--no-metadata")
 	}
-	if cfg.prerelease {
+	if cfg.Prerelease {
 		flags = append(flags, "--pre-release")
 	} else {
 		flags = append(flags, "--no-pre-release")
 	}
-	if cfg.build {
+	if cfg.Build {
 		flags = append(flags, "--build")
 	} else {
 		flags = append(flags, "--no-build")

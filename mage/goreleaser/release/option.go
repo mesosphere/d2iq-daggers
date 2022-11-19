@@ -5,24 +5,24 @@ import (
 )
 
 type config struct {
-	env               map[string]string
-	autoSnapshot      bool
-	config            string
-	parallelism       string
-	rmDist            bool
-	releaseFooter     string
-	releaseFooterTmpl string
-	releaseHeader     string
-	releaseHeaderTmpl string
-	releaseNotes      string
-	releaseNotesTmpl  string
-	skipAnnounce      bool
-	skipPublish       bool
-	skipSbom          bool
-	skipSign          bool
-	skipValidate      bool
-	snapshot          bool
-	timeout           string
+	Env               map[string]string
+	AutoSnapshot      bool
+	Config            string
+	Parallelism       string
+	RmDist            bool
+	ReleaseFooter     string
+	ReleaseFooterTmpl string
+	ReleaseHeader     string
+	ReleaseHeaderTmpl string
+	ReleaseNotes      string
+	ReleaseNotesTmpl  string
+	SkipAnnounce      bool
+	SkipPublish       bool
+	SkipSbom          bool
+	SkipSign          bool
+	SkipValidate      bool
+	Snapshot          bool
+	Timeout           string
 }
 
 // Option is a function that configures the goreleaser release options.
@@ -31,7 +31,7 @@ type Option func(config config) config
 // WithEnv append extra env variables to goreleaser build process.
 func WithEnv(env map[string]string) Option {
 	return func(config config) config {
-		config.env = env
+		config.Env = env
 		return config
 	}
 }
@@ -39,7 +39,7 @@ func WithEnv(env map[string]string) Option {
 // WithAutoSnapshot sets --snapshot flag.
 func WithAutoSnapshot(autoSnapshot bool) Option {
 	return func(config config) config {
-		config.autoSnapshot = autoSnapshot
+		config.AutoSnapshot = autoSnapshot
 		return config
 	}
 }
@@ -47,7 +47,7 @@ func WithAutoSnapshot(autoSnapshot bool) Option {
 // WithConfig sets  --config flag.
 func WithConfig(configPath string) Option {
 	return func(config config) config {
-		config.config = configPath
+		config.Config = configPath
 		return config
 	}
 }
@@ -55,7 +55,7 @@ func WithConfig(configPath string) Option {
 // WithParallelism sets --parallelism flag.
 func WithParallelism(parallelism string) Option {
 	return func(config config) config {
-		config.parallelism = parallelism
+		config.Parallelism = parallelism
 		return config
 	}
 }
@@ -63,7 +63,7 @@ func WithParallelism(parallelism string) Option {
 // WithRmDist sets --rm-dist flag.
 func WithRmDist(rmDist bool) Option {
 	return func(config config) config {
-		config.rmDist = rmDist
+		config.RmDist = rmDist
 		return config
 	}
 }
@@ -71,7 +71,7 @@ func WithRmDist(rmDist bool) Option {
 // WithReleaseFooter sets --release-footer flag.
 func WithReleaseFooter(releaseFooter string) Option {
 	return func(config config) config {
-		config.releaseFooter = releaseFooter
+		config.ReleaseFooter = releaseFooter
 		return config
 	}
 }
@@ -79,7 +79,7 @@ func WithReleaseFooter(releaseFooter string) Option {
 // WithReleaseFooterTmpl sets --release-footer-tmpl flag.
 func WithReleaseFooterTmpl(releaseFooterTmpl string) Option {
 	return func(config config) config {
-		config.releaseFooterTmpl = releaseFooterTmpl
+		config.ReleaseFooterTmpl = releaseFooterTmpl
 		return config
 	}
 }
@@ -87,7 +87,7 @@ func WithReleaseFooterTmpl(releaseFooterTmpl string) Option {
 // WithReleaseHeader sets --release-header flag.
 func WithReleaseHeader(releaseHeader string) Option {
 	return func(config config) config {
-		config.releaseHeader = releaseHeader
+		config.ReleaseHeader = releaseHeader
 		return config
 	}
 }
@@ -95,7 +95,7 @@ func WithReleaseHeader(releaseHeader string) Option {
 // WithReleaseHeaderTmpl sets --release-header-tmpl flag.
 func WithReleaseHeaderTmpl(releaseHeaderTmpl string) Option {
 	return func(config config) config {
-		config.releaseHeaderTmpl = releaseHeaderTmpl
+		config.ReleaseHeaderTmpl = releaseHeaderTmpl
 		return config
 	}
 }
@@ -103,7 +103,7 @@ func WithReleaseHeaderTmpl(releaseHeaderTmpl string) Option {
 // WithReleaseNotes sets --release-notes flag.
 func WithReleaseNotes(releaseNotes string) Option {
 	return func(config config) config {
-		config.releaseNotes = releaseNotes
+		config.ReleaseNotes = releaseNotes
 		return config
 	}
 }
@@ -111,7 +111,7 @@ func WithReleaseNotes(releaseNotes string) Option {
 // WithReleaseNotesTmpl sets --release-notes-tmpl flag.
 func WithReleaseNotesTmpl(releaseNotesTmpl string) Option {
 	return func(config config) config {
-		config.releaseNotesTmpl = releaseNotesTmpl
+		config.ReleaseNotesTmpl = releaseNotesTmpl
 		return config
 	}
 }
@@ -119,7 +119,7 @@ func WithReleaseNotesTmpl(releaseNotesTmpl string) Option {
 // SkipAnnounce sets --skip-announce flag.
 func SkipAnnounce(skipAnnounce bool) Option {
 	return func(config config) config {
-		config.skipAnnounce = skipAnnounce
+		config.SkipAnnounce = skipAnnounce
 		return config
 	}
 }
@@ -127,7 +127,7 @@ func SkipAnnounce(skipAnnounce bool) Option {
 // SkipPublish sets --skip-publish flag.
 func SkipPublish(skipPublish bool) Option {
 	return func(config config) config {
-		config.skipPublish = skipPublish
+		config.SkipPublish = skipPublish
 		return config
 	}
 }
@@ -135,7 +135,7 @@ func SkipPublish(skipPublish bool) Option {
 // SkipSbom sets --skip-sbom flag.
 func SkipSbom(skipSbom bool) Option {
 	return func(config config) config {
-		config.skipSbom = skipSbom
+		config.SkipSbom = skipSbom
 		return config
 	}
 }
@@ -143,7 +143,7 @@ func SkipSbom(skipSbom bool) Option {
 // SkipSign sets --skip-sign flag.
 func SkipSign(skipSign bool) Option {
 	return func(config config) config {
-		config.skipSign = skipSign
+		config.SkipSign = skipSign
 		return config
 	}
 }
@@ -151,7 +151,7 @@ func SkipSign(skipSign bool) Option {
 // SkipValidate sets --skip-validate flag.
 func SkipValidate(skipValidate bool) Option {
 	return func(config config) config {
-		config.skipValidate = skipValidate
+		config.SkipValidate = skipValidate
 		return config
 	}
 }
@@ -159,7 +159,7 @@ func SkipValidate(skipValidate bool) Option {
 // WithSnapshot sets --snapshot flag.
 func WithSnapshot(snapshot bool) Option {
 	return func(config config) config {
-		config.snapshot = snapshot
+		config.Snapshot = snapshot
 		return config
 	}
 }
@@ -167,7 +167,7 @@ func WithSnapshot(snapshot bool) Option {
 // WithTimeout sets --timeout flag.
 func WithTimeout(timeout time.Duration) Option {
 	return func(config config) config {
-		config.timeout = timeout.String()
+		config.Timeout = timeout.String()
 		return config
 	}
 }
@@ -175,23 +175,23 @@ func WithTimeout(timeout time.Duration) Option {
 func (c *config) toArgs() []string {
 	var args []string
 
-	args = appendNonEmptyStringVal(args, "--config", c.config)
-	args = appendBoolVal(args, "--snapshot", c.autoSnapshot)
-	args = appendNonEmptyStringVal(args, "--parallelism", c.parallelism)
-	args = appendBoolVal(args, "--rm-dist", c.rmDist)
-	args = appendNonEmptyStringVal(args, "--release-footer", c.releaseFooter)
-	args = appendNonEmptyStringVal(args, "--release-footer-tmpl", c.releaseFooterTmpl)
-	args = appendNonEmptyStringVal(args, "--release-header", c.releaseHeader)
-	args = appendNonEmptyStringVal(args, "--release-header-tmpl", c.releaseHeaderTmpl)
-	args = appendNonEmptyStringVal(args, "--release-notes", c.releaseNotes)
-	args = appendNonEmptyStringVal(args, "--release-notes-tmpl", c.releaseNotesTmpl)
-	args = appendBoolVal(args, "--skip-announce", c.skipAnnounce)
-	args = appendBoolVal(args, "--skip-publish", c.skipPublish)
-	args = appendBoolVal(args, "--skip-sbom", c.skipSbom)
-	args = appendBoolVal(args, "--skip-sign", c.skipSign)
-	args = appendBoolVal(args, "--skip-validate", c.skipValidate)
-	args = appendBoolVal(args, "--snapshot", c.snapshot)
-	args = appendNonEmptyStringVal(args, "--timeout", c.timeout)
+	args = appendNonEmptyStringVal(args, "--config", c.Config)
+	args = appendBoolVal(args, "--snapshot", c.AutoSnapshot)
+	args = appendNonEmptyStringVal(args, "--parallelism", c.Parallelism)
+	args = appendBoolVal(args, "--rm-dist", c.RmDist)
+	args = appendNonEmptyStringVal(args, "--release-footer", c.ReleaseFooter)
+	args = appendNonEmptyStringVal(args, "--release-footer-tmpl", c.ReleaseFooterTmpl)
+	args = appendNonEmptyStringVal(args, "--release-header", c.ReleaseHeader)
+	args = appendNonEmptyStringVal(args, "--release-header-tmpl", c.ReleaseHeaderTmpl)
+	args = appendNonEmptyStringVal(args, "--release-notes", c.ReleaseNotes)
+	args = appendNonEmptyStringVal(args, "--release-notes-tmpl", c.ReleaseNotesTmpl)
+	args = appendBoolVal(args, "--skip-announce", c.SkipAnnounce)
+	args = appendBoolVal(args, "--skip-publish", c.SkipPublish)
+	args = appendBoolVal(args, "--skip-sbom", c.SkipSbom)
+	args = appendBoolVal(args, "--skip-sign", c.SkipSign)
+	args = appendBoolVal(args, "--skip-validate", c.SkipValidate)
+	args = appendBoolVal(args, "--snapshot", c.Snapshot)
+	args = appendNonEmptyStringVal(args, "--timeout", c.Timeout)
 
 	return args
 }

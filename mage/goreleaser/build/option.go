@@ -5,17 +5,17 @@ import (
 )
 
 type config struct {
-	env                 map[string]string
-	config              string
-	id                  string
-	output              string
-	parallelism         string
-	rmDist              bool
-	singleTarget        bool
-	skipPostCommitHooks bool
-	skipValidate        bool
-	snapshot            bool
-	timeout             string
+	Env                 map[string]string
+	Config              string
+	ID                  string
+	Output              string
+	Parallelism         string
+	RmDist              bool
+	SingleTarget        bool
+	SkipPostCommitHooks bool
+	SkipValidate        bool
+	Snapshot            bool
+	Timeout             string
 }
 
 // Option is a function that configures the goreleaser build options.
@@ -24,7 +24,7 @@ type Option func(config config) config
 // WithEnv append extra env variables to goreleaser build process.
 func WithEnv(env map[string]string) Option {
 	return func(config config) config {
-		config.env = env
+		config.Env = env
 		return config
 	}
 }
@@ -32,7 +32,7 @@ func WithEnv(env map[string]string) Option {
 // WithConfig sets  --config flag.
 func WithConfig(configPath string) Option {
 	return func(config config) config {
-		config.config = configPath
+		config.Config = configPath
 		return config
 	}
 }
@@ -40,7 +40,7 @@ func WithConfig(configPath string) Option {
 // WithID sets --id flag.
 func WithID(id string) Option {
 	return func(config config) config {
-		config.id = id
+		config.ID = id
 		return config
 	}
 }
@@ -48,7 +48,7 @@ func WithID(id string) Option {
 // WithOutput sets --output.
 func WithOutput(output string) Option {
 	return func(config config) config {
-		config.output = output
+		config.Output = output
 		return config
 	}
 }
@@ -56,7 +56,7 @@ func WithOutput(output string) Option {
 // WithParallelism sets --parallelism.
 func WithParallelism(parallelism string) Option {
 	return func(config config) config {
-		config.parallelism = parallelism
+		config.Parallelism = parallelism
 		return config
 	}
 }
@@ -64,7 +64,7 @@ func WithParallelism(parallelism string) Option {
 // WithRmDist sets --rm-dist.
 func WithRmDist(rmDist bool) Option {
 	return func(config config) config {
-		config.rmDist = rmDist
+		config.RmDist = rmDist
 		return config
 	}
 }
@@ -72,7 +72,7 @@ func WithRmDist(rmDist bool) Option {
 // WithSingleTarget sets --single-target.
 func WithSingleTarget(singleTarget bool) Option {
 	return func(config config) config {
-		config.singleTarget = singleTarget
+		config.SingleTarget = singleTarget
 		return config
 	}
 }
@@ -80,7 +80,7 @@ func WithSingleTarget(singleTarget bool) Option {
 // SkipPostCommitHooks sets--skip-post-hooks.
 func SkipPostCommitHooks(skipPostCommitHooks bool) Option {
 	return func(config config) config {
-		config.skipPostCommitHooks = skipPostCommitHooks
+		config.SkipPostCommitHooks = skipPostCommitHooks
 		return config
 	}
 }
@@ -88,7 +88,7 @@ func SkipPostCommitHooks(skipPostCommitHooks bool) Option {
 // SkipValidate sets --skip-validate.
 func SkipValidate(skipValidate bool) Option {
 	return func(config config) config {
-		config.skipValidate = skipValidate
+		config.SkipValidate = skipValidate
 		return config
 	}
 }
@@ -96,7 +96,7 @@ func SkipValidate(skipValidate bool) Option {
 // WithSnapshot sets --snapshot.
 func WithSnapshot(snapshot bool) Option {
 	return func(config config) config {
-		config.snapshot = snapshot
+		config.Snapshot = snapshot
 		return config
 	}
 }
@@ -104,7 +104,7 @@ func WithSnapshot(snapshot bool) Option {
 // WithTimeout sets --timeout duration.
 func WithTimeout(timeout time.Duration) Option {
 	return func(config config) config {
-		config.timeout = timeout.String()
+		config.Timeout = timeout.String()
 		return config
 	}
 }
@@ -112,16 +112,16 @@ func WithTimeout(timeout time.Duration) Option {
 func (c *config) toArgs() []string {
 	var args []string
 
-	args = appendNonEmptyStringVal(args, "--config", c.config)
-	args = appendNonEmptyStringVal(args, "--id", c.id)
-	args = appendNonEmptyStringVal(args, "--output", c.output)
-	args = appendNonEmptyStringVal(args, "--parallelism", c.parallelism)
-	args = appendBoolVal(args, "--rm-dist", c.rmDist)
-	args = appendBoolVal(args, "--single-target", c.singleTarget)
-	args = appendBoolVal(args, "--skip-post-hooks", c.skipPostCommitHooks)
-	args = appendBoolVal(args, "--skip-validate", c.skipValidate)
-	args = appendBoolVal(args, "--snapshot", c.snapshot)
-	args = appendNonEmptyStringVal(args, "--timeout", c.timeout)
+	args = appendNonEmptyStringVal(args, "--config", c.Config)
+	args = appendNonEmptyStringVal(args, "--id", c.ID)
+	args = appendNonEmptyStringVal(args, "--output", c.Output)
+	args = appendNonEmptyStringVal(args, "--parallelism", c.Parallelism)
+	args = appendBoolVal(args, "--rm-dist", c.RmDist)
+	args = appendBoolVal(args, "--single-target", c.SingleTarget)
+	args = appendBoolVal(args, "--skip-post-hooks", c.SkipPostCommitHooks)
+	args = appendBoolVal(args, "--skip-validate", c.SkipValidate)
+	args = appendBoolVal(args, "--snapshot", c.Snapshot)
+	args = appendNonEmptyStringVal(args, "--timeout", c.Timeout)
 
 	return args
 }

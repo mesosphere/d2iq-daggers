@@ -27,28 +27,28 @@ const (
 )
 
 type config struct {
-	version    string
-	metadata   bool
-	prerelease bool
-	build      bool
-	command    Command
-	pattern    string
-	prefix     string
-	suffix     string
-	tagMode    TagMode
+	Version    string
+	Metadata   bool
+	Prerelease bool
+	Build      bool
+	Command    Command
+	Pattern    string
+	Prefix     string
+	Suffix     string
+	TagMode    TagMode
 }
 
 func defaultConfig() config {
 	return config{
-		version:    "v1.9.0",
-		metadata:   true,
-		prerelease: true,
-		build:      true,
-		command:    CommandNext,
-		pattern:    "*",
-		prefix:     "v",
-		suffix:     "",
-		tagMode:    TagModeAllBranches,
+		Version:    "v1.9.0",
+		Metadata:   true,
+		Prerelease: true,
+		Build:      true,
+		Command:    CommandNext,
+		Pattern:    "*",
+		Prefix:     "v",
+		Suffix:     "",
+		TagMode:    TagModeAllBranches,
 	}
 }
 
@@ -62,7 +62,7 @@ type Option func(config) config
 //nolint:revive // Disable stuttering check.
 func SVUVersion(v string) Option {
 	return func(c config) config {
-		c.version = v
+		c.Version = v
 		return c
 	}
 }
@@ -70,7 +70,7 @@ func SVUVersion(v string) Option {
 // WithMetadata controls whether to include pre-release and build metadata in the version. Defaults to true.
 func WithMetadata(b bool) Option {
 	return func(c config) config {
-		c.metadata = b
+		c.Metadata = b
 		return c
 	}
 }
@@ -78,7 +78,7 @@ func WithMetadata(b bool) Option {
 // WithPreRelease controls whether to include pre-release metadata in the version. Defaults to true.
 func WithPreRelease(b bool) Option {
 	return func(c config) config {
-		c.prerelease = b
+		c.Prerelease = b
 		return c
 	}
 }
@@ -86,7 +86,7 @@ func WithPreRelease(b bool) Option {
 // WithBuild controls whether to include build metadata in the version. Defaults to true.
 func WithBuild(b bool) Option {
 	return func(c config) config {
-		c.build = b
+		c.Build = b
 		return c
 	}
 }
@@ -94,7 +94,7 @@ func WithBuild(b bool) Option {
 // WithCommand sets the svu sub-command to run. Defaults to "next".
 func WithCommand(cmd Command) Option {
 	return func(c config) config {
-		c.command = cmd
+		c.Command = cmd
 		return c
 	}
 }
@@ -102,7 +102,7 @@ func WithCommand(cmd Command) Option {
 // WithPattern sets the pattern to use when searching for tags. Defaults to "*".
 func WithPattern(pattern string) Option {
 	return func(c config) config {
-		c.pattern = pattern
+		c.Pattern = pattern
 		return c
 	}
 }
@@ -110,7 +110,7 @@ func WithPattern(pattern string) Option {
 // WithPrefix sets the prefix to use when searching for tags. Defaults to "v".
 func WithPrefix(prefix string) Option {
 	return func(c config) config {
-		c.prefix = prefix
+		c.Prefix = prefix
 		return c
 	}
 }
@@ -118,7 +118,7 @@ func WithPrefix(prefix string) Option {
 // WithSuffix sets the suffix to use when searching for tags. Defaults to "".
 func WithSuffix(suffix string) Option {
 	return func(c config) config {
-		c.suffix = suffix
+		c.Suffix = suffix
 		return c
 	}
 }
@@ -126,7 +126,7 @@ func WithSuffix(suffix string) Option {
 // WithTagMode sets the tag mode to use when searching for tags. Defaults to TagModeAllBranches.
 func WithTagMode(tagMode TagMode) Option {
 	return func(c config) config {
-		c.tagMode = tagMode
+		c.TagMode = tagMode
 		return c
 	}
 }

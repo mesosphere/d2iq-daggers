@@ -23,11 +23,11 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 	}
 
 	// Create a pre-commit container
-	container := client.Container().From(cfg.baseImage)
+	container := client.Container().From(cfg.BaseImage)
 
 	var err error
 
-	for _, c := range cfg.containerCustomizers {
+	for _, c := range cfg.ContainerCustomizers {
 		container, err = c(container, client)
 		if err != nil {
 			return "", err

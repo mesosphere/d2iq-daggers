@@ -89,7 +89,7 @@ func BuildWithOptions(opts ...Option) (*cli.Result, error) {
 		options = opt(options)
 	}
 
-	return cli.Run(cli.CommandBuild, debug, options.env, options.toArgs())
+	return cli.Run(cli.CommandBuild, debug, options.Env, options.toArgs())
 }
 
 func loadOptionsFromEnv() ([]Option, error) {

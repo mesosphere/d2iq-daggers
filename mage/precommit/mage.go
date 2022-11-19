@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"dagger.io/dagger"
+
 	loggerdagger "github.com/mesosphere/daggers/dagger/logger"
 	precommitdagger "github.com/mesosphere/daggers/dagger/precommit"
 )

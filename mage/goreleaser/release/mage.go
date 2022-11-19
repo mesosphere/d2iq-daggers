@@ -93,7 +93,7 @@ func ReleaseWithOptions(opts ...Option) (*cli.Result, error) {
 		options = opt(options)
 	}
 
-	return cli.Run(cli.CommandRelease, debug, options.env, options.toArgs())
+	return cli.Run(cli.CommandRelease, debug, options.Env, options.toArgs())
 }
 
 // TODO: make this more readable or come-up with more generic solution
