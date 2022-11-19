@@ -2,29 +2,41 @@ package build
 
 import (
 	"time"
+
+	"github.com/caarlos0/env/v6"
 )
 
 type config struct {
 	Env                 map[string]string
-	Config              string
-	ID                  string
-	Output              string
-	Parallelism         string
-	RmDist              bool
-	SingleTarget        bool
-	SkipPostCommitHooks bool
-	SkipValidate        bool
-	Snapshot            bool
-	Timeout             string
+	Config              string `env:"CONFIG"`
+	ID                  string `env:"ID"`
+	Output              string `env:"OUTPUT"`
+	Parallelism         string `env:"PARALLELISM"`
+	RmDist              bool   `env:"RM_DIST"`
+	SingleTarget        bool   `env:"SINGLE_TARGET"`
+	SkipPostCommitHooks bool   `env:"SKIP_POST_COMMIT_HOOKS"`
+	SkipValidate        bool   `env:"SKIP_VALIDATE"`
+	Snapshot            bool   `env:"SNAPSHOT"`
+	Timeout             string `env:"TIMEOUT"`
 }
 
 // Option is a function that configures the goreleaser build options.
 type Option func(config config) config
 
+func loadConfigFromEnv() (config, error) {
+	cfg := config{}
+
+	if err := env.Parse(&cfg, env.Options{Prefix: "GORELEASER_BUILD_"}); err != nil {
+		return cfg, err
+	}
+
+	return cfg, nil
+}
+
 // WithEnv append extra env variables to goreleaser build process.
-func WithEnv(env map[string]string) Option {
+func WithEnv(envMap map[string]string) Option {
 	return func(config config) config {
-		config.Env = env
+		config.Env = envMap
 		return config
 	}
 }

@@ -2,36 +2,48 @@ package release
 
 import (
 	"time"
+
+	"github.com/caarlos0/env/v6"
 )
 
 type config struct {
 	Env               map[string]string
-	AutoSnapshot      bool
-	Config            string
-	Parallelism       string
-	RmDist            bool
-	ReleaseFooter     string
-	ReleaseFooterTmpl string
-	ReleaseHeader     string
-	ReleaseHeaderTmpl string
-	ReleaseNotes      string
-	ReleaseNotesTmpl  string
-	SkipAnnounce      bool
-	SkipPublish       bool
-	SkipSbom          bool
-	SkipSign          bool
-	SkipValidate      bool
-	Snapshot          bool
-	Timeout           string
+	AutoSnapshot      bool   `env:"AUTO_SNAPSHOT"`
+	Config            string `env:"CONFIG"`
+	Parallelism       string `env:"PARALLELISM"`
+	RmDist            bool   `env:"RM_DIST"`
+	ReleaseFooter     string `env:"RELEASE_FOOTER"`
+	ReleaseFooterTmpl string `env:"RELEASE_FOOTER_TMPL"`
+	ReleaseHeader     string `env:"RELEASE_HEADER"`
+	ReleaseHeaderTmpl string `env:"RELEASE_HEADER_TMPL"`
+	ReleaseNotes      string `env:"RELEASE_NOTES"`
+	ReleaseNotesTmpl  string `env:"RELEASE_NOTES_TMPL"`
+	SkipAnnounce      bool   `env:"SKIP_ANNOUNCE"`
+	SkipPublish       bool   `env:"SKIP_PUBLISH"`
+	SkipSbom          bool   `env:"SKIP_SBOM"`
+	SkipSign          bool   `env:"SKIP_SIGN"`
+	SkipValidate      bool   `env:"SKIP_VALIDATE"`
+	Snapshot          bool   `env:"SNAPSHOT"`
+	Timeout           string `env:"TIMEOUT"`
 }
 
 // Option is a function that configures the goreleaser release options.
 type Option func(config config) config
 
+func loadConfigFromEnv() (config, error) {
+	cfg := config{}
+
+	if err := env.Parse(&cfg, env.Options{Prefix: "GORELEASER_RELEASE_"}); err != nil {
+		return cfg, err
+	}
+
+	return cfg, nil
+}
+
 // WithEnv append extra env variables to goreleaser build process.
-func WithEnv(env map[string]string) Option {
+func WithEnv(envMap map[string]string) Option {
 	return func(config config) config {
-		config.Env = env
+		config.Env = envMap
 		return config
 	}
 }
