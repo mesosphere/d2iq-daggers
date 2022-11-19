@@ -2,16 +2,11 @@ package precommit
 
 import (
 	"context"
-	"os"
 
 	"dagger.io/dagger"
 
 	loggerdagger "github.com/mesosphere/daggers/dagger/logger"
 	precommitdagger "github.com/mesosphere/daggers/dagger/precommit"
-)
-
-const (
-	baseImageEnvVar = "PRECOMMIT_BASE_IMAGE"
 )
 
 // Precommit runs all the precommit checks. Run `mage help:precommit` for information on available options.
@@ -40,10 +35,6 @@ func PrecommitWithOptions(ctx context.Context, opts ...precommitdagger.Option) e
 		return err
 	}
 	defer client.Close()
-
-	if baseImage, ok := os.LookupEnv(baseImageEnvVar); ok {
-		opts = append([]precommitdagger.Option{precommitdagger.BaseImage(baseImage)}, opts...)
-	}
 
 	// Print the command output to stdout when the issue https://github.com/dagger/dagger/issues/3192. is fixed.
 	// Currently, we set verbose to true to see the output of the command.
