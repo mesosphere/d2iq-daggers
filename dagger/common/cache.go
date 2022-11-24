@@ -25,7 +25,7 @@ func NewCacheVolumeWithFileHashKeys(
 	return client.CacheVolume(key), nil
 }
 
-// cacheKeyFromFiles returns the a string constrcucted from the supplied prefix suffixed with a SHA256 sum
+// cacheKeyFromFiles returns the string constructed from the supplied prefix suffixed with a SHA256 sum
 // of the contents of the requested filenames.
 func cacheKeyFromFiles(
 	ctx context.Context, cacheKeyPrefix string, workDir *dagger.Directory, fileNames ...string,
