@@ -35,10 +35,6 @@ func PrecommitWithOptions(ctx context.Context, opts ...precommitdagger.Option) e
 		return err
 	}
 	defer client.Close()
-	if err != nil {
-		return err
-	}
-	defer client.Close()
 
 	if baseImage, ok := os.LookupEnv(baseImageEnvVar); ok {
 		opts = append([]precommitdagger.Option{precommitdagger.BaseImage(baseImage)}, opts...)
