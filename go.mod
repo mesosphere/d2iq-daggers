@@ -7,6 +7,7 @@ replace github.com/docker/docker => github.com/docker/docker v20.10.3-0.20220414
 require (
 	dagger.io/dagger v0.4.0
 	github.com/magefile/mage v1.14.0
+	github.com/stretchr/testify v1.8.1
 )
 
 require (
@@ -22,6 +23,7 @@ require (
 	github.com/dagger/dagger v0.3.3 // indirect
 	github.com/dagger/graphql v0.0.0-20221102000338-24d5e47d3b72 // indirect
 	github.com/dagger/graphql-go-tools v0.0.0-20221102001222-e68b44170936 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/cli v20.10.17+incompatible // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
 	github.com/docker/docker v20.10.17+incompatible // indirect
@@ -49,9 +51,9 @@ require (
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.0.3-0.20211202183452-c5a74bcca799 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rs/zerolog v1.28.0 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
-	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/tonistiigi/fsutil v0.0.0-20220115021204-b19f7f9cb274 // indirect
 	github.com/tonistiigi/units v0.0.0-20180711220420-6950e57a87ea // indirect
 	github.com/tonistiigi/vt100 v0.0.0-20210615222946-8066bb97264f // indirect
@@ -75,4 +77,5 @@ require (
 	google.golang.org/genproto v0.0.0-20220810155839-1856144b1d9c // indirect
 	google.golang.org/grpc v1.49.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
