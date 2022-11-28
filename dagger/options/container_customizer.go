@@ -25,20 +25,20 @@ func AppendToPATH(ctx context.Context, path string) ContainerCustomizer {
 // InstallGo installs Go in the container. Currently it's using hardcoded version 1.19.3 for installation.
 func InstallGo(ctx context.Context) ContainerCustomizer {
 	return func(c *dagger.Container, client *dagger.Client) (*dagger.Container, error) {
-		c = c.Exec(dagger.ContainerExecOpts{
-			Args: []string{
+		c = c.WithExec(
+			[]string{
 				"bash", "-ec",
 				`curl --location --fail --silent --show-error https://go.dev/dl/go1.19.3.linux-amd64.tar.gz |
 				tar -C /usr/local -xz`,
 			},
-		})
+		)
 
 		c, err := AppendToPATH(ctx, "/usr/local/go/bin")(c, nil)
 		if err != nil {
 			return nil, err
 		}
 
-		return WithMountedGoCache(ctx, client.Host().Workdir())(c, client)
+		return WithMountedGoCache(ctx, client.Host().Directory("."))(c, client)
 	}
 }
 
@@ -69,14 +69,9 @@ func WithMountedGoCache(ctx context.Context, workDir *dagger.Directory) Containe
 // DownloadFile downloads the given URL to the given destination file.
 func DownloadFile(url, destFile string) ContainerCustomizer {
 	return func(c *dagger.Container, _ *dagger.Client) (*dagger.Container, error) {
-		return c.Exec(dagger.ContainerExecOpts{
-			Args: []string{
-				"curl",
-				"--location", "--fail", "--silent", "--show-error",
-				"--output", destFile,
-				url,
-			},
-		}), nil
+		return c.WithExec(
+			[]string{"curl", "--location", "--fail", "--silent", "--show-error", "--output", destFile, url},
+		), nil
 	}
 }
 
@@ -87,10 +82,7 @@ func DownloadExecutableFile(url, destFile string) ContainerCustomizer {
 		if err != nil {
 			return nil, err
 		}
-		return c.Exec(dagger.ContainerExecOpts{
-			Args: []string{
-				"chmod", "755", destFile,
-			},
-		}), nil
+
+		return c.WithExec([]string{"chmod", "755", destFile}), nil
 	}
 }
