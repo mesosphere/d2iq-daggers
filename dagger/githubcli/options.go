@@ -2,20 +2,21 @@ package githubcli
 
 import (
 	"github.com/caarlos0/env/v6"
+	"github.com/mesosphere/daggers/dagger/common"
 )
 
 type config struct {
-	GoBaseImage      string   `env:"GO_BASE_IMAGE,notEmpty" envDefault:"docker.io/golang"`
-	GoVersion        string   `env:"GO_VERSION,notEmpty" envDefault:"1.19"`
-	GithubCliVersion string   `env:"VERSION,notEmpty" envDefault:"2.20.2"`
-	Extensions       []string `env:"EXTENSIONS" envDefault:""`
-	Args             []string `env:"ARGS" envDefault:""  envSeparator:" "`
+	common.GithubCLIConfig
+
+	GoBaseImage string   `env:"GO_BASE_IMAGE,notEmpty" envDefault:"docker.io/golang"`
+	GoVersion   string   `env:"GO_VERSION,notEmpty" envDefault:"1.19"`
+	Args        []string `env:"GH_ARGS" envDefault:""  envSeparator:" "`
 }
 
 func loadConfigFromEnv() (config, error) {
 	cfg := config{}
 
-	if err := env.Parse(&cfg, env.Options{Prefix: "GH_"}); err != nil {
+	if err := env.Parse(&cfg, env.Options{}); err != nil {
 		return cfg, err
 	}
 
@@ -52,7 +53,7 @@ func WithGithubCliVersion(version string) Option {
 // WithExtensions sets the extensions to install for github cli.
 func WithExtensions(extensions ...string) Option {
 	return func(c config) config {
-		c.Extensions = extensions
+		c.GithubCliExtensions = extensions
 		return c
 	}
 }

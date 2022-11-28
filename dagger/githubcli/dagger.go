@@ -8,16 +8,12 @@ import (
 
 	"dagger.io/dagger"
 
+	"github.com/mesosphere/daggers/dagger/common"
 	"github.com/mesosphere/daggers/dagger/options"
 )
 
-const (
-	// url template for downloading github cli from github releases.
-	ghURLTemplate = "https://github.com/cli/cli/releases/download/v%s/gh_%s_linux_amd64.tar.gz"
-
-	// standard source path.
-	srcDir = "/src"
-)
+// standard source path.
+const srcDir = "/src"
 
 // Run runs the ginkgo run command with given options.
 func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, opts ...Option) (string, error) {
@@ -55,21 +51,9 @@ func GetContainer(
 ) (*dagger.Container, error) {
 	var err error
 
-	// Source url for downloading the Github CLI
-	srcURL := fmt.Sprintf(ghURLTemplate, cfg.GithubCliVersion, cfg.GithubCliVersion)
-
-	// Destination file to download tar file contains Github CLI
-	dstFile := "/tmp/gh_linux_amd64.tar.gz"
-
-	// Extract Directory
-	extractDir := "/tmp"
-
-	// Cli path after extracting downloaded tar to extract directory
-	cliPath := fmt.Sprintf("/tmp/gh_%s_linux_amd64/bin/gh", cfg.GithubCliVersion)
-
 	var customizers []options.ContainerCustomizer
 
-	customizers = append(customizers, options.WithMountedGoCache(ctx, workdir), options.DownloadFile(srcURL, dstFile))
+	customizers = append(customizers, options.WithMountedGoCache(ctx, workdir))
 
 	container := client.Container().From(fmt.Sprintf("%s:%s", cfg.GoBaseImage, cfg.GoVersion))
 
@@ -80,18 +64,16 @@ func GetContainer(
 		}
 	}
 
+	container, err = common.InstallGithubCLI(ctx, container, cfg.GithubCLIConfig)
+	if err != nil {
+		return nil, err
+	}
+
 	token := client.Host().EnvVariable("GITHUB_TOKEN").Secret()
 
 	container = container.
 		WithSecretVariable("GITHUB_TOKEN", token).
-		WithExec([]string{"tar", "-xf", dstFile, "-C", extractDir}).
-		WithExec([]string{"mv", cliPath, "/usr/local/bin/gh"}).
-		WithExec([]string{"rm", "-rf", "/tmp/*"}).
-		WithEntrypoint([]string{"/usr/local/bin/gh"})
-
-	for _, extension := range cfg.Extensions {
-		container = container.WithExec([]string{"extension", "install", extension})
-	}
+		WithEntrypoint([]string{"gh"})
 
 	_, err = container.ExitCode(ctx)
 	if err != nil {
