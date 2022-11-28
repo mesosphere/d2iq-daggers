@@ -41,7 +41,7 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 		WithEnvVariable("CACHE_BUSTER", time.Now().String()). // Workaround for stop caching after this step
 		Exec(dagger.ContainerExecOpts{Args: cfg.Args})
 
-	output, err := container.Stdout().Contents(ctx)
+	output, err := container.Stdout(ctx)
 	if err != nil {
 		return "", err
 	}

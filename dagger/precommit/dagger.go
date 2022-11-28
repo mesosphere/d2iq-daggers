@@ -61,5 +61,5 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 		})
 
 	// Run container and get Exit code
-	return container.Stdout().Contents(ctx)
+	return container.Stdout(ctx)
 }

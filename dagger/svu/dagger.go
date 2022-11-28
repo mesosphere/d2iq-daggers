@@ -41,7 +41,7 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 		return nil, err
 	}
 
-	version, err := container.Stdout().Contents(ctx)
+	version, err := container.Stdout(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 		return nil, err
 	}
 
-	versionWithoutPrefix, err := container.Stdout().Contents(ctx)
+	versionWithoutPrefix, err := container.Stdout(ctx)
 	if err != nil {
 		return nil, err
 	}
