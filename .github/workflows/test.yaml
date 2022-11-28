@@ -1,4 +1,5 @@
 name: Go test
+
 on:
   push:
     tags:
@@ -7,6 +8,7 @@ on:
       - main
   pull_request:
     types: [opened, reopened, synchronize]
+
 jobs:
   test:
     name: Go Test
@@ -18,4 +20,4 @@ jobs:
         with:
           go-version: '>=1.19.0'
       - name: Run unit tests
-        run: go run mage.go test:go
+        run: ./hack/mage test:go
