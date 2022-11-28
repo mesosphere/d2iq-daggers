@@ -1,2 +1,5 @@
 # Daggers artifacts and logs
 .daggers/
+
+# Output directory for artifacts
+.output/
