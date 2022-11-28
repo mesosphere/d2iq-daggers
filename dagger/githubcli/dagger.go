@@ -39,7 +39,7 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 		WithMountedDirectory(srcDir, workdir).
 		WithWorkdir(srcDir).
 		WithEnvVariable("CACHE_BUSTER", time.Now().String()). // Workaround for stop caching after this step
-		Exec(dagger.ContainerExecOpts{Args: cfg.Args})
+		WithExec(cfg.Args)
 
 	output, err := container.Stdout(ctx)
 	if err != nil {
@@ -84,13 +84,13 @@ func getGHContainer(
 
 	container = container.
 		WithSecretVariable("GITHUB_TOKEN", token).
-		Exec(dagger.ContainerExecOpts{Args: []string{"tar", "-xf", dstFile, "-C", extractDir}}).
-		Exec(dagger.ContainerExecOpts{Args: []string{"mv", cliPath, "/usr/local/bin/gh"}}).
-		Exec(dagger.ContainerExecOpts{Args: []string{"rm", "-rf", "/tmp/*"}}).
+		WithExec([]string{"tar", "-xf", dstFile, "-C", extractDir}).
+		WithExec([]string{"mv", cliPath, "/usr/local/bin/gh"}).
+		WithExec([]string{"rm", "-rf", "/tmp/*"}).
 		WithEntrypoint([]string{"/usr/local/bin/gh"})
 
 	for _, extension := range cfg.Extensions {
-		container = container.Exec(dagger.ContainerExecOpts{Args: []string{"extension", "install", extension}})
+		container = container.WithExec([]string{"extension", "install", extension})
 	}
 
 	_, err = container.ExitCode(ctx)

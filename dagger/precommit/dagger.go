@@ -53,12 +53,9 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 	container = container.WithEnvVariable(precommitHomeEnvVar, cacheDir).WithMountedCache(precommitHomeEnvVar, cacheVol)
 
 	container = container.WithMountedDirectory("/src", workdir).WithWorkdir("/src").
-		Exec(dagger.ContainerExecOpts{
-			Args: []string{
-				"python", "/usr/local/bin/pre-commit-2.20.0.pyz",
-				"run", "--all-files", "--show-diff-on-failure",
-			},
-		})
+		WithExec(
+			[]string{"python", "/usr/local/bin/pre-commit-2.20.0.pyz", "run", "--all-files", "--show-diff-on-failure"},
+		)
 
 	// Run container and get Exit code
 	return container.Stdout(ctx)

@@ -34,7 +34,7 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 		WithMountedDirectory("/src", workdir).
 		WithWorkdir("/src")
 
-	container = container.Exec(dagger.ContainerExecOpts{Args: append([]string{cfg.Command}, svuFlags...)})
+	container = container.WithExec(append([]string{cfg.Command}, svuFlags...))
 	// Run container and get Exit code
 	_, err = container.ExitCode(ctx)
 	if err != nil {
@@ -47,7 +47,7 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 	}
 
 	svuFlags = append(svuFlags, "--strip-prefix")
-	container = container.Exec(dagger.ContainerExecOpts{Args: append([]string{cfg.Command}, svuFlags...)})
+	container = container.WithExec(append([]string{cfg.Command}, svuFlags...))
 	// Run container and get Exit code
 	_, err = container.ExitCode(ctx)
 	if err != nil {
