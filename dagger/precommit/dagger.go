@@ -17,17 +17,19 @@ const (
 
 // Run runs the precommit checks.
 func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, opts ...Option) (string, error) {
-	cfg := defaultConfig()
+	cfg, err := loadConfigFromEnv()
+	if err != nil {
+		return "", err
+	}
+
 	for _, o := range opts {
 		cfg = o(cfg)
 	}
 
 	// Create a pre-commit container
-	container := client.Container().From(cfg.baseImage)
+	container := client.Container().From(cfg.BaseImage)
 
-	var err error
-
-	for _, c := range cfg.containerCustomizers {
+	for _, c := range cfg.ContainerCustomizers {
 		container, err = c(container, client)
 		if err != nil {
 			return "", err
