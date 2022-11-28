@@ -54,3 +54,22 @@ func InstallGithubCLI(
 
 	return container, nil
 }
+
+// SetupGitAuth is a dagger step that sets up git authentication using the given GITHUB_TOKEN.
+func SetupGitAuth(ctx context.Context, client *dagger.Client, container *dagger.Container) (*dagger.Container, error) {
+	var err error
+
+	token := client.Host().EnvVariable("GITHUB_TOKEN").Secret()
+
+	container = container.
+		WithSecretVariable("GITHUB_TOKEN", token).
+		WithExec([]string{"gh", "auth", "setup-git"}).
+		WithExec([]string{"gh", "auth", "status"})
+
+	_, err = container.ExitCode(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return container, nil
+}

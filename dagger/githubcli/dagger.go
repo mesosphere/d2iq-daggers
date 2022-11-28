@@ -69,13 +69,7 @@ func GetContainer(
 		return nil, err
 	}
 
-	token := client.Host().EnvVariable("GITHUB_TOKEN").Secret()
-
-	container = container.
-		WithSecretVariable("GITHUB_TOKEN", token).
-		WithEntrypoint([]string{"gh"})
-
-	_, err = container.ExitCode(ctx)
+	container, err = common.SetupGitAuth(ctx, client, container)
 	if err != nil {
 		return nil, err
 	}
