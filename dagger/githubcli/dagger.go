@@ -30,7 +30,7 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 		cfg = o(cfg)
 	}
 
-	container, err := getGHContainer(ctx, client, workdir, &cfg)
+	container, err := GetContainer(ctx, client, workdir, &cfg)
 	if err != nil {
 		return "", err
 	}
@@ -49,8 +49,8 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 	return strings.TrimSpace(output), nil
 }
 
-// getGHContainer returns a dagger container instance with github cli as entrypoint.
-func getGHContainer(
+// GetContainer returns a dagger container instance with github cli as entrypoint.
+func GetContainer(
 	ctx context.Context, client *dagger.Client, workdir *dagger.Directory, cfg *config,
 ) (*dagger.Container, error) {
 	var err error
