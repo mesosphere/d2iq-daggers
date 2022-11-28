@@ -38,7 +38,7 @@ func InstallGo(ctx context.Context) ContainerCustomizer {
 			return nil, err
 		}
 
-		return WithMountedGoCache(ctx, client.Host().Workdir())(c, client)
+		return WithMountedGoCache(ctx, client.Host().Directory("."))(c, client)
 	}
 }
 

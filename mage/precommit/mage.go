@@ -34,7 +34,7 @@ func PrecommitWithOptions(ctx context.Context, opts ...precommitdagger.Option) e
 
 	// Print the command output to stdout when the issue https://github.com/dagger/dagger/issues/3192. is fixed.
 	// Currently, we set verbose to true to see the output of the command.
-	_, err = precommitdagger.Run(ctx, client, client.Host().Workdir(), opts...)
+	_, err = precommitdagger.Run(ctx, client, client.Host().Directory("."), opts...)
 	if err != nil {
 		return err
 	}

@@ -53,7 +53,7 @@ func SVUWithOptions(ctx context.Context, opts ...svudagger.Option) error {
 	}
 	defer client.Close()
 
-	output, err := svudagger.Run(ctx, client, client.Host().Workdir(), opts...)
+	output, err := svudagger.Run(ctx, client, client.Host().Directory("."), opts...)
 	if err != nil {
 		return err
 	}
