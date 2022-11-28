@@ -1,18 +1,23 @@
 package golang
 
-import "github.com/caarlos0/env/v6"
+import (
+	"github.com/caarlos0/env/v6"
+
+	"github.com/mesosphere/daggers/dagger/common"
+)
 
 type config struct {
-	GoBaseImage string   `env:"BASE_IMAGE,notEmpty" envDefault:"docker.io/golang"`
-	GoVersion   string   `env:"VERSION,notEmpty" envDefault:"1.19"`
-	Args        []string `env:"ARGS" envDefault:""  envSeparator:" "`
-	Env         map[string]string
+	common.GolangImageConfig
+	common.GithubCLIConfig
+
+	Args []string `env:"GO_ARGS" envDefault:""  envSeparator:" "`
+	Env  map[string]string
 }
 
 func loadConfigFromEnv() (config, error) {
 	cfg := config{}
 
-	if err := env.Parse(&cfg, env.Options{Prefix: "GO_"}); err != nil {
+	if err := env.Parse(&cfg, env.Options{}); err != nil {
 		return cfg, err
 	}
 
@@ -22,18 +27,34 @@ func loadConfigFromEnv() (config, error) {
 // Option is a function that configures the precommit checks.
 type Option func(config) config
 
-// WithGoBaseImage sets the go base image to use for the container.
-func WithGoBaseImage(image string) Option {
+// WithGoImageRepo sets the go image repo to use for the container.
+func WithGoImageRepo(image string) Option {
 	return func(c config) config {
-		c.GoBaseImage = image
+		c.GoImageRepo = image
 		return c
 	}
 }
 
-// WithGoVersion sets the go version to use for the container.
-func WithGoVersion(version string) Option {
+// WithGoImageTag sets the go image tag to use for the container.
+func WithGoImageTag(version string) Option {
 	return func(c config) config {
-		c.GoVersion = version
+		c.GoImageTag = version
+		return c
+	}
+}
+
+// WithGithubCliVersion sets the github cli version to use for the container.
+func WithGithubCliVersion(version string) Option {
+	return func(c config) config {
+		c.GithubCliVersion = version
+		return c
+	}
+}
+
+// WithExtensions sets the extensions to install for github cli.
+func WithExtensions(extensions ...string) Option {
+	return func(c config) config {
+		c.GithubCliExtensions = extensions
 		return c
 	}
 }

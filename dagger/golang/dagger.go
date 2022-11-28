@@ -2,10 +2,10 @@ package golang
 
 import (
 	"context"
-	"fmt"
 
 	"dagger.io/dagger"
 
+	"github.com/mesosphere/daggers/dagger/common"
 	"github.com/mesosphere/daggers/dagger/options"
 )
 
@@ -43,12 +43,22 @@ func GetContainer(
 		cfg = o(cfg)
 	}
 
-	container := client.
-		Container().
-		From(fmt.Sprintf("%s:%s", cfg.GoBaseImage, cfg.GoVersion)).
-		WithMountedDirectory(srcDir, workdir).
-		WithWorkdir(srcDir).
-		WithEntrypoint([]string{"go"})
+	container, err := common.GetGolangContainer(ctx, client, cfg.GolangImageConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	container, err = common.InstallGithubCLI(ctx, container, cfg.GithubCLIConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	container = container.WithMountedDirectory(srcDir, workdir).WithWorkdir(srcDir)
+
+	container, err = common.SetupGitAuth(ctx, client, container)
+	if err != nil {
+		return nil, err
+	}
 
 	for k, v := range cfg.Env {
 		container = container.WithEnvVariable(k, v)
@@ -59,5 +69,5 @@ func GetContainer(
 		return nil, err
 	}
 
-	return container.WithExec(cfg.Args), nil
+	return container.WithEntrypoint([]string{"go"}).WithExec(cfg.Args), nil
 }

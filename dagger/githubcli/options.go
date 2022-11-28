@@ -6,11 +6,10 @@ import (
 )
 
 type config struct {
+	common.GolangImageConfig
 	common.GithubCLIConfig
 
-	GoBaseImage string   `env:"GO_BASE_IMAGE,notEmpty" envDefault:"docker.io/golang"`
-	GoVersion   string   `env:"GO_VERSION,notEmpty" envDefault:"1.19"`
-	Args        []string `env:"GH_ARGS" envDefault:""  envSeparator:" "`
+	Args []string `env:"GH_ARGS" envDefault:""  envSeparator:" "`
 }
 
 func loadConfigFromEnv() (config, error) {
@@ -26,18 +25,18 @@ func loadConfigFromEnv() (config, error) {
 // Option is a function that configures the precommit checks.
 type Option func(config) config
 
-// WithGoBaseImage sets the go base image to use for the container.
-func WithGoBaseImage(image string) Option {
+// WithGoImageRepo sets the go image repo to use for the container.
+func WithGoImageRepo(image string) Option {
 	return func(c config) config {
-		c.GoBaseImage = image
+		c.GoImageRepo = image
 		return c
 	}
 }
 
-// WithGoVersion sets the go version to use for the container.
-func WithGoVersion(version string) Option {
+// WithGoImageTag sets the go image tag to use for the container.
+func WithGoImageTag(version string) Option {
 	return func(c config) config {
-		c.GoVersion = version
+		c.GoImageTag = version
 		return c
 	}
 }

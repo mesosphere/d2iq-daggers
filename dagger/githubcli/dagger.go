@@ -2,14 +2,12 @@ package githubcli
 
 import (
 	"context"
-	"fmt"
 	"strings"
 	"time"
 
 	"dagger.io/dagger"
 
 	"github.com/mesosphere/daggers/dagger/common"
-	"github.com/mesosphere/daggers/dagger/options"
 )
 
 // standard source path.
@@ -26,7 +24,7 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 		cfg = o(cfg)
 	}
 
-	container, err := GetContainer(ctx, client, workdir, &cfg)
+	container, err := GetContainer(ctx, client, &cfg)
 	if err != nil {
 		return "", err
 	}
@@ -46,22 +44,12 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 }
 
 // GetContainer returns a dagger container instance with github cli as entrypoint.
-func GetContainer(
-	ctx context.Context, client *dagger.Client, workdir *dagger.Directory, cfg *config,
-) (*dagger.Container, error) {
+func GetContainer(ctx context.Context, client *dagger.Client, cfg *config) (*dagger.Container, error) {
 	var err error
 
-	var customizers []options.ContainerCustomizer
-
-	customizers = append(customizers, options.WithMountedGoCache(ctx, workdir))
-
-	container := client.Container().From(fmt.Sprintf("%s:%s", cfg.GoBaseImage, cfg.GoVersion))
-
-	for _, customizer := range customizers {
-		container, err = customizer(container, client)
-		if err != nil {
-			return nil, err
-		}
+	container, err := common.GetGolangContainer(ctx, client, cfg.GolangImageConfig)
+	if err != nil {
+		return nil, err
 	}
 
 	container, err = common.InstallGithubCLI(ctx, container, cfg.GithubCLIConfig)
@@ -74,5 +62,5 @@ func GetContainer(
 		return nil, err
 	}
 
-	return container, nil
+	return container.WithEntrypoint([]string{"gh"}), nil
 }
