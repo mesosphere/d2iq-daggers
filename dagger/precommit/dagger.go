@@ -6,7 +6,6 @@ import (
 	"dagger.io/dagger"
 
 	"github.com/mesosphere/daggers/dagger/common"
-	loggerdagger "github.com/mesosphere/daggers/dagger/logger"
 	"github.com/mesosphere/daggers/dagger/options"
 	"github.com/mesosphere/daggers/daggers"
 )
@@ -70,7 +69,7 @@ func PrecommitWithOptions(ctx context.Context, opts ...daggers.Option[config]) e
 	// There is a known issue in dagger, if exec command is failed, dagger will not return stdout or stderr.
 	// So we need to set verbose to true to see the output of the command until the issue is fixed.
 	// issue: https://github.com/dagger/dagger/issues/3192.
-	logger, err := loggerdagger.NewLogger(true)
+	logger, err := daggers.NewLogger(true)
 	if err != nil {
 		return err
 	}

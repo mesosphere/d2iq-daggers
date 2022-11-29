@@ -8,7 +8,6 @@ import (
 	"dagger.io/dagger"
 	"github.com/magefile/mage/mg"
 
-	loggerdagger "github.com/mesosphere/daggers/dagger/logger"
 	"github.com/mesosphere/daggers/daggers"
 )
 
@@ -75,7 +74,7 @@ func Run(
 func SVUWithOptions(ctx context.Context, opts ...daggers.Option[config]) error {
 	verbose := mg.Verbose() || mg.Debug()
 
-	logger, err := loggerdagger.NewLogger(verbose)
+	logger, err := daggers.NewLogger(verbose)
 	if err != nil {
 		return err
 	}
