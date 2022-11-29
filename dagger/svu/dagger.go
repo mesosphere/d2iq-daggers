@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	"dagger.io/dagger"
 	"github.com/magefile/mage/mg"
 
 	"github.com/mesosphere/daggers/daggers"
@@ -21,7 +20,7 @@ type Output struct {
 
 // Run runs the svu command with the given options.
 func Run(
-	ctx context.Context, client *dagger.Client, workdir *dagger.Directory, options ...daggers.Option[config],
+	ctx context.Context, runtime *daggers.Runtime, options ...daggers.Option[config],
 ) (*Output, error) {
 	cfg, err := daggers.InitConfig(options...)
 	if err != nil {
@@ -30,9 +29,10 @@ func Run(
 
 	svuFlags := flagsFromConfig(&cfg)
 
-	container := client.Container().
+	container := runtime.Client().
+		Container().
 		From(fmt.Sprintf("ghcr.io/caarlos0/svu:%s", cfg.Version)).
-		WithMountedDirectory("/src", workdir).
+		WithMountedDirectory("/src", runtime.Workdir()).
 		WithWorkdir("/src")
 
 	container = container.WithExec(append([]string{cfg.Command}, svuFlags...))
@@ -74,18 +74,13 @@ func Run(
 func SVUWithOptions(ctx context.Context, opts ...daggers.Option[config]) error {
 	verbose := mg.Verbose() || mg.Debug()
 
-	logger, err := daggers.NewLogger(verbose)
+	runtime, err := daggers.NewRuntime(ctx, daggers.WithVerbose(verbose))
 	if err != nil {
 		return err
 	}
+	defer runtime.Close()
 
-	client, err := dagger.Connect(ctx, dagger.WithLogOutput(logger))
-	if err != nil {
-		return err
-	}
-	defer client.Close()
-
-	output, err := Run(ctx, client, client.Host().Directory("."), opts...)
+	output, err := Run(ctx, runtime, opts...)
 	if err != nil {
 		return err
 	}
