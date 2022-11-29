@@ -7,6 +7,7 @@ import (
 	"dagger.io/dagger"
 
 	"github.com/mesosphere/daggers/dagger/options"
+	"github.com/mesosphere/daggers/daggers"
 )
 
 // standard source path.
@@ -15,9 +16,9 @@ const srcDir = "/src"
 // RunCommand runs a go command with given working directory and options and returns command output and
 // working directory.
 func RunCommand(
-	ctx context.Context, client *dagger.Client, workdir *dagger.Directory, opts ...Option,
+	ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[config],
 ) (string, *dagger.Directory, error) {
-	container, err := GetContainer(ctx, client, workdir, opts...)
+	container, err := GetContainer(ctx, runtime, opts...)
 	if err != nil {
 		return "", nil, err
 	}
@@ -32,32 +33,20 @@ func RunCommand(
 
 // GetContainer returns a dagger container with given working directory and options.
 func GetContainer(
-	ctx context.Context, client *dagger.Client, workdir *dagger.Directory, opts ...Option,
+	ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[config],
 ) (*dagger.Container, error) {
-	cfg, err := loadConfigFromEnv()
-	if err != nil {
-		return nil, err
-	}
+	cfg, err := daggers.InitConfig(opts...)
 
-	for _, o := range opts {
-		cfg = o(cfg)
-	}
-
-	container := client.
-		Container().
-		From(fmt.Sprintf("%s:%s", cfg.GoBaseImage, cfg.GoVersion)).
-		WithMountedDirectory(srcDir, workdir).
-		WithWorkdir(srcDir).
-		WithEntrypoint([]string{"go"})
+	container := runtime.ContainerWithAddress(fmt.Sprintf("%s:%s", cfg.GoImageRepo, cfg.GoImageTag))
 
 	for k, v := range cfg.Env {
 		container = container.WithEnvVariable(k, v)
 	}
 
-	container, err = options.WithMountedGoCache(ctx, workdir)(container, client)
+	container, err = options.WithMountedGoCache(ctx, runtime.Workdir)(container, runtime.Client)
 	if err != nil {
 		return nil, err
 	}
 
-	return container.WithExec(cfg.Args), nil
+	return container.WithEntrypoint([]string{"go"}).WithExec(cfg.Args), nil
 }

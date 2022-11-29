@@ -4,13 +4,11 @@ package main
 
 import (
 	"context"
-	"os"
-
-	"dagger.io/dagger"
 
 	"github.com/magefile/mage/mg"
 
 	"github.com/mesosphere/daggers/dagger/golang"
+	"github.com/mesosphere/daggers/daggers"
 )
 
 // Test is a collection of test targets.
@@ -19,17 +17,13 @@ import (
 type Test mg.Namespace
 
 func (Test) Go(ctx context.Context) error {
-	client, err := dagger.Connect(ctx, dagger.WithLogOutput(os.Stdout), dagger.WithWorkdir("."))
-	if err != nil {
-		return err
-	}
+	runtime, err := daggers.NewRuntime(ctx, daggers.WithVerbose(true))
 
 	args := []string{"test", "-v", "-race", "-coverprofile", "coverage.txt", "-covermode", "atomic", "./..."}
 
 	_, dir, err := golang.RunCommand(
 		ctx,
-		client,
-		client.Host().Directory("."),
+		runtime,
 		golang.WithArgs(args...),
 		golang.WithEnv(map[string]string{"GOPRIVATE": "github.com/mesosphere"}),
 	)

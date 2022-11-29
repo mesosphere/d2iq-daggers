@@ -1,45 +1,32 @@
 package golang
 
-import "github.com/caarlos0/env/v6"
+import "github.com/mesosphere/daggers/daggers"
 
 type config struct {
-	GoBaseImage string   `env:"BASE_IMAGE,notEmpty" envDefault:"docker.io/golang"`
-	GoVersion   string   `env:"VERSION,notEmpty" envDefault:"1.19"`
+	GoImageRepo string   `env:"GO_IMAGE_REPO,notEmpty" envDefault:"docker.io/golang"`
+	GoImageTag  string   `env:"GO_IMAGE_TAG,notEmpty" envDefault:"1.19"`
 	Args        []string `env:"ARGS" envDefault:""  envSeparator:" "`
 	Env         map[string]string
 }
 
-func loadConfigFromEnv() (config, error) {
-	cfg := config{}
-
-	if err := env.Parse(&cfg, env.Options{Prefix: "GO_"}); err != nil {
-		return cfg, err
-	}
-
-	return cfg, nil
-}
-
-// Option is a function that configures the precommit checks.
-type Option func(config) config
-
-// WithGoBaseImage sets the go base image to use for the container.
-func WithGoBaseImage(image string) Option {
+// WithGoImageRepo sets the go base image to use for the container.
+func WithGoImageRepo(image string) daggers.Option[config] {
 	return func(c config) config {
-		c.GoBaseImage = image
+		c.GoImageRepo = image
 		return c
 	}
 }
 
-// WithGoVersion sets the go version to use for the container.
-func WithGoVersion(version string) Option {
+// WithGoImageTag sets the go version to use for the container.
+func WithGoImageTag(version string) daggers.Option[config] {
 	return func(c config) config {
-		c.GoVersion = version
+		c.GoImageTag = version
 		return c
 	}
 }
 
 // WithArgs sets the arguments to pass to go.
-func WithArgs(args ...string) Option {
+func WithArgs(args ...string) daggers.Option[config] {
 	return func(c config) config {
 		c.Args = args
 		return c
@@ -47,7 +34,7 @@ func WithArgs(args ...string) Option {
 }
 
 // WithEnv sets the environment variables to pass to go.
-func WithEnv(envMap map[string]string) Option {
+func WithEnv(envMap map[string]string) daggers.Option[config] {
 	return func(c config) config {
 		c.Env = envMap
 		return c
