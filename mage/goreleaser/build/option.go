@@ -3,38 +3,25 @@ package build
 import (
 	"time"
 
-	"github.com/caarlos0/env/v6"
+	"github.com/mesosphere/daggers/daggers"
 )
 
 type config struct {
 	Env                 map[string]string
-	Config              string `env:"CONFIG"`
-	ID                  string `env:"ID"`
-	Output              string `env:"OUTPUT"`
-	Parallelism         string `env:"PARALLELISM"`
-	RmDist              bool   `env:"RM_DIST"`
-	SingleTarget        bool   `env:"SINGLE_TARGET"`
-	SkipPostCommitHooks bool   `env:"SKIP_POST_COMMIT_HOOKS"`
-	SkipValidate        bool   `env:"SKIP_VALIDATE"`
-	Snapshot            bool   `env:"SNAPSHOT"`
-	Timeout             string `env:"TIMEOUT"`
-}
-
-// Option is a function that configures the goreleaser build options.
-type Option func(config config) config
-
-func loadConfigFromEnv() (config, error) {
-	cfg := config{}
-
-	if err := env.Parse(&cfg, env.Options{Prefix: "GORELEASER_BUILD_"}); err != nil {
-		return cfg, err
-	}
-
-	return cfg, nil
+	Config              string `env:"GORELEASER_BUILD_CONFIG"`
+	ID                  string `env:"GORELEASER_BUILD_ID"`
+	Output              string `env:"GORELEASER_BUILD_OUTPUT"`
+	Parallelism         string `env:"GORELEASER_BUILD_PARALLELISM"`
+	RmDist              bool   `env:"GORELEASER_BUILD_RM_DIST"`
+	SingleTarget        bool   `env:"GORELEASER_BUILD_SINGLE_TARGET"`
+	SkipPostCommitHooks bool   `env:"GORELEASER_BUILD_SKIP_POST_COMMIT_HOOKS"`
+	SkipValidate        bool   `env:"GORELEASER_BUILD_SKIP_VALIDATE"`
+	Snapshot            bool   `env:"GORELEASER_BUILD_SNAPSHOT"`
+	Timeout             string `env:"GORELEASER_BUILD_TIMEOUT"`
 }
 
 // WithEnv append extra env variables to goreleaser build process.
-func WithEnv(envMap map[string]string) Option {
+func WithEnv(envMap map[string]string) daggers.Option[config] {
 	return func(config config) config {
 		config.Env = envMap
 		return config
@@ -42,7 +29,7 @@ func WithEnv(envMap map[string]string) Option {
 }
 
 // WithConfig sets  --config flag.
-func WithConfig(configPath string) Option {
+func WithConfig(configPath string) daggers.Option[config] {
 	return func(config config) config {
 		config.Config = configPath
 		return config
@@ -50,7 +37,7 @@ func WithConfig(configPath string) Option {
 }
 
 // WithID sets --id flag.
-func WithID(id string) Option {
+func WithID(id string) daggers.Option[config] {
 	return func(config config) config {
 		config.ID = id
 		return config
@@ -58,7 +45,7 @@ func WithID(id string) Option {
 }
 
 // WithOutput sets --output.
-func WithOutput(output string) Option {
+func WithOutput(output string) daggers.Option[config] {
 	return func(config config) config {
 		config.Output = output
 		return config
@@ -66,7 +53,7 @@ func WithOutput(output string) Option {
 }
 
 // WithParallelism sets --parallelism.
-func WithParallelism(parallelism string) Option {
+func WithParallelism(parallelism string) daggers.Option[config] {
 	return func(config config) config {
 		config.Parallelism = parallelism
 		return config
@@ -74,7 +61,7 @@ func WithParallelism(parallelism string) Option {
 }
 
 // WithRmDist sets --rm-dist.
-func WithRmDist(rmDist bool) Option {
+func WithRmDist(rmDist bool) daggers.Option[config] {
 	return func(config config) config {
 		config.RmDist = rmDist
 		return config
@@ -82,7 +69,7 @@ func WithRmDist(rmDist bool) Option {
 }
 
 // WithSingleTarget sets --single-target.
-func WithSingleTarget(singleTarget bool) Option {
+func WithSingleTarget(singleTarget bool) daggers.Option[config] {
 	return func(config config) config {
 		config.SingleTarget = singleTarget
 		return config
@@ -90,7 +77,7 @@ func WithSingleTarget(singleTarget bool) Option {
 }
 
 // SkipPostCommitHooks sets--skip-post-hooks.
-func SkipPostCommitHooks(skipPostCommitHooks bool) Option {
+func SkipPostCommitHooks(skipPostCommitHooks bool) daggers.Option[config] {
 	return func(config config) config {
 		config.SkipPostCommitHooks = skipPostCommitHooks
 		return config
@@ -98,7 +85,7 @@ func SkipPostCommitHooks(skipPostCommitHooks bool) Option {
 }
 
 // SkipValidate sets --skip-validate.
-func SkipValidate(skipValidate bool) Option {
+func SkipValidate(skipValidate bool) daggers.Option[config] {
 	return func(config config) config {
 		config.SkipValidate = skipValidate
 		return config
@@ -106,7 +93,7 @@ func SkipValidate(skipValidate bool) Option {
 }
 
 // WithSnapshot sets --snapshot.
-func WithSnapshot(snapshot bool) Option {
+func WithSnapshot(snapshot bool) daggers.Option[config] {
 	return func(config config) config {
 		config.Snapshot = snapshot
 		return config
@@ -114,7 +101,7 @@ func WithSnapshot(snapshot bool) Option {
 }
 
 // WithTimeout sets --timeout duration.
-func WithTimeout(timeout time.Duration) Option {
+func WithTimeout(timeout time.Duration) daggers.Option[config] {
 	return func(config config) config {
 		config.Timeout = timeout.String()
 		return config

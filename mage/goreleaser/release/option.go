@@ -3,45 +3,32 @@ package release
 import (
 	"time"
 
-	"github.com/caarlos0/env/v6"
+	"github.com/mesosphere/daggers/daggers"
 )
 
 type config struct {
 	Env               map[string]string
-	AutoSnapshot      bool   `env:"AUTO_SNAPSHOT"`
-	Config            string `env:"CONFIG"`
-	Parallelism       string `env:"PARALLELISM"`
-	RmDist            bool   `env:"RM_DIST"`
-	ReleaseFooter     string `env:"RELEASE_FOOTER"`
-	ReleaseFooterTmpl string `env:"RELEASE_FOOTER_TMPL"`
-	ReleaseHeader     string `env:"RELEASE_HEADER"`
-	ReleaseHeaderTmpl string `env:"RELEASE_HEADER_TMPL"`
-	ReleaseNotes      string `env:"RELEASE_NOTES"`
-	ReleaseNotesTmpl  string `env:"RELEASE_NOTES_TMPL"`
-	SkipAnnounce      bool   `env:"SKIP_ANNOUNCE"`
-	SkipPublish       bool   `env:"SKIP_PUBLISH"`
-	SkipSbom          bool   `env:"SKIP_SBOM"`
-	SkipSign          bool   `env:"SKIP_SIGN"`
-	SkipValidate      bool   `env:"SKIP_VALIDATE"`
-	Snapshot          bool   `env:"SNAPSHOT"`
-	Timeout           string `env:"TIMEOUT"`
-}
-
-// Option is a function that configures the goreleaser release options.
-type Option func(config config) config
-
-func loadConfigFromEnv() (config, error) {
-	cfg := config{}
-
-	if err := env.Parse(&cfg, env.Options{Prefix: "GORELEASER_RELEASE_"}); err != nil {
-		return cfg, err
-	}
-
-	return cfg, nil
+	AutoSnapshot      bool   `env:"GORELEASER_RELEASE_AUTO_SNAPSHOT"`
+	Config            string `env:"GORELEASER_RELEASE_CONFIG"`
+	Parallelism       string `env:"GORELEASER_RELEASE_PARALLELISM"`
+	RmDist            bool   `env:"GORELEASER_RELEASE_RM_DIST"`
+	ReleaseFooter     string `env:"GORELEASER_RELEASE_FOOTER"`
+	ReleaseFooterTmpl string `env:"GORELEASER_RELEASE_FOOTER_TMPL"`
+	ReleaseHeader     string `env:"GORELEASER_RELEASE_HEADER"`
+	ReleaseHeaderTmpl string `env:"GORELEASER_RELEASE_HEADER_TMPL"`
+	ReleaseNotes      string `env:"GORELEASER_RELEASE_NOTES"`
+	ReleaseNotesTmpl  string `env:"GORELEASER_RELEASE_NOTES_TMPL"`
+	SkipAnnounce      bool   `env:"GORELEASER_RELEASE_SKIP_ANNOUNCE"`
+	SkipPublish       bool   `env:"GORELEASER_RELEASE_SKIP_PUBLISH"`
+	SkipSbom          bool   `env:"GORELEASER_RELEASE_SKIP_SBOM"`
+	SkipSign          bool   `env:"GORELEASER_RELEASE_SKIP_SIGN"`
+	SkipValidate      bool   `env:"GORELEASER_RELEASE_SKIP_VALIDATE"`
+	Snapshot          bool   `env:"GORELEASER_RELEASE_SNAPSHOT"`
+	Timeout           string `env:"GORELEASER_RELEASE_TIMEOUT"`
 }
 
 // WithEnv append extra env variables to goreleaser build process.
-func WithEnv(envMap map[string]string) Option {
+func WithEnv(envMap map[string]string) daggers.Option[config] {
 	return func(config config) config {
 		config.Env = envMap
 		return config
@@ -49,7 +36,7 @@ func WithEnv(envMap map[string]string) Option {
 }
 
 // WithAutoSnapshot sets --snapshot flag.
-func WithAutoSnapshot(autoSnapshot bool) Option {
+func WithAutoSnapshot(autoSnapshot bool) daggers.Option[config] {
 	return func(config config) config {
 		config.AutoSnapshot = autoSnapshot
 		return config
@@ -57,7 +44,7 @@ func WithAutoSnapshot(autoSnapshot bool) Option {
 }
 
 // WithConfig sets  --config flag.
-func WithConfig(configPath string) Option {
+func WithConfig(configPath string) daggers.Option[config] {
 	return func(config config) config {
 		config.Config = configPath
 		return config
@@ -65,7 +52,7 @@ func WithConfig(configPath string) Option {
 }
 
 // WithParallelism sets --parallelism flag.
-func WithParallelism(parallelism string) Option {
+func WithParallelism(parallelism string) daggers.Option[config] {
 	return func(config config) config {
 		config.Parallelism = parallelism
 		return config
@@ -73,7 +60,7 @@ func WithParallelism(parallelism string) Option {
 }
 
 // WithRmDist sets --rm-dist flag.
-func WithRmDist(rmDist bool) Option {
+func WithRmDist(rmDist bool) daggers.Option[config] {
 	return func(config config) config {
 		config.RmDist = rmDist
 		return config
@@ -81,7 +68,7 @@ func WithRmDist(rmDist bool) Option {
 }
 
 // WithReleaseFooter sets --release-footer flag.
-func WithReleaseFooter(releaseFooter string) Option {
+func WithReleaseFooter(releaseFooter string) daggers.Option[config] {
 	return func(config config) config {
 		config.ReleaseFooter = releaseFooter
 		return config
@@ -89,7 +76,7 @@ func WithReleaseFooter(releaseFooter string) Option {
 }
 
 // WithReleaseFooterTmpl sets --release-footer-tmpl flag.
-func WithReleaseFooterTmpl(releaseFooterTmpl string) Option {
+func WithReleaseFooterTmpl(releaseFooterTmpl string) daggers.Option[config] {
 	return func(config config) config {
 		config.ReleaseFooterTmpl = releaseFooterTmpl
 		return config
@@ -97,7 +84,7 @@ func WithReleaseFooterTmpl(releaseFooterTmpl string) Option {
 }
 
 // WithReleaseHeader sets --release-header flag.
-func WithReleaseHeader(releaseHeader string) Option {
+func WithReleaseHeader(releaseHeader string) daggers.Option[config] {
 	return func(config config) config {
 		config.ReleaseHeader = releaseHeader
 		return config
@@ -105,7 +92,7 @@ func WithReleaseHeader(releaseHeader string) Option {
 }
 
 // WithReleaseHeaderTmpl sets --release-header-tmpl flag.
-func WithReleaseHeaderTmpl(releaseHeaderTmpl string) Option {
+func WithReleaseHeaderTmpl(releaseHeaderTmpl string) daggers.Option[config] {
 	return func(config config) config {
 		config.ReleaseHeaderTmpl = releaseHeaderTmpl
 		return config
@@ -113,7 +100,7 @@ func WithReleaseHeaderTmpl(releaseHeaderTmpl string) Option {
 }
 
 // WithReleaseNotes sets --release-notes flag.
-func WithReleaseNotes(releaseNotes string) Option {
+func WithReleaseNotes(releaseNotes string) daggers.Option[config] {
 	return func(config config) config {
 		config.ReleaseNotes = releaseNotes
 		return config
@@ -121,7 +108,7 @@ func WithReleaseNotes(releaseNotes string) Option {
 }
 
 // WithReleaseNotesTmpl sets --release-notes-tmpl flag.
-func WithReleaseNotesTmpl(releaseNotesTmpl string) Option {
+func WithReleaseNotesTmpl(releaseNotesTmpl string) daggers.Option[config] {
 	return func(config config) config {
 		config.ReleaseNotesTmpl = releaseNotesTmpl
 		return config
@@ -129,7 +116,7 @@ func WithReleaseNotesTmpl(releaseNotesTmpl string) Option {
 }
 
 // SkipAnnounce sets --skip-announce flag.
-func SkipAnnounce(skipAnnounce bool) Option {
+func SkipAnnounce(skipAnnounce bool) daggers.Option[config] {
 	return func(config config) config {
 		config.SkipAnnounce = skipAnnounce
 		return config
@@ -137,7 +124,7 @@ func SkipAnnounce(skipAnnounce bool) Option {
 }
 
 // SkipPublish sets --skip-publish flag.
-func SkipPublish(skipPublish bool) Option {
+func SkipPublish(skipPublish bool) daggers.Option[config] {
 	return func(config config) config {
 		config.SkipPublish = skipPublish
 		return config
@@ -145,7 +132,7 @@ func SkipPublish(skipPublish bool) Option {
 }
 
 // SkipSbom sets --skip-sbom flag.
-func SkipSbom(skipSbom bool) Option {
+func SkipSbom(skipSbom bool) daggers.Option[config] {
 	return func(config config) config {
 		config.SkipSbom = skipSbom
 		return config
@@ -153,7 +140,7 @@ func SkipSbom(skipSbom bool) Option {
 }
 
 // SkipSign sets --skip-sign flag.
-func SkipSign(skipSign bool) Option {
+func SkipSign(skipSign bool) daggers.Option[config] {
 	return func(config config) config {
 		config.SkipSign = skipSign
 		return config
@@ -161,7 +148,7 @@ func SkipSign(skipSign bool) Option {
 }
 
 // SkipValidate sets --skip-validate flag.
-func SkipValidate(skipValidate bool) Option {
+func SkipValidate(skipValidate bool) daggers.Option[config] {
 	return func(config config) config {
 		config.SkipValidate = skipValidate
 		return config
@@ -169,7 +156,7 @@ func SkipValidate(skipValidate bool) Option {
 }
 
 // WithSnapshot sets --snapshot flag.
-func WithSnapshot(snapshot bool) Option {
+func WithSnapshot(snapshot bool) daggers.Option[config] {
 	return func(config config) config {
 		config.Snapshot = snapshot
 		return config
@@ -177,7 +164,7 @@ func WithSnapshot(snapshot bool) Option {
 }
 
 // WithTimeout sets --timeout flag.
-func WithTimeout(timeout time.Duration) Option {
+func WithTimeout(timeout time.Duration) daggers.Option[config] {
 	return func(config config) config {
 		config.Timeout = timeout.String()
 		return config

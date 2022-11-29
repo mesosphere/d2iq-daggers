@@ -7,6 +7,7 @@ import (
 	"dagger.io/dagger"
 
 	"github.com/mesosphere/daggers/dagger/options"
+	"github.com/mesosphere/daggers/daggers"
 )
 
 // standard source path.
@@ -15,7 +16,7 @@ const srcDir = "/src"
 // RunCommand runs a go command with given working directory and options and returns command output and
 // working directory.
 func RunCommand(
-	ctx context.Context, client *dagger.Client, workdir *dagger.Directory, opts ...Option,
+	ctx context.Context, client *dagger.Client, workdir *dagger.Directory, opts ...daggers.Option[config],
 ) (string, *dagger.Directory, error) {
 	container, err := GetContainer(ctx, client, workdir, opts...)
 	if err != nil {
@@ -32,15 +33,11 @@ func RunCommand(
 
 // GetContainer returns a dagger container with given working directory and options.
 func GetContainer(
-	ctx context.Context, client *dagger.Client, workdir *dagger.Directory, opts ...Option,
+	ctx context.Context, client *dagger.Client, workdir *dagger.Directory, opts ...daggers.Option[config],
 ) (*dagger.Container, error) {
-	cfg, err := loadConfigFromEnv()
+	cfg, err := daggers.InitConfig(opts...)
 	if err != nil {
 		return nil, err
-	}
-
-	for _, o := range opts {
-		cfg = o(cfg)
 	}
 
 	container := client.

@@ -6,7 +6,9 @@ import (
 	"dagger.io/dagger"
 
 	"github.com/mesosphere/daggers/dagger/common"
+	loggerdagger "github.com/mesosphere/daggers/dagger/logger"
 	"github.com/mesosphere/daggers/dagger/options"
+	"github.com/mesosphere/daggers/daggers"
 )
 
 const (
@@ -16,14 +18,12 @@ const (
 )
 
 // Run runs the precommit checks.
-func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, opts ...Option) (string, error) {
-	cfg, err := loadConfigFromEnv()
+func Run(
+	ctx context.Context, client *dagger.Client, workdir *dagger.Directory, opts ...daggers.Option[config],
+) (string, error) {
+	cfg, err := daggers.InitConfig(opts...) /**/
 	if err != nil {
 		return "", err
-	}
-
-	for _, o := range opts {
-		cfg = o(cfg)
 	}
 
 	// Create a pre-commit container
@@ -59,4 +59,34 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 
 	// Run container and get Exit code
 	return container.Stdout(ctx)
+}
+
+// PrecommitWithOptions runs all the precommit checks with Dagger options.
+//
+// TODO: Refactor this to make it more generic and reusable. Temporary solution to get precommit working.
+//
+//nolint:revive // Stuttering is fine here to provide a functional options variant of Precommit function above.
+func PrecommitWithOptions(ctx context.Context, opts ...daggers.Option[config]) error {
+	// There is a known issue in dagger, if exec command is failed, dagger will not return stdout or stderr.
+	// So we need to set verbose to true to see the output of the command until the issue is fixed.
+	// issue: https://github.com/dagger/dagger/issues/3192.
+	logger, err := loggerdagger.NewLogger(true)
+	if err != nil {
+		return err
+	}
+
+	client, err := dagger.Connect(ctx, dagger.WithLogOutput(logger))
+	if err != nil {
+		return err
+	}
+	defer client.Close()
+
+	// Print the command output to stdout when the issue https://github.com/dagger/dagger/issues/3192. is fixed.
+	// Currently, we set verbose to true to see the output of the command.
+	_, err = Run(ctx, client, client.Host().Directory("."), opts...)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
