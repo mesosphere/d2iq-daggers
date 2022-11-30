@@ -40,17 +40,18 @@ func GetContainer(
 		return nil, err
 	}
 
-	container := containers.ContainerFromImage(runtime, fmt.Sprintf("%s:%s", cfg.GoBaseImage, cfg.GoVersion))
+	var (
+		image       = fmt.Sprintf("%s:%s", cfg.GoBaseImage, cfg.GoVersion)
+		customizers = []containers.ContainerCustomizerFn{containers.WithMountedGoCache(ctx, ".")}
+	)
 
-	container = containers.MountRuntimeWorkdir(runtime, container)
+	container, err := containers.CustomizedContainerFromImage(runtime, image, true, customizers...)
+	if err != nil {
+		return nil, err
+	}
 
 	for k, v := range cfg.Env {
 		container = container.WithEnvVariable(k, v)
-	}
-
-	container, err = containers.ApplyCustomizations(runtime, container, containers.WithMountedGoCache(ctx, "."))
-	if err != nil {
-		return nil, err
 	}
 
 	return container.WithEntrypoint([]string{"go"}).WithExec(cfg.Args), nil

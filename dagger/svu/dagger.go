@@ -28,10 +28,15 @@ func Run(
 		return nil, err
 	}
 
-	svuFlags := flagsFromConfig(&cfg)
+	var (
+		image    = fmt.Sprintf("ghcr.io/caarlos0/svu:%s", cfg.Version)
+		svuFlags = flagsFromConfig(&cfg)
+	)
 
-	container := containers.ContainerFromImage(runtime, fmt.Sprintf("ghcr.io/caarlos0/svu:%s", cfg.Version))
-	container = containers.MountRuntimeWorkdir(runtime, container)
+	container, err := containers.CustomizedContainerFromImage(runtime, image, true)
+	if err != nil {
+		return nil, err
+	}
 
 	container = container.WithExec(append([]string{cfg.Command}, svuFlags...))
 

@@ -48,19 +48,20 @@ func GetContainer(
 		return nil, err
 	}
 
-	container := containers.ContainerFromImage(runtime, fmt.Sprintf("%s:%s", cfg.GoBaseImage, cfg.GoVersion))
+	var (
+		image       = fmt.Sprintf("%s:%s", cfg.GoBaseImage, cfg.GoVersion)
+		customizers = []containers.ContainerCustomizerFn{containers.InstallGithubCli(cfg.GithubCliVersion)}
+	)
 
-	container, err = containers.InstallGithubCli(cfg.GithubCliVersion)(runtime, container)
+	container, err := containers.CustomizedContainerFromImage(runtime, image, true, customizers...)
 	if err != nil {
 		return nil, err
 	}
-
-	container = container.WithEntrypoint([]string{"gh"})
 
 	_, err = container.ExitCode(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return container, nil
+	return container.WithEntrypoint([]string{"gh"}), nil
 }
