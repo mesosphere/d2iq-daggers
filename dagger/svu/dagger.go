@@ -6,6 +6,10 @@ import (
 	"strings"
 
 	"dagger.io/dagger"
+	"github.com/magefile/mage/mg"
+
+	loggerdagger "github.com/mesosphere/daggers/dagger/logger"
+	"github.com/mesosphere/daggers/daggers"
 )
 
 // Output is svu command output.
@@ -17,14 +21,12 @@ type Output struct {
 }
 
 // Run runs the svu command with the given options.
-func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, options ...Option) (*Output, error) {
-	cfg, err := loadConfigFromEnv()
+func Run(
+	ctx context.Context, client *dagger.Client, workdir *dagger.Directory, options ...daggers.Option[config],
+) (*Output, error) {
+	cfg, err := daggers.InitConfig(options...)
 	if err != nil {
 		return nil, err
-	}
-
-	for _, o := range options {
-		cfg = o(cfg)
 	}
 
 	svuFlags := flagsFromConfig(&cfg)
@@ -63,6 +65,35 @@ func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, 
 		Version:              strings.TrimSpace(version),
 		VersionWithoutPrefix: strings.TrimSpace(versionWithoutPrefix),
 	}, nil
+}
+
+// SVUWithOptions runs svu with specific options.
+//
+// TODO: Refactor this to make it more generic and reusable. Temporary solution to get svu working.
+//
+//nolint:revive // Stuttering is fine here to provide a functional options variant of SVU call.
+func SVUWithOptions(ctx context.Context, opts ...daggers.Option[config]) error {
+	verbose := mg.Verbose() || mg.Debug()
+
+	logger, err := loggerdagger.NewLogger(verbose)
+	if err != nil {
+		return err
+	}
+
+	client, err := dagger.Connect(ctx, dagger.WithLogOutput(logger))
+	if err != nil {
+		return err
+	}
+	defer client.Close()
+
+	output, err := Run(ctx, client, client.Host().Directory("."), opts...)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(output.Version)
+
+	return nil
 }
 
 func flagsFromConfig(cfg *config) []string {

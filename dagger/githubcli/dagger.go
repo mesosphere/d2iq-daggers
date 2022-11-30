@@ -9,6 +9,7 @@ import (
 	"dagger.io/dagger"
 
 	"github.com/mesosphere/daggers/dagger/options"
+	"github.com/mesosphere/daggers/daggers"
 )
 
 const (
@@ -20,14 +21,12 @@ const (
 )
 
 // Run runs the ginkgo run command with given options.
-func Run(ctx context.Context, client *dagger.Client, workdir *dagger.Directory, opts ...Option) (string, error) {
-	cfg, err := loadConfigFromEnv()
+func Run(
+	ctx context.Context, client *dagger.Client, workdir *dagger.Directory, opts ...daggers.Option[config],
+) (string, error) {
+	cfg, err := daggers.InitConfig(opts...)
 	if err != nil {
 		return "", err
-	}
-
-	for _, o := range opts {
-		cfg = o(cfg)
 	}
 
 	container, err := GetContainer(ctx, client, workdir, &cfg)
