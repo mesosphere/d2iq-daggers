@@ -11,6 +11,17 @@ import (
 // ErrMissingRequiredArgument is returned when a required argument is missing.
 var ErrMissingRequiredArgument = errors.New("missing required argument")
 
+// ContainerFromImage creates a container from the given image.
+func ContainerFromImage(runtime *daggers.Runtime, address string) *dagger.Container {
+	return runtime.Client.Container().From(address)
+}
+
+// MountRuntimeWorkdir mounts the runtime workdir to the given container with the provided path and configures the
+// working directory of the container to the hardcoded /src path.
+func MountRuntimeWorkdir(runtime *daggers.Runtime, container *dagger.Container) *dagger.Container {
+	return container.WithMountedDirectory("/src", runtime.Workdir).WithWorkdir("/src")
+}
+
 // ApplyCustomizations applies customizations to the given container.
 func ApplyCustomizations(
 	runtime *daggers.Runtime, container *dagger.Container, customizers ...ContainerCustomizerFn,
@@ -25,10 +36,4 @@ func ApplyCustomizations(
 	}
 
 	return container, nil
-}
-
-// MountRuntimeWorkdir mounts the runtime workdir to the given container with the provided path and configures the
-// working directory of the container to the hardcoded /src path.
-func MountRuntimeWorkdir(runtime *daggers.Runtime, container *dagger.Container) *dagger.Container {
-	return container.WithMountedDirectory("/src", runtime.Workdir).WithWorkdir("/src")
 }

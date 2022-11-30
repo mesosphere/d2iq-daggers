@@ -30,8 +30,7 @@ func Run(
 
 	svuFlags := flagsFromConfig(&cfg)
 
-	container := runtime.Client.Container().From(fmt.Sprintf("ghcr.io/caarlos0/svu:%s", cfg.Version))
-
+	container := containers.ContainerFromImage(runtime, fmt.Sprintf("ghcr.io/caarlos0/svu:%s", cfg.Version))
 	container = containers.MountRuntimeWorkdir(runtime, container)
 
 	container = container.WithExec(append([]string{cfg.Command}, svuFlags...))

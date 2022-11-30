@@ -48,7 +48,7 @@ func GetContainer(
 		return nil, err
 	}
 
-	container := runtime.Client.Container().From(fmt.Sprintf("%s:%s", cfg.GoBaseImage, cfg.GoVersion))
+	container := containers.ContainerFromImage(runtime, fmt.Sprintf("%s:%s", cfg.GoBaseImage, cfg.GoVersion))
 
 	container, err = containers.InstallGithubCli(cfg.GithubCliVersion)(runtime, container)
 	if err != nil {
