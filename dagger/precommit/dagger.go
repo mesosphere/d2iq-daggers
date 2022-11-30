@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/mesosphere/daggers/dagger/common"
 	"github.com/mesosphere/daggers/daggers"
 	"github.com/mesosphere/daggers/daggers/containers"
 )
@@ -42,7 +41,7 @@ func Run(
 	}
 
 	// Configure pre-commit to use the cache volume
-	cacheVol, err := common.NewCacheVolumeWithFileHashKeys(
+	cacheVol, err := containers.NewCacheVolumeWithFileHashKeys(
 		ctx, runtime.Client, "pre-commit-", runtime.Workdir, configFileName,
 	)
 	if err != nil {

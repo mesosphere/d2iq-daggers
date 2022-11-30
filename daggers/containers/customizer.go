@@ -6,7 +6,6 @@ import (
 
 	"dagger.io/dagger"
 
-	"github.com/mesosphere/daggers/dagger/common"
 	"github.com/mesosphere/daggers/daggers"
 )
 
@@ -41,7 +40,7 @@ func WithMountedGoCache(ctx context.Context, path string) ContainerCustomizerFn 
 		}
 
 		// Configure go to use the cache volume for the go build cache.
-		buildCache, err := common.NewCacheVolumeWithFileHashKeys(ctx, client, "go-build-", cacheDir, cacheFiles...)
+		buildCache, err := NewCacheVolumeWithFileHashKeys(ctx, client, "go-build-", cacheDir, cacheFiles...)
 		if err != nil {
 			return nil, err
 		}
@@ -49,7 +48,7 @@ func WithMountedGoCache(ctx context.Context, path string) ContainerCustomizerFn 
 		c = c.WithEnvVariable("GOCACHE", "/go/build-cache").WithMountedCache("/go/build-cache", buildCache)
 
 		// Configure go to use the cache volume for the go mod cache.
-		modCache, err := common.NewCacheVolumeWithFileHashKeys(ctx, client, "go-mod-", cacheDir, cacheFiles...)
+		modCache, err := NewCacheVolumeWithFileHashKeys(ctx, client, "go-mod-", cacheDir, cacheFiles...)
 		if err != nil {
 			return nil, err
 		}

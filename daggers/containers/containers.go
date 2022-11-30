@@ -1,10 +1,15 @@
 package containers
 
 import (
+	"errors"
+
 	"dagger.io/dagger"
 
 	"github.com/mesosphere/daggers/daggers"
 )
+
+// ErrMissingRequiredArgument is returned when a required argument is missing.
+var ErrMissingRequiredArgument = errors.New("missing required argument")
 
 // ApplyCustomizations applies customizations to the given container.
 func ApplyCustomizations(
