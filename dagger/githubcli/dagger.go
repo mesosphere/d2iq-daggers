@@ -25,9 +25,8 @@ func Run(ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[c
 		return "", err
 	}
 
-	container = containers.MountRuntimeWorkdir(runtime, container).
-		WithEnvVariable("CACHE_BUSTER", time.Now().String()). // Workaround for stop caching after this step
-		WithExec(cfg.Args)
+	// CACHE_BUSTER is workaround for stop caching after this step
+	container = container.WithEnvVariable("CACHE_BUSTER", time.Now().String()).WithExec(cfg.Args)
 
 	output, err := container.Stdout(ctx)
 	if err != nil {
