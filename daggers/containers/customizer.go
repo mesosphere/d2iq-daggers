@@ -45,7 +45,7 @@ func WithMountedGoCache(ctx context.Context, path string) ContainerCustomizerFn 
 			return nil, err
 		}
 
-		c = c.WithEnvVariable("GOCACHE", "/go/build-cache").WithMountedCache("/go/build-cache", buildCache)
+		c, _ = WithMountedCache(buildCache, "/go/.cache/build", "GOCACHE")(runtime, c)
 
 		// Configure go to use the cache volume for the go mod cache.
 		modCache, err := NewCacheVolumeWithFileHashKeys(ctx, client, "go-mod-", cacheDir, cacheFiles...)
@@ -53,7 +53,21 @@ func WithMountedGoCache(ctx context.Context, path string) ContainerCustomizerFn 
 			return nil, err
 		}
 
-		c = c.WithEnvVariable("GOMODCACHE", "/go/mod-cache").WithMountedCache("/go/mod-cache", modCache)
+		c, _ = WithMountedCache(modCache, "/go/.cache/mod", "GOMODCACHE")(runtime, c)
+
+		return c, nil
+	}
+}
+
+// WithMountedCache mounts the given cache volume at the given path in the container and if envVarName provided, set env
+// variable with the cache mount path.
+func WithMountedCache(cacheVol *dagger.CacheVolume, path, envVarName string) ContainerCustomizerFn {
+	return func(runtime *daggers.Runtime, c *dagger.Container) (*dagger.Container, error) {
+		c = c.WithMountedCache(path, cacheVol)
+
+		if envVarName != "" {
+			c = c.WithEnvVariable(envVarName, path)
+		}
 
 		return c, nil
 	}

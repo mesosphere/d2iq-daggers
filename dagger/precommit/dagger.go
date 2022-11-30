@@ -28,17 +28,21 @@ func Run(
 		customizers = cfg.ContainerCustomizers
 	)
 
-	customizers = append(customizers, containers.DownloadFile(url, dest))
-
-	container, err := containers.CustomizedContainerFromImage(runtime, cfg.BaseImage, true, customizers...)
-	if err != nil {
-		return "", err
-	}
-
 	// Configure pre-commit to use the cache volume
 	cacheVol, err := containers.NewCacheVolumeWithFileHashKeys(
 		ctx, runtime.Client, "pre-commit-", runtime.Workdir, configFileName,
 	)
+	if err != nil {
+		return "", err
+	}
+
+	customizers = append(
+		customizers,
+		containers.DownloadFile(url, dest),
+		containers.WithMountedCache(cacheVol, cacheDir, precommitHomeEnvVar),
+	)
+
+	container, err := containers.CustomizedContainerFromImage(runtime, cfg.BaseImage, true, customizers...)
 	if err != nil {
 		return "", err
 	}
