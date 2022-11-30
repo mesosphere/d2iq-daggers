@@ -17,7 +17,7 @@ const (
 func Run(
 	ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[config],
 ) (string, error) {
-	cfg, err := daggers.InitConfig(opts...) /**/
+	cfg, err := daggers.InitConfig(opts...)
 	if err != nil {
 		return "", err
 	}
