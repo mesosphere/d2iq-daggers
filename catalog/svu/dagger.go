@@ -18,9 +18,7 @@ type Output struct {
 }
 
 // Run runs the svu command with the given options.
-func Run(
-	ctx context.Context, runtime *daggers.Runtime, options ...daggers.Option[config],
-) (*Output, error) {
+func Run(ctx context.Context, runtime *daggers.Runtime, options ...daggers.Option[config]) (*Output, error) {
 	cfg, err := daggers.InitConfig(options...)
 	if err != nil {
 		return nil, err
