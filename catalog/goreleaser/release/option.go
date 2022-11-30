@@ -1,8 +1,6 @@
 package release
 
-import (
-	"github.com/mesosphere/daggers/daggers"
-)
+import "github.com/mesosphere/daggers/daggers"
 
 type config struct {
 	Env map[string]string
