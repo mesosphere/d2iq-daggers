@@ -8,6 +8,7 @@ import (
 	"github.com/magefile/mage/mg"
 
 	"github.com/mesosphere/daggers/daggers"
+	"github.com/mesosphere/daggers/daggers/containers"
 )
 
 // Output is svu command output.
@@ -27,15 +28,18 @@ func Run(
 		return nil, err
 	}
 
-	svuFlags := flagsFromConfig(&cfg)
+	var (
+		image    = fmt.Sprintf("ghcr.io/caarlos0/svu:%s", cfg.Version)
+		svuFlags = flagsFromConfig(&cfg)
+	)
 
-	container := runtime.Client().
-		Container().
-		From(fmt.Sprintf("ghcr.io/caarlos0/svu:%s", cfg.Version)).
-		WithMountedDirectory("/src", runtime.Workdir()).
-		WithWorkdir("/src")
+	container, err := containers.CustomizedContainerFromImage(runtime, image, true)
+	if err != nil {
+		return nil, err
+	}
 
 	container = container.WithExec(append([]string{cfg.Command}, svuFlags...))
+
 	// Run container and get Exit code
 	_, err = container.ExitCode(ctx)
 	if err != nil {
@@ -49,6 +53,7 @@ func Run(
 
 	svuFlags = append(svuFlags, "--strip-prefix")
 	container = container.WithExec(append([]string{cfg.Command}, svuFlags...))
+
 	// Run container and get Exit code
 	_, err = container.ExitCode(ctx)
 	if err != nil {

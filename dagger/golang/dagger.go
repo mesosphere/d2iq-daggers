@@ -6,8 +6,8 @@ import (
 
 	"dagger.io/dagger"
 
-	"github.com/mesosphere/daggers/dagger/options"
 	"github.com/mesosphere/daggers/daggers"
+	"github.com/mesosphere/daggers/daggers/containers"
 )
 
 // standard source path.
@@ -40,21 +40,19 @@ func GetContainer(
 		return nil, err
 	}
 
-	container := runtime.Client().
-		Container().
-		From(fmt.Sprintf("%s:%s", cfg.GoBaseImage, cfg.GoVersion)).
-		WithMountedDirectory(srcDir, runtime.Workdir()).
-		WithWorkdir(srcDir).
-		WithEntrypoint([]string{"go"})
+	var (
+		image       = fmt.Sprintf("%s:%s", cfg.GoBaseImage, cfg.GoVersion)
+		customizers = []containers.ContainerCustomizerFn{containers.WithMountedGoCache(ctx, ".")}
+	)
+
+	container, err := containers.CustomizedContainerFromImage(runtime, image, true, customizers...)
+	if err != nil {
+		return nil, err
+	}
 
 	for k, v := range cfg.Env {
 		container = container.WithEnvVariable(k, v)
 	}
 
-	container, err = options.WithMountedGoCache(ctx, runtime.Workdir())(container, runtime.Client())
-	if err != nil {
-		return nil, err
-	}
-
-	return container.WithExec(cfg.Args), nil
+	return container.WithEntrypoint([]string{"go"}).WithExec(cfg.Args), nil
 }

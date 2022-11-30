@@ -8,37 +8,25 @@ import (
 
 	"dagger.io/dagger"
 
-	"github.com/mesosphere/daggers/dagger/options"
 	"github.com/mesosphere/daggers/daggers"
-)
-
-const (
-	// url template for downloading github cli from github releases.
-	ghURLTemplate = "https://github.com/cli/cli/releases/download/v%s/gh_%s_linux_amd64.tar.gz"
-
-	// standard source path.
-	srcDir = "/src"
+	"github.com/mesosphere/daggers/daggers/containers"
 )
 
 // Run runs the ginkgo run command with given options.
-func Run(
-	ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[config],
-) (string, error) {
+func Run(ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[config]) (string, error) {
+	container, err := GetContainer(ctx, runtime, opts...)
+	if err != nil {
+		return "", err
+	}
+
+	// TODO: this is necessary to get args from the config. We should find a way to do this without any duplication.
 	cfg, err := daggers.InitConfig(opts...)
 	if err != nil {
 		return "", err
 	}
 
-	container, err := GetContainer(ctx, runtime, &cfg)
-	if err != nil {
-		return "", err
-	}
-
-	container = container.
-		WithMountedDirectory(srcDir, runtime.Workdir()).
-		WithWorkdir(srcDir).
-		WithEnvVariable("CACHE_BUSTER", time.Now().String()). // Workaround for stop caching after this step
-		WithExec(cfg.Args)
+	// CACHE_BUSTER is workaround for stop caching after this step
+	container = container.WithEnvVariable("CACHE_BUSTER", time.Now().String()).WithExec(cfg.Args)
 
 	output, err := container.Stdout(ctx)
 	if err != nil {
@@ -50,48 +38,23 @@ func Run(
 
 // GetContainer returns a dagger container instance with github cli as entrypoint.
 func GetContainer(
-	ctx context.Context, runtime *daggers.Runtime, cfg *config,
+	ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[config],
 ) (*dagger.Container, error) {
 	var err error
 
-	// Source url for downloading the Github CLI
-	srcURL := fmt.Sprintf(ghURLTemplate, cfg.GithubCliVersion, cfg.GithubCliVersion)
-
-	// Destination file to download tar file contains Github CLI
-	dstFile := "/tmp/gh_linux_amd64.tar.gz"
-
-	// Extract Directory
-	extractDir := "/tmp"
-
-	// Cli path after extracting downloaded tar to extract directory
-	cliPath := fmt.Sprintf("/tmp/gh_%s_linux_amd64/bin/gh", cfg.GithubCliVersion)
-
-	var customizers []options.ContainerCustomizer
-
-	customizers = append(
-		customizers, options.WithMountedGoCache(ctx, runtime.Workdir()), options.DownloadFile(srcURL, dstFile),
-	)
-
-	container := runtime.Client().Container().From(fmt.Sprintf("%s:%s", cfg.GoBaseImage, cfg.GoVersion))
-
-	for _, customizer := range customizers {
-		container, err = customizer(container, runtime.Client())
-		if err != nil {
-			return nil, err
-		}
+	cfg, err := daggers.InitConfig(opts...)
+	if err != nil {
+		return nil, err
 	}
 
-	token := runtime.Client().Host().EnvVariable("GITHUB_TOKEN").Secret()
+	var (
+		image       = fmt.Sprintf("%s:%s", cfg.GoBaseImage, cfg.GoVersion)
+		customizers = []containers.ContainerCustomizerFn{containers.InstallGithubCli(cfg.GithubCliVersion)}
+	)
 
-	container = container.
-		WithSecretVariable("GITHUB_TOKEN", token).
-		WithExec([]string{"tar", "-xf", dstFile, "-C", extractDir}).
-		WithExec([]string{"mv", cliPath, "/usr/local/bin/gh"}).
-		WithExec([]string{"rm", "-rf", "/tmp/*"}).
-		WithEntrypoint([]string{"/usr/local/bin/gh"})
-
-	for _, extension := range cfg.Extensions {
-		container = container.WithExec([]string{"extension", "install", extension})
+	container, err := containers.CustomizedContainerFromImage(runtime, image, true, customizers...)
+	if err != nil {
+		return nil, err
 	}
 
 	_, err = container.ExitCode(ctx)
@@ -99,5 +62,5 @@ func GetContainer(
 		return nil, err
 	}
 
-	return container, nil
+	return container.WithEntrypoint([]string{"gh"}), nil
 }
