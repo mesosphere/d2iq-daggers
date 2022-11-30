@@ -113,6 +113,51 @@ func InstallGo(ctx context.Context, version string) ContainerCustomizerFn {
 	}
 }
 
+// InstallGithubCli installs github cli in the container using the given version and provided extensions. If the version
+// is empty, the hardcoded "2.20.2" is used.
+//
+// Github cli uses GITHUB_TOKEN to authenticate, installation process read GITHUB_TOKEN env variable from host and
+// configure it as a secret.
+//
+// The container must have the "curl" and "tar" binaries installed in order to install Go.
+func InstallGithubCli(version string, extensions ...string) ContainerCustomizerFn {
+	return func(runtime *daggers.Runtime, c *dagger.Container) (*dagger.Container, error) {
+		var err error
+
+		// If no version is given, default to 2.20.2.
+		if version == "" {
+			version = "2.20.2"
+		}
+
+		var (
+			ghURLTemplate = "https://github.com/cli/cli/releases/download/v%s/gh_%s_linux_amd64.tar.gz"
+			url           = fmt.Sprintf(ghURLTemplate, version, version)
+			dest          = "/tmp/gh_linux_amd64.tar.gz"
+			extractDir    = "/tmp"
+			cliSourcePath = fmt.Sprintf("/tmp/gh_%s_linux_amd64/bin/gh", version)
+			cliTargetPath = "/usr/local/bin/gh"
+		)
+
+		c, err = ApplyCustomizations(runtime, c, DownloadFile(url, dest))
+		if err != nil {
+			return nil, err
+		}
+
+		token := runtime.Client.Host().EnvVariable("GITHUB_TOKEN").Secret()
+
+		c = c.WithSecretVariable("GITHUB_TOKEN", token).
+			WithExec([]string{"tar", "-xf", dest, "-C", extractDir}).
+			WithExec([]string{"mv", cliSourcePath, cliTargetPath}).
+			WithExec([]string{"rm", "-rf", "/tmp/*"})
+
+		for _, extension := range extensions {
+			c = c.WithExec([]string{"gh", "extension", "install", extension})
+		}
+
+		return c, nil
+	}
+}
+
 // DownloadFile downloads the given URL to the given destination file.
 func DownloadFile(url, destFile string) ContainerCustomizerFn {
 	return func(runtime *daggers.Runtime, c *dagger.Container) (*dagger.Container, error) {
