@@ -38,12 +38,6 @@ func Run(
 
 	container = container.WithExec(append([]string{cfg.Command}, svuFlags...))
 
-	// Run container and get Exit code
-	_, err = container.ExitCode(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	version, err := container.Stdout(ctx)
 	if err != nil {
 		return nil, err
@@ -51,12 +45,6 @@ func Run(
 
 	svuFlags = append(svuFlags, "--strip-prefix")
 	container = container.WithExec(append([]string{cfg.Command}, svuFlags...))
-
-	// Run container and get Exit code
-	_, err = container.ExitCode(ctx)
-	if err != nil {
-		return nil, err
-	}
 
 	versionWithoutPrefix, err := container.Stdout(ctx)
 	if err != nil {
