@@ -1,4 +1,4 @@
-package cli
+package goreleaser
 
 import (
 	"encoding/json"
@@ -60,6 +60,10 @@ type Result struct {
 }
 
 // Run executes goreleaser with given command and arguments and return results info about command.
+//
+// Our goreleaser flow is contains docker image build and push and this is not possible to do with dagger at the
+// moment. We will need to add this feature to dagger after https://github.com/dagger/dagger/issues/3712 released.
+// Currently, we are using pure mage to execute goreleaser commands.
 func Run(cmd Command, debug bool, env map[string]string, args []string) (*Result, error) {
 	var cliArgs []string
 

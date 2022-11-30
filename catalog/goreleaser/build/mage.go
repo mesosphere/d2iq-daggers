@@ -6,7 +6,7 @@ import (
 
 	"github.com/magefile/mage/mg"
 
-	"github.com/mesosphere/daggers/catalog/goreleaser/cli"
+	"github.com/mesosphere/daggers/catalog/goreleaser"
 	"github.com/mesosphere/daggers/daggers"
 )
 
@@ -54,7 +54,7 @@ func BuildSnapshot(_ context.Context) error {
 // BuildWithOptions runs goreleaser build with specific options.
 //
 //nolint:revive // Disable stuttering check.
-func BuildWithOptions(opts ...daggers.Option[config]) (*cli.Result, error) {
+func BuildWithOptions(opts ...daggers.Option[config]) (*goreleaser.Result, error) {
 	debug := mg.Debug() || mg.Verbose()
 
 	options, err := daggers.InitConfig(opts...)
@@ -62,5 +62,5 @@ func BuildWithOptions(opts ...daggers.Option[config]) (*cli.Result, error) {
 		return nil, err
 	}
 
-	return cli.Run(cli.CommandBuild, debug, options.Env, options.toArgs())
+	return goreleaser.Run(goreleaser.CommandBuild, debug, options.Env, options.toArgs())
 }
