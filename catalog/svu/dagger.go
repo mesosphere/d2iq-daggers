@@ -28,7 +28,7 @@ func Run(
 
 	var (
 		image    = fmt.Sprintf("ghcr.io/caarlos0/svu:%s", cfg.Version)
-		svuFlags = flagsFromConfig(&cfg)
+		svuFlags = cfg.toArgs()
 	)
 
 	container, err := containers.CustomizedContainerFromImage(runtime, image, true)
@@ -67,38 +67,4 @@ func Run(
 		Version:              strings.TrimSpace(version),
 		VersionWithoutPrefix: strings.TrimSpace(versionWithoutPrefix),
 	}, nil
-}
-
-func flagsFromConfig(cfg *config) []string {
-	var flags []string
-
-	if cfg.Pattern != "" {
-		flags = append(flags, "--pattern", cfg.Pattern)
-	}
-	if cfg.Prefix != "" {
-		flags = append(flags, "--prefix", cfg.Prefix)
-	}
-	if cfg.Suffix != "" {
-		flags = append(flags, "--suffix", cfg.Suffix)
-	}
-	if cfg.TagMode != "" {
-		flags = append(flags, "--tag-mode", cfg.TagMode)
-	}
-	if cfg.Metadata {
-		flags = append(flags, "--metadata")
-	} else {
-		flags = append(flags, "--no-metadata")
-	}
-	if cfg.Prerelease {
-		flags = append(flags, "--pre-release")
-	} else {
-		flags = append(flags, "--no-pre-release")
-	}
-	if cfg.Build {
-		flags = append(flags, "--build")
-	} else {
-		flags = append(flags, "--no-build")
-	}
-
-	return flags
 }
