@@ -7,7 +7,7 @@ import (
 
 	"github.com/magefile/mage/mg"
 
-	"github.com/mesosphere/daggers/dagger/golang"
+	"github.com/mesosphere/daggers/catalog/golang"
 	"github.com/mesosphere/daggers/daggers"
 )
 

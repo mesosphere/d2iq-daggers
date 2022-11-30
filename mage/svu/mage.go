@@ -3,7 +3,7 @@ package svu
 import (
 	"context"
 
-	svudagger "github.com/mesosphere/daggers/dagger/svu"
+	svudagger "github.com/mesosphere/daggers/catalog/svu"
 )
 
 // Current runs svu current.
