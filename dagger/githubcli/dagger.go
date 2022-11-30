@@ -8,8 +8,8 @@ import (
 
 	"dagger.io/dagger"
 
-	"github.com/mesosphere/daggers/dagger/options"
 	"github.com/mesosphere/daggers/daggers"
+	"github.com/mesosphere/daggers/daggers/containers"
 )
 
 const (
@@ -21,9 +21,7 @@ const (
 )
 
 // Run runs the ginkgo run command with given options.
-func Run(
-	ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[config],
-) (string, error) {
+func Run(ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[config]) (string, error) {
 	cfg, err := daggers.InitConfig(opts...)
 	if err != nil {
 		return "", err
@@ -49,48 +47,33 @@ func Run(
 }
 
 // GetContainer returns a dagger container instance with github cli as entrypoint.
-func GetContainer(
-	ctx context.Context, runtime *daggers.Runtime, cfg *config,
-) (*dagger.Container, error) {
+func GetContainer(ctx context.Context, runtime *daggers.Runtime, cfg *config) (*dagger.Container, error) {
 	var err error
 
-	// Source url for downloading the Github CLI
-	srcURL := fmt.Sprintf(ghURLTemplate, cfg.GithubCliVersion, cfg.GithubCliVersion)
-
-	// Destination file to download tar file contains Github CLI
-	dstFile := "/tmp/gh_linux_amd64.tar.gz"
-
-	// Extract Directory
-	extractDir := "/tmp"
-
-	// Cli path after extracting downloaded tar to extract directory
-	cliPath := fmt.Sprintf("/tmp/gh_%s_linux_amd64/bin/gh", cfg.GithubCliVersion)
-
-	var customizers []options.ContainerCustomizer
-
-	customizers = append(
-		customizers, options.WithMountedGoCache(ctx, runtime.Workdir), options.DownloadFile(srcURL, dstFile),
+	var (
+		url              = fmt.Sprintf(ghURLTemplate, cfg.GithubCliVersion, cfg.GithubCliVersion)
+		dest             = "/tmp/gh_linux_amd64.tar.gz"
+		extractDir       = "/tmp"
+		cliSourcePath    = fmt.Sprintf("/tmp/gh_%s_linux_amd64/bin/gh", cfg.GithubCliVersion)
+		cliTargetPath    = "/usr/local/bin/gh"
+		containerAddress = fmt.Sprintf("%s:%s", cfg.GoBaseImage, cfg.GoVersion)
 	)
 
-	container := runtime.Client.
-		Container().
-		From(fmt.Sprintf("%s:%s", cfg.GoBaseImage, cfg.GoVersion))
+	container := runtime.Client.Container().From(containerAddress)
 
-	for _, customizer := range customizers {
-		container, err = customizer(container, runtime.Client)
-		if err != nil {
-			return nil, err
-		}
+	container, err = containers.ApplyCustomizations(runtime, container, containers.DownloadFile(url, dest))
+	if err != nil {
+		return nil, err
 	}
 
 	token := runtime.Client.Host().EnvVariable("GITHUB_TOKEN").Secret()
 
 	container = container.
 		WithSecretVariable("GITHUB_TOKEN", token).
-		WithExec([]string{"tar", "-xf", dstFile, "-C", extractDir}).
-		WithExec([]string{"mv", cliPath, "/usr/local/bin/gh"}).
+		WithExec([]string{"tar", "-xf", dest, "-C", extractDir}).
+		WithExec([]string{"mv", cliSourcePath, cliTargetPath}).
 		WithExec([]string{"rm", "-rf", "/tmp/*"}).
-		WithEntrypoint([]string{"/usr/local/bin/gh"})
+		WithEntrypoint([]string{cliTargetPath})
 
 	for _, extension := range cfg.Extensions {
 		container = container.WithExec([]string{"extension", "install", extension})

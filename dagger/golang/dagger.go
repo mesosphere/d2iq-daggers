@@ -6,8 +6,8 @@ import (
 
 	"dagger.io/dagger"
 
-	"github.com/mesosphere/daggers/dagger/options"
 	"github.com/mesosphere/daggers/daggers"
+	"github.com/mesosphere/daggers/daggers/containers"
 )
 
 // standard source path.
@@ -51,7 +51,7 @@ func GetContainer(
 		container = container.WithEnvVariable(k, v)
 	}
 
-	container, err = options.WithMountedGoCache(ctx, runtime.Workdir)(container, runtime.Client)
+	container, err = containers.ApplyCustomizations(runtime, container, containers.WithMountedGoCache(ctx, "."))
 	if err != nil {
 		return nil, err
 	}

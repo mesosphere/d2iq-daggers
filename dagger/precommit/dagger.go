@@ -2,10 +2,11 @@ package precommit
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/mesosphere/daggers/dagger/common"
-	"github.com/mesosphere/daggers/dagger/options"
 	"github.com/mesosphere/daggers/daggers"
+	"github.com/mesosphere/daggers/daggers/containers"
 )
 
 const (
@@ -26,19 +27,18 @@ func Run(
 	// Create a pre-commit container
 	container := runtime.Client.Container().From(cfg.BaseImage)
 
-	for _, c := range cfg.ContainerCustomizers {
-		container, err = c(container, runtime.Client)
-		if err != nil {
-			return "", err
-		}
-	}
+	var (
+		url  = "https://github.com/pre-commit/pre-commit/releases/download/v2.20.0/pre-commit-2.20.0.pyz"
+		dest = "/usr/local/bin/pre-commit-2.20.0.pyz"
+	)
 
-	container, err = options.DownloadFile(
-		"https://github.com/pre-commit/pre-commit/releases/download/v2.20.0/pre-commit-2.20.0.pyz",
-		"/usr/local/bin/pre-commit-2.20.0.pyz",
-	)(container, runtime.Client)
+	customizers := cfg.ContainerCustomizers
+
+	customizers = append(customizers, containers.DownloadFile(url, dest))
+
+	container, err = containers.ApplyCustomizations(runtime, container, customizers...)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to apply customizations: %w", err)
 	}
 
 	// Configure pre-commit to use the cache volume
