@@ -21,3 +21,9 @@ func ApplyCustomizations(
 
 	return container, nil
 }
+
+// MountRuntimeWorkdir mounts the runtime workdir to the given container with the provided path and configures the
+// working directory of the container to the hardcoded /src path.
+func MountRuntimeWorkdir(runtime *daggers.Runtime, container *dagger.Container) *dagger.Container {
+	return container.WithMountedDirectory("/src", runtime.Workdir).WithWorkdir("/src")
+}

@@ -40,12 +40,9 @@ func GetContainer(
 		return nil, err
 	}
 
-	container := runtime.Client.
-		Container().
-		From(fmt.Sprintf("%s:%s", cfg.GoBaseImage, cfg.GoVersion)).
-		WithMountedDirectory(srcDir, runtime.Workdir).
-		WithWorkdir(srcDir).
-		WithEntrypoint([]string{"go"})
+	container := runtime.Client.Container().From(fmt.Sprintf("%s:%s", cfg.GoBaseImage, cfg.GoVersion))
+
+	container = containers.MountRuntimeWorkdir(runtime, container)
 
 	for k, v := range cfg.Env {
 		container = container.WithEnvVariable(k, v)
@@ -56,5 +53,5 @@ func GetContainer(
 		return nil, err
 	}
 
-	return container.WithExec(cfg.Args), nil
+	return container.WithEntrypoint([]string{"go"}).WithExec(cfg.Args), nil
 }
