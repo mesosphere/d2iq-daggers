@@ -1,26 +1,49 @@
 package golang
 
-import "github.com/mesosphere/daggers/daggers"
+import (
+	"github.com/mesosphere/daggers/daggers"
+	"github.com/mesosphere/daggers/daggers/containers"
+)
 
 type config struct {
-	GoBaseImage string   `env:"GO_BASE_IMAGE,notEmpty" envDefault:"docker.io/golang"`
-	GoVersion   string   `env:"GO_VERSION,notEmpty" envDefault:"1.19"`
-	Args        []string `env:"GO_ARGS" envDefault:""  envSeparator:" "`
-	Env         map[string]string
+	GoImageRepo       string   `env:"GO_IMAGE_REPO,notEmpty" envDefault:"docker.io/golang"`
+	GoImageTag        string   `env:"GO_IMAGE_TAG,notEmpty" envDefault:"1.19"`
+	GoModCacheEnabled bool     `env:"GO_MOD_CACHE_ENABLE" envDefault:"true"`
+	GoModDir          string   `env:"GO_MOD_DIR" envDefault:"."`
+	Args              []string `env:"GO_ARGS" envDefault:""  envSeparator:" "`
+
+	Env                  map[string]string
+	ContainerCustomizers []containers.ContainerCustomizerFn
 }
 
-// WithGoBaseImage sets the go base image to use for the container.
-func WithGoBaseImage(image string) daggers.Option[config] {
+// WithGoImageRepo sets whether to enable go module caching. Optional, defaults to docker.io/golang.
+func WithGoImageRepo(repo string) daggers.Option[config] {
 	return func(c config) config {
-		c.GoBaseImage = image
+		c.GoImageRepo = repo
 		return c
 	}
 }
 
-// WithGoVersion sets the go version to use for the container.
-func WithGoVersion(version string) daggers.Option[config] {
+// WithGoImageTag sets the go image tag to use for the container. Optional, defaults to 1.19.
+func WithGoImageTag(tag string) daggers.Option[config] {
 	return func(c config) config {
-		c.GoVersion = version
+		c.GoImageTag = tag
+		return c
+	}
+}
+
+// WithGoModCacheEnabled sets whether to enable go module caching. Optional, defaults to true.
+func WithGoModCacheEnabled(enable bool) daggers.Option[config] {
+	return func(c config) config {
+		c.GoModCacheEnabled = enable
+		return c
+	}
+}
+
+// WithGoModDir sets the go module directory to use for the container. Optional, defaults to the current directory.
+func WithGoModDir(dir string) daggers.Option[config] {
+	return func(c config) config {
+		c.GoModDir = dir
 		return c
 	}
 }
@@ -37,6 +60,14 @@ func WithArgs(args ...string) daggers.Option[config] {
 func WithEnv(envMap map[string]string) daggers.Option[config] {
 	return func(c config) config {
 		c.Env = envMap
+		return c
+	}
+}
+
+// WithContainerCustomizers adds the container customizers to use for the container.
+func WithContainerCustomizers(customizers ...containers.ContainerCustomizerFn) daggers.Option[config] {
+	return func(c config) config {
+		c.ContainerCustomizers = append(c.ContainerCustomizers, customizers...)
 		return c
 	}
 }
