@@ -12,7 +12,7 @@ import (
 
 // Release runs goreleaser release with --rm-dist flags.
 func Release(_ context.Context) error {
-	result, err := ReleaseWithOptions(WithRmDist(true))
+	result, err := ReleaseWithOptions(WithArgs("--rm-dist"))
 	if err != nil {
 		return err
 	}
@@ -30,11 +30,7 @@ func Release(_ context.Context) error {
 //
 //nolint:revive // Disable stuttering check.
 func ReleaseSnapshot(_ context.Context) error {
-	result, err := ReleaseWithOptions(
-		WithRmDist(true),
-		SkipPublish(true),
-		WithSnapshot(true),
-	)
+	result, err := ReleaseWithOptions(WithArgs("--snapshot", "--rm-dist", "--skip-publish"))
 	if err != nil {
 		return err
 	}
@@ -63,5 +59,5 @@ func ReleaseWithOptions(opts ...daggers.Option[config]) (*goreleaser.Result, err
 		options = opt(options)
 	}
 
-	return goreleaser.Run(goreleaser.CommandRelease, debug, options.Env, options.toArgs())
+	return goreleaser.Run(goreleaser.CommandRelease, debug, options.Env, options.Args)
 }

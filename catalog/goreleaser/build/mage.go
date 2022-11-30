@@ -12,10 +12,7 @@ import (
 
 // Build runs goreleaser build with --rm-dist and --single-target flags.
 func Build(_ context.Context) error {
-	result, err := BuildWithOptions(
-		WithRmDist(true),
-		WithSingleTarget(true),
-	)
+	result, err := BuildWithOptions(WithArgs("--rm-dist", "--single-target"))
 	if err != nil {
 		return err
 	}
@@ -33,11 +30,7 @@ func Build(_ context.Context) error {
 //
 //nolint:revive // Disable stuttering check.
 func BuildSnapshot(_ context.Context) error {
-	result, err := BuildWithOptions(
-		WithRmDist(true),
-		WithSingleTarget(true),
-		WithSnapshot(true),
-	)
+	result, err := BuildWithOptions(WithArgs("--snapshot", "--rm-dist", "--single-target"))
 	if err != nil {
 		return err
 	}
@@ -62,5 +55,5 @@ func BuildWithOptions(opts ...daggers.Option[config]) (*goreleaser.Result, error
 		return nil, err
 	}
 
-	return goreleaser.Run(goreleaser.CommandBuild, debug, options.Env, options.toArgs())
+	return goreleaser.Run(goreleaser.CommandBuild, debug, options.Env, options.Args)
 }
