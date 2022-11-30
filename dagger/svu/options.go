@@ -28,7 +28,7 @@ const (
 	TagModeCurrentBranch TagMode = "current-branch"
 )
 
-type config struct {
+type Config struct {
 	Version    string `env:"SVU_VERSION" envDefault:"v1.9.0"`
 	Metadata   bool   `env:"SVU_METADATA" envDefault:"true"`
 	Prerelease bool   `env:"SVU_PRERELEASE" envDefault:"true"`
@@ -45,72 +45,72 @@ type config struct {
 // tags.
 //
 //nolint:revive // Disable stuttering check.
-func SVUVersion(v string) daggers.Option[config] {
-	return func(c config) config {
+func SVUVersion(v string) daggers.Option[Config] {
+	return func(c Config) Config {
 		c.Version = v
 		return c
 	}
 }
 
 // WithMetadata controls whether to include pre-release and build metadata in the version. Defaults to true.
-func WithMetadata(b bool) daggers.Option[config] {
-	return func(c config) config {
+func WithMetadata(b bool) daggers.Option[Config] {
+	return func(c Config) Config {
 		c.Metadata = b
 		return c
 	}
 }
 
 // WithPreRelease controls whether to include pre-release metadata in the version. Defaults to true.
-func WithPreRelease(b bool) daggers.Option[config] {
-	return func(c config) config {
+func WithPreRelease(b bool) daggers.Option[Config] {
+	return func(c Config) Config {
 		c.Prerelease = b
 		return c
 	}
 }
 
 // WithBuild controls whether to include build metadata in the version. Defaults to true.
-func WithBuild(b bool) daggers.Option[config] {
-	return func(c config) config {
+func WithBuild(b bool) daggers.Option[Config] {
+	return func(c Config) Config {
 		c.Build = b
 		return c
 	}
 }
 
 // WithCommand sets the svu sub-command to run. Defaults to "next".
-func WithCommand(cmd Command) daggers.Option[config] {
-	return func(c config) config {
+func WithCommand(cmd Command) daggers.Option[Config] {
+	return func(c Config) Config {
 		c.Command = string(cmd)
 		return c
 	}
 }
 
 // WithPattern sets the pattern to use when searching for tags. Defaults to "*".
-func WithPattern(pattern string) daggers.Option[config] {
-	return func(c config) config {
+func WithPattern(pattern string) daggers.Option[Config] {
+	return func(c Config) Config {
 		c.Pattern = pattern
 		return c
 	}
 }
 
 // WithPrefix sets the prefix to use when searching for tags. Defaults to "v".
-func WithPrefix(prefix string) daggers.Option[config] {
-	return func(c config) config {
+func WithPrefix(prefix string) daggers.Option[Config] {
+	return func(c Config) Config {
 		c.Prefix = prefix
 		return c
 	}
 }
 
 // WithSuffix sets the suffix to use when searching for tags. Defaults to "".
-func WithSuffix(suffix string) daggers.Option[config] {
-	return func(c config) config {
+func WithSuffix(suffix string) daggers.Option[Config] {
+	return func(c Config) Config {
 		c.Suffix = suffix
 		return c
 	}
 }
 
 // WithTagMode sets the tag mode to use when searching for tags. Defaults to TagModeAllBranches.
-func WithTagMode(tagMode TagMode) daggers.Option[config] {
-	return func(c config) config {
+func WithTagMode(tagMode TagMode) daggers.Option[Config] {
+	return func(c Config) Config {
 		c.TagMode = string(tagMode)
 		return c
 	}

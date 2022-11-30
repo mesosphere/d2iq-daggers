@@ -8,14 +8,14 @@ import (
 )
 
 const (
-	configFileName      = ".pre-commit-config.yaml"
+	configFileName      = ".pre-commit-Config.yaml"
 	cacheDir            = "/pre-commit-cache"
 	precommitHomeEnvVar = "PRE_COMMIT_HOME"
 )
 
 // Run runs the precommit checks.
 func Run(
-	ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[config],
+	ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[Config],
 ) (string, error) {
 	cfg, err := daggers.InitConfig(opts...)
 	if err != nil {
@@ -63,7 +63,7 @@ func Run(
 // TODO: Refactor this to make it more generic and reusable. Temporary solution to get precommit working.
 //
 //nolint:revive // Stuttering is fine here to provide a functional options variant of Precommit function above.
-func PrecommitWithOptions(ctx context.Context, opts ...daggers.Option[config]) error {
+func PrecommitWithOptions(ctx context.Context, opts ...daggers.Option[Config]) error {
 	runtime, err := daggers.NewRuntime(ctx, daggers.WithVerbose(true))
 	if err != nil {
 		return err

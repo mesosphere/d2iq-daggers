@@ -21,7 +21,7 @@ type Output struct {
 
 // Run runs the svu command with the given options.
 func Run(
-	ctx context.Context, runtime *daggers.Runtime, options ...daggers.Option[config],
+	ctx context.Context, runtime *daggers.Runtime, options ...daggers.Option[Config],
 ) (*Output, error) {
 	cfg, err := daggers.InitConfig(options...)
 	if err != nil {
@@ -76,7 +76,7 @@ func Run(
 // TODO: Refactor this to make it more generic and reusable. Temporary solution to get svu working.
 //
 //nolint:revive // Stuttering is fine here to provide a functional options variant of SVU call.
-func SVUWithOptions(ctx context.Context, opts ...daggers.Option[config]) error {
+func SVUWithOptions(ctx context.Context, opts ...daggers.Option[Config]) error {
 	verbose := mg.Verbose() || mg.Debug()
 
 	runtime, err := daggers.NewRuntime(ctx, daggers.WithVerbose(verbose))
@@ -95,7 +95,7 @@ func SVUWithOptions(ctx context.Context, opts ...daggers.Option[config]) error {
 	return nil
 }
 
-func flagsFromConfig(cfg *config) []string {
+func flagsFromConfig(cfg *Config) []string {
 	var flags []string
 
 	if cfg.Pattern != "" {

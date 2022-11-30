@@ -16,7 +16,7 @@ const srcDir = "/src"
 // RunCommand runs a go command with given working directory and options and returns command output and
 // working directory.
 func RunCommand(
-	ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[config],
+	ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[Config],
 ) (string, *dagger.Directory, error) {
 	container, err := GetContainer(ctx, runtime, opts...)
 	if err != nil {
@@ -33,7 +33,7 @@ func RunCommand(
 
 // GetContainer returns a dagger container with given working directory and options.
 func GetContainer(
-	ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[config],
+	ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[Config],
 ) (*dagger.Container, error) {
 	cfg, err := daggers.InitConfig(opts...)
 	if err != nil {

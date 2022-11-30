@@ -13,13 +13,13 @@ import (
 )
 
 // Run runs the ginkgo run command with given options.
-func Run(ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[config]) (string, error) {
+func Run(ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[Config]) (string, error) {
 	container, err := GetContainer(ctx, runtime, opts...)
 	if err != nil {
 		return "", err
 	}
 
-	// TODO: this is necessary to get args from the config. We should find a way to do this without any duplication.
+	// TODO: this is necessary to get args from the Config. We should find a way to do this without any duplication.
 	cfg, err := daggers.InitConfig(opts...)
 	if err != nil {
 		return "", err
@@ -38,7 +38,7 @@ func Run(ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[c
 
 // GetContainer returns a dagger container instance with github cli as entrypoint.
 func GetContainer(
-	ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[config],
+	ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[Config],
 ) (*dagger.Container, error) {
 	var err error
 

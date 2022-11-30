@@ -5,7 +5,7 @@ import (
 	"github.com/mesosphere/daggers/daggers/containers"
 )
 
-type config struct {
+type Config struct {
 	GoImageRepo       string   `env:"GO_IMAGE_REPO,notEmpty" envDefault:"docker.io/golang"`
 	GoImageTag        string   `env:"GO_IMAGE_TAG,notEmpty" envDefault:"1.19"`
 	GoModCacheEnabled bool     `env:"GO_MOD_CACHE_ENABLE" envDefault:"true"`
@@ -17,56 +17,56 @@ type config struct {
 }
 
 // WithGoImageRepo sets whether to enable go module caching. Optional, defaults to docker.io/golang.
-func WithGoImageRepo(repo string) daggers.Option[config] {
-	return func(c config) config {
+func WithGoImageRepo(repo string) daggers.Option[Config] {
+	return func(c Config) Config {
 		c.GoImageRepo = repo
 		return c
 	}
 }
 
 // WithGoImageTag sets the go image tag to use for the container. Optional, defaults to 1.19.
-func WithGoImageTag(tag string) daggers.Option[config] {
-	return func(c config) config {
+func WithGoImageTag(tag string) daggers.Option[Config] {
+	return func(c Config) Config {
 		c.GoImageTag = tag
 		return c
 	}
 }
 
 // WithGoModCacheEnabled sets whether to enable go module caching. Optional, defaults to true.
-func WithGoModCacheEnabled(enable bool) daggers.Option[config] {
-	return func(c config) config {
+func WithGoModCacheEnabled(enable bool) daggers.Option[Config] {
+	return func(c Config) Config {
 		c.GoModCacheEnabled = enable
 		return c
 	}
 }
 
 // WithGoModDir sets the go module directory to use for the container. Optional, defaults to the current directory.
-func WithGoModDir(dir string) daggers.Option[config] {
-	return func(c config) config {
+func WithGoModDir(dir string) daggers.Option[Config] {
+	return func(c Config) Config {
 		c.GoModDir = dir
 		return c
 	}
 }
 
 // WithArgs sets the arguments to pass to go.
-func WithArgs(args ...string) daggers.Option[config] {
-	return func(c config) config {
+func WithArgs(args ...string) daggers.Option[Config] {
+	return func(c Config) Config {
 		c.Args = args
 		return c
 	}
 }
 
 // WithEnv sets the environment variables to pass to go.
-func WithEnv(envMap map[string]string) daggers.Option[config] {
-	return func(c config) config {
+func WithEnv(envMap map[string]string) daggers.Option[Config] {
+	return func(c Config) Config {
 		c.Env = envMap
 		return c
 	}
 }
 
 // WithContainerCustomizers adds the container customizers to use for the container.
-func WithContainerCustomizers(customizers ...containers.ContainerCustomizerFn) daggers.Option[config] {
-	return func(c config) config {
+func WithContainerCustomizers(customizers ...containers.ContainerCustomizerFn) daggers.Option[Config] {
+	return func(c Config) Config {
 		c.ContainerCustomizers = append(c.ContainerCustomizers, customizers...)
 		return c
 	}
