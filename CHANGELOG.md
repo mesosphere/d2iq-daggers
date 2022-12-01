@@ -3,6 +3,45 @@
 <!-- Release notes generated using configuration in .github/release.yaml at main -->
 
 ## What's Changed
+### Breaking Changes 🛠
+* refactor!: restructure container operations by @aweris in https://github.com/mesosphere/daggers/pull/49
+* refactor!: remove help package by @aweris in https://github.com/mesosphere/daggers/pull/51
+* refactor!: merge mage and dagger directories as catalog by @aweris in https://github.com/mesosphere/daggers/pull/52
+* refactor!: simplify goreleaser by @aweris in https://github.com/mesosphere/daggers/pull/53
+### Exciting New Features 🎉
+* feat: Introduce go tests by @mikolajb in https://github.com/mesosphere/daggers/pull/40
+* feat: Add coveralls reporting by @mikolajb in https://github.com/mesosphere/daggers/pull/41
+* feat: Add github-cli dagger package by @aweris in https://github.com/mesosphere/daggers/pull/38
+* feat: introduce dagger/golang by @aweris in https://github.com/mesosphere/daggers/pull/43
+* feat: add new config options to golang by @aweris in https://github.com/mesosphere/daggers/pull/56
+* feat: add new config options to  github-cli by @aweris in https://github.com/mesosphere/daggers/pull/57
+* feat: introduce customizers for configuring host env variables by @aweris in https://github.com/mesosphere/daggers/pull/60
+* feat: load Github env vars in CustomizedContainerFromImage if CI is true by @aweris in https://github.com/mesosphere/daggers/pull/61
+### Fixes 🔧
+* fix: remove unnecessary error check by @aweris in https://github.com/mesosphere/daggers/pull/35
+* fix: correct spelling in typo by @aweris in https://github.com/mesosphere/daggers/pull/36
+* fix: list all plugin versions not just installed ones by @aweris in https://github.com/mesosphere/daggers/pull/58
+### Other Changes
+* refactor: use caarlos0/env lib to read env configuration by @aweris in https://github.com/mesosphere/daggers/pull/37
+* build(deps): bump dagger version to 0.4.1 by @aweris in https://github.com/mesosphere/daggers/pull/42
+* refactor: make GetContainer public for githubcli by @aweris in https://github.com/mesosphere/daggers/pull/44
+* refactor: extract Option type to daggers package by @aweris in https://github.com/mesosphere/daggers/pull/47
+* refactor: extract dagger.Connect to daggers.Runtime by @aweris in https://github.com/mesosphere/daggers/pull/48
+* ci: add PR size label workflow by @aweris in https://github.com/mesosphere/daggers/pull/62
+* refactor: clean-up svu by @aweris in https://github.com/mesosphere/daggers/pull/54
+* refactor: move PrecommitWithOptions to mage.go again by @aweris in https://github.com/mesosphere/daggers/pull/55
+* refactor: extract env map setting to container customizer by @aweris in https://github.com/mesosphere/daggers/pull/59
+
+## New Contributors
+* @mikolajb made their first contribution in https://github.com/mesosphere/daggers/pull/40
+
+**Full Changelog**: https://github.com/mesosphere/daggers/compare/v0.4.0...v0.5.0
+
+## Changelog
+
+<!-- Release notes generated using configuration in .github/release.yaml at main -->
+
+## What's Changed
 ### Exciting New Features 🎉
 * feat: Add asdf mage targets by @aweris in https://github.com/mesosphere/daggers/pull/32
 * feat: Add goreleaser mage package by @aweris in https://github.com/mesosphere/daggers/pull/33
