@@ -14,9 +14,7 @@ const (
 )
 
 // Run runs the precommit checks.
-func Run(
-	ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[config],
-) (string, error) {
+func Run(ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[config]) (string, error) {
 	cfg, err := daggers.InitConfig(opts...)
 	if err != nil {
 		return "", err
@@ -56,26 +54,4 @@ func Run(
 
 	// Run container and get Exit code
 	return container.Stdout(ctx)
-}
-
-// PrecommitWithOptions runs all the precommit checks with Dagger options.
-//
-// TODO: Refactor this to make it more generic and reusable. Temporary solution to get precommit working.
-//
-//nolint:revive // Stuttering is fine here to provide a functional options variant of Precommit function above.
-func PrecommitWithOptions(ctx context.Context, opts ...daggers.Option[config]) error {
-	runtime, err := daggers.NewRuntime(ctx, daggers.WithVerbose(true))
-	if err != nil {
-		return err
-	}
-	defer runtime.Close()
-
-	// Print the command output to stdout when the issue https://github.com/dagger/dagger/issues/3192. is fixed.
-	// Currently, we set verbose to true to see the output of the command.
-	_, err = Run(ctx, runtime, opts...)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
