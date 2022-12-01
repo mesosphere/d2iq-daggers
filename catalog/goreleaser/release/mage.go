@@ -6,8 +6,8 @@ import (
 
 	"github.com/magefile/mage/mg"
 
+	"github.com/mesosphere/daggers/catalog/goreleaser/cli"
 	"github.com/mesosphere/daggers/daggers"
-	"github.com/mesosphere/daggers/mage/goreleaser/cli"
 )
 
 // Release runs goreleaser release with --rm-dist flags.
