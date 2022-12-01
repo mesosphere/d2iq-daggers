@@ -22,20 +22,20 @@ const (
 
 // Run runs the ginkgo run command with given options.
 func Run(
-	ctx context.Context, client *dagger.Client, workdir *dagger.Directory, opts ...daggers.Option[config],
+	ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[config],
 ) (string, error) {
 	cfg, err := daggers.InitConfig(opts...)
 	if err != nil {
 		return "", err
 	}
 
-	container, err := GetContainer(ctx, client, workdir, &cfg)
+	container, err := GetContainer(ctx, runtime, &cfg)
 	if err != nil {
 		return "", err
 	}
 
 	container = container.
-		WithMountedDirectory(srcDir, workdir).
+		WithMountedDirectory(srcDir, runtime.Workdir()).
 		WithWorkdir(srcDir).
 		WithEnvVariable("CACHE_BUSTER", time.Now().String()). // Workaround for stop caching after this step
 		WithExec(cfg.Args)
@@ -50,7 +50,7 @@ func Run(
 
 // GetContainer returns a dagger container instance with github cli as entrypoint.
 func GetContainer(
-	ctx context.Context, client *dagger.Client, workdir *dagger.Directory, cfg *config,
+	ctx context.Context, runtime *daggers.Runtime, cfg *config,
 ) (*dagger.Container, error) {
 	var err error
 
@@ -68,18 +68,20 @@ func GetContainer(
 
 	var customizers []options.ContainerCustomizer
 
-	customizers = append(customizers, options.WithMountedGoCache(ctx, workdir), options.DownloadFile(srcURL, dstFile))
+	customizers = append(
+		customizers, options.WithMountedGoCache(ctx, runtime.Workdir()), options.DownloadFile(srcURL, dstFile),
+	)
 
-	container := client.Container().From(fmt.Sprintf("%s:%s", cfg.GoBaseImage, cfg.GoVersion))
+	container := runtime.Client().Container().From(fmt.Sprintf("%s:%s", cfg.GoBaseImage, cfg.GoVersion))
 
 	for _, customizer := range customizers {
-		container, err = customizer(container, client)
+		container, err = customizer(container, runtime.Client())
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	token := client.Host().EnvVariable("GITHUB_TOKEN").Secret()
+	token := runtime.Client().Host().EnvVariable("GITHUB_TOKEN").Secret()
 
 	container = container.
 		WithSecretVariable("GITHUB_TOKEN", token).
