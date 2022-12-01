@@ -6,13 +6,13 @@ import (
 
 	"github.com/magefile/mage/mg"
 
-	"github.com/mesosphere/daggers/catalog/goreleaser/cli"
+	"github.com/mesosphere/daggers/catalog/goreleaser"
 	"github.com/mesosphere/daggers/daggers"
 )
 
 // Release runs goreleaser release with --rm-dist flags.
 func Release(_ context.Context) error {
-	result, err := ReleaseWithOptions(WithRmDist(true))
+	result, err := ReleaseWithOptions(WithArgs("--rm-dist"))
 	if err != nil {
 		return err
 	}
@@ -30,11 +30,7 @@ func Release(_ context.Context) error {
 //
 //nolint:revive // Disable stuttering check.
 func ReleaseSnapshot(_ context.Context) error {
-	result, err := ReleaseWithOptions(
-		WithRmDist(true),
-		SkipPublish(true),
-		WithSnapshot(true),
-	)
+	result, err := ReleaseWithOptions(WithArgs("--snapshot", "--rm-dist", "--skip-publish"))
 	if err != nil {
 		return err
 	}
@@ -51,7 +47,7 @@ func ReleaseSnapshot(_ context.Context) error {
 // ReleaseWithOptions runs goreleaser release with specific options.
 //
 //nolint:revive // Disable stuttering check.
-func ReleaseWithOptions(opts ...daggers.Option[config]) (*cli.Result, error) {
+func ReleaseWithOptions(opts ...daggers.Option[config]) (*goreleaser.Result, error) {
 	debug := mg.Debug() || mg.Verbose()
 
 	options, err := daggers.InitConfig(opts...)
@@ -63,5 +59,5 @@ func ReleaseWithOptions(opts ...daggers.Option[config]) (*cli.Result, error) {
 		options = opt(options)
 	}
 
-	return cli.Run(cli.CommandRelease, debug, options.Env, options.toArgs())
+	return goreleaser.Run(goreleaser.CommandRelease, debug, options.Env, options.Args)
 }

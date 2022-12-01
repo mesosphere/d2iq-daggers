@@ -6,16 +6,13 @@ import (
 
 	"github.com/magefile/mage/mg"
 
-	"github.com/mesosphere/daggers/catalog/goreleaser/cli"
+	"github.com/mesosphere/daggers/catalog/goreleaser"
 	"github.com/mesosphere/daggers/daggers"
 )
 
 // Build runs goreleaser build with --rm-dist and --single-target flags.
 func Build(_ context.Context) error {
-	result, err := BuildWithOptions(
-		WithRmDist(true),
-		WithSingleTarget(true),
-	)
+	result, err := BuildWithOptions(WithArgs("--rm-dist", "--single-target"))
 	if err != nil {
 		return err
 	}
@@ -33,11 +30,7 @@ func Build(_ context.Context) error {
 //
 //nolint:revive // Disable stuttering check.
 func BuildSnapshot(_ context.Context) error {
-	result, err := BuildWithOptions(
-		WithRmDist(true),
-		WithSingleTarget(true),
-		WithSnapshot(true),
-	)
+	result, err := BuildWithOptions(WithArgs("--snapshot", "--rm-dist", "--single-target"))
 	if err != nil {
 		return err
 	}
@@ -54,7 +47,7 @@ func BuildSnapshot(_ context.Context) error {
 // BuildWithOptions runs goreleaser build with specific options.
 //
 //nolint:revive // Disable stuttering check.
-func BuildWithOptions(opts ...daggers.Option[config]) (*cli.Result, error) {
+func BuildWithOptions(opts ...daggers.Option[config]) (*goreleaser.Result, error) {
 	debug := mg.Debug() || mg.Verbose()
 
 	options, err := daggers.InitConfig(opts...)
@@ -62,5 +55,5 @@ func BuildWithOptions(opts ...daggers.Option[config]) (*cli.Result, error) {
 		return nil, err
 	}
 
-	return cli.Run(cli.CommandBuild, debug, options.Env, options.toArgs())
+	return goreleaser.Run(goreleaser.CommandBuild, debug, options.Env, options.Args)
 }
