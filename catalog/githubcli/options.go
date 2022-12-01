@@ -1,27 +1,34 @@
 package githubcli
 
-import "github.com/mesosphere/daggers/daggers"
+import (
+	"github.com/mesosphere/daggers/daggers"
+	"github.com/mesosphere/daggers/daggers/containers"
+)
 
 type config struct {
-	GoBaseImage      string   `env:"GO_BASE_IMAGE,notEmpty" envDefault:"docker.io/golang"`
-	GoVersion        string   `env:"GO_VERSION,notEmpty" envDefault:"1.19"`
+	GoImageRepo      string   `env:"GO_IMAGE_REPO,notEmpty" envDefault:"docker.io/golang"`
+	GoImageTag       string   `env:"GO_IMAGE_TAG,notEmpty" envDefault:"1.19"`
 	GithubCliVersion string   `env:"GH_VERSION,notEmpty" envDefault:"2.20.2"`
 	Extensions       []string `env:"GH_EXTENSIONS" envDefault:""`
 	Args             []string `env:"GH_ARGS" envDefault:""  envSeparator:" "`
+	MountWorkDir     bool     `env:"GH_MOUNT_WORKDIR" envDefault:"true"`
+
+	Env                  map[string]string
+	ContainerCustomizers []containers.ContainerCustomizerFn
 }
 
-// WithGoBaseImage sets the go base image to use for the container.
-func WithGoBaseImage(image string) daggers.Option[config] {
+// WithGoImageRepo sets whether to enable go module caching. Optional, defaults to docker.io/golang.
+func WithGoImageRepo(repo string) daggers.Option[config] {
 	return func(c config) config {
-		c.GoBaseImage = image
+		c.GoImageRepo = repo
 		return c
 	}
 }
 
-// WithGoVersion sets the go version to use for the container.
-func WithGoVersion(version string) daggers.Option[config] {
+// WithGoImageTag sets the go image tag to use for the container. Optional, defaults to 1.19.
+func WithGoImageTag(tag string) daggers.Option[config] {
 	return func(c config) config {
-		c.GoVersion = version
+		c.GoImageTag = tag
 		return c
 	}
 }
@@ -46,6 +53,30 @@ func WithExtensions(extensions ...string) daggers.Option[config] {
 func WithArgs(args ...string) daggers.Option[config] {
 	return func(c config) config {
 		c.Args = args
+		return c
+	}
+}
+
+// WithMountWorkDir sets whether to mount runtime workdir to the container. Optional, defaults to true.
+func WithMountWorkDir(mount bool) daggers.Option[config] {
+	return func(c config) config {
+		c.MountWorkDir = mount
+		return c
+	}
+}
+
+// WithEnv sets the environment variables to pass to go.
+func WithEnv(envMap map[string]string) daggers.Option[config] {
+	return func(c config) config {
+		c.Env = envMap
+		return c
+	}
+}
+
+// WithContainerCustomizers adds the container customizers to use for the container.
+func WithContainerCustomizers(customizers ...containers.ContainerCustomizerFn) daggers.Option[config] {
+	return func(c config) config {
+		c.ContainerCustomizers = append(c.ContainerCustomizers, customizers...)
 		return c
 	}
 }
