@@ -56,7 +56,7 @@ func GetContainer(
 
 	customizers = append(customizers, cfg.ContainerCustomizers...)
 
-	container, err := containers.CustomizedContainerFromImage(runtime, image, cfg.MountWorkDir, customizers...)
+	container, err := containers.CustomizedContainerFromImage(ctx, runtime, image, cfg.MountWorkDir, customizers...)
 	if err != nil {
 		return nil, err
 	}

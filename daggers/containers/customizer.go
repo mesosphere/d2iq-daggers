@@ -291,3 +291,35 @@ func WithHostEnvSecrets(include ...string) ContainerCustomizerFn {
 		return c, nil
 	}
 }
+
+// WithGitHubEnvs sets GitHub environment variables in the container from the host.
+//
+// The following environment variables are set:
+// - GITHUB_TOKEN as a secret
+// - GITHUB_* as regular environment variables except for GITHUB_TOKEN
+// - RUNNER_* as regular environment variables.
+func WithGitHubEnvs(ctx context.Context) ContainerCustomizerFn {
+	return func(runtime *daggers.Runtime, c *dagger.Container) (*dagger.Container, error) {
+		// Default environment variables for GitHub runners are documented here:
+		// https://docs.github.com/en/actions/learn-github-actions/environment-variables#default-environment-variables
+
+		// load all env variables from the host that start with "GITHUB_" and explicitly ignore GITHUB_TOKEN
+		c, err := WithHostEnvVariablesWithPrefix(ctx, "GITHUB_", "GITHUB_TOKEN")(runtime, c)
+		if err != nil {
+			return nil, err
+		}
+
+		c, err = WithHostEnvVariablesWithPrefix(ctx, "RUNNER_")(runtime, c)
+		if err != nil {
+			return nil, err
+		}
+
+		// load GITHUB_TOKEN from the host as a secret
+		c, err = WithHostEnvSecret("GITHUB_TOKEN")(runtime, c)
+		if err != nil {
+			return nil, err
+		}
+
+		return c, nil
+	}
+}

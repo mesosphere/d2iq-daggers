@@ -3,6 +3,7 @@ package daggers
 import (
 	"context"
 	"io"
+	"os"
 
 	"dagger.io/dagger"
 )
@@ -72,4 +73,14 @@ func (r *Runtime) Workdir() *dagger.Directory {
 // Close closes the dagger client.
 func (r *Runtime) Close() error {
 	return r.client.Close()
+}
+
+// IsCI returns true if the runtime is running in a CI environment. This check rely on CI environment variable set
+// by GitHub Actions. If the CI environment variable is not set, it returns false.
+//
+// https://docs.github.com/en/actions/learn-github-actions/environment-variables#default-environment-variables
+func (r *Runtime) IsCI() bool {
+	// Using os.Getenv instead client.Host().Env() because this check should be simple and with dagger client
+	// we would need context and error handling which is not needed here.
+	return os.Getenv("CI") == "true"
 }

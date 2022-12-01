@@ -1,6 +1,7 @@
 package containers
 
 import (
+	"context"
 	"errors"
 
 	"dagger.io/dagger"
@@ -41,11 +42,22 @@ func ApplyCustomizations(
 // CustomizedContainerFromImage creates a container from the given image, applies customizations to it and mounts
 // the runtime workdir to it if mountWorkdir is true.
 func CustomizedContainerFromImage(
-	runtime *daggers.Runtime, address string, mountWorkdir bool, customizers ...ContainerCustomizerFn,
+	ctx context.Context,
+	runtime *daggers.Runtime,
+	address string,
+	mountWorkdir bool,
+	customizers ...ContainerCustomizerFn,
 ) (*dagger.Container, error) {
+	var err error
+
 	container := ContainerFromImage(runtime, address)
 
-	container, err := ApplyCustomizations(runtime, container, customizers...)
+	if runtime.IsCI() {
+		// prepend the GHA env variables to make sure they're available in the container before any customizations
+		customizers = append([]ContainerCustomizerFn{WithGitHubEnvs(ctx)}, customizers...)
+	}
+
+	container, err = ApplyCustomizations(runtime, container, customizers...)
 	if err != nil {
 		return nil, err
 	}
