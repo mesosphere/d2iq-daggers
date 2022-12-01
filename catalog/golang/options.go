@@ -1,6 +1,9 @@
 package golang
 
-import "github.com/mesosphere/daggers/daggers"
+import (
+	"github.com/mesosphere/daggers/daggers"
+	"github.com/mesosphere/daggers/daggers/containers"
+)
 
 type config struct {
 	GoImageRepo       string   `env:"GO_IMAGE_REPO,notEmpty" envDefault:"docker.io/golang"`
@@ -9,7 +12,8 @@ type config struct {
 	GoModDir          string   `env:"GO_MOD_DIR" envDefault:"."`
 	Args              []string `env:"GO_ARGS" envDefault:""  envSeparator:" "`
 
-	Env map[string]string
+	Env                  map[string]string
+	ContainerCustomizers []containers.ContainerCustomizerFn
 }
 
 // WithGoImageRepo sets whether to enable go module caching. Optional, defaults to docker.io/golang.
@@ -56,6 +60,14 @@ func WithArgs(args ...string) daggers.Option[config] {
 func WithEnv(envMap map[string]string) daggers.Option[config] {
 	return func(c config) config {
 		c.Env = envMap
+		return c
+	}
+}
+
+// WithContainerCustomizers adds the container customizers to use for the container.
+func WithContainerCustomizers(customizers ...containers.ContainerCustomizerFn) daggers.Option[config] {
+	return func(c config) config {
+		c.ContainerCustomizers = append(c.ContainerCustomizers, customizers...)
 		return c
 	}
 }

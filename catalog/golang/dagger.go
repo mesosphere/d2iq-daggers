@@ -42,7 +42,7 @@ func GetContainer(
 
 	var (
 		image       = fmt.Sprintf("%s:%s", cfg.GoImageRepo, cfg.GoImageTag)
-		customizers []containers.ContainerCustomizerFn
+		customizers = cfg.ContainerCustomizers
 	)
 
 	if cfg.GoModCacheEnabled {
