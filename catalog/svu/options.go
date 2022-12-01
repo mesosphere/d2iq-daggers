@@ -115,3 +115,37 @@ func WithTagMode(tagMode TagMode) daggers.Option[config] {
 		return c
 	}
 }
+
+func (c *config) toArgs() []string {
+	var flags []string
+
+	if c.Pattern != "" {
+		flags = append(flags, "--pattern", c.Pattern)
+	}
+	if c.Prefix != "" {
+		flags = append(flags, "--prefix", c.Prefix)
+	}
+	if c.Suffix != "" {
+		flags = append(flags, "--suffix", c.Suffix)
+	}
+	if c.TagMode != "" {
+		flags = append(flags, "--tag-mode", c.TagMode)
+	}
+	if c.Metadata {
+		flags = append(flags, "--metadata")
+	} else {
+		flags = append(flags, "--no-metadata")
+	}
+	if c.Prerelease {
+		flags = append(flags, "--pre-release")
+	} else {
+		flags = append(flags, "--no-pre-release")
+	}
+	if c.Build {
+		flags = append(flags, "--build")
+	} else {
+		flags = append(flags, "--no-build")
+	}
+
+	return flags
+}
