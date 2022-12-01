@@ -46,7 +46,7 @@ func ListPlugins() (Plugins, error) {
 
 // ListPluginVersions lists all installed versions of software for the specified plugin in ascending order.
 func ListPluginVersions(plugin string) ([]string, error) {
-	output, err := sh.Output("asdf", "list", plugin)
+	output, err := sh.Output("asdf", "list", "all", plugin)
 	if err != nil {
 		return nil, err
 	}
