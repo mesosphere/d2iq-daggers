@@ -50,7 +50,8 @@ func GetContainer(
 	var (
 		image       = fmt.Sprintf("%s:%s", cfg.GoImageRepo, cfg.GoImageTag)
 		installFn   = containers.InstallGithubCli(cfg.GithubCliVersion, cfg.Extensions...)
-		customizers = []containers.ContainerCustomizerFn{installFn}
+		envFn       = containers.WithEnvVariables(cfg.Env)
+		customizers = []containers.ContainerCustomizerFn{installFn, envFn}
 	)
 
 	customizers = append(customizers, cfg.ContainerCustomizers...)
@@ -58,10 +59,6 @@ func GetContainer(
 	container, err := containers.CustomizedContainerFromImage(runtime, image, cfg.MountWorkDir, customizers...)
 	if err != nil {
 		return nil, err
-	}
-
-	for k, v := range cfg.Env {
-		container = container.WithEnvVariable(k, v)
 	}
 
 	_, err = container.ExitCode(ctx)

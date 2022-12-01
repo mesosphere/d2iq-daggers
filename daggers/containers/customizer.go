@@ -191,3 +191,14 @@ func DownloadExecutableFile(url, destFile string) ContainerCustomizerFn {
 		return c.WithExec([]string{"chmod", "755", destFile}), nil
 	}
 }
+
+// WithEnvVariables sets the given environment variables in the container.
+func WithEnvVariables(env map[string]string) ContainerCustomizerFn {
+	return func(runtime *daggers.Runtime, c *dagger.Container) (*dagger.Container, error) {
+		for k, v := range env {
+			c = c.WithEnvVariable(k, v)
+		}
+
+		return c, nil
+	}
+}
