@@ -57,6 +57,10 @@ func GetContainer(
 		return nil, err
 	}
 
+	for k, v := range cfg.Env {
+		container = container.WithEnvVariable(k, v)
+	}
+
 	_, err = container.ExitCode(ctx)
 	if err != nil {
 		return nil, err

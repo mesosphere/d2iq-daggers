@@ -9,6 +9,8 @@ type config struct {
 	Extensions       []string `env:"GH_EXTENSIONS" envDefault:""`
 	Args             []string `env:"GH_ARGS" envDefault:""  envSeparator:" "`
 	MountWorkDir     bool     `env:"GH_MOUNT_WORKDIR" envDefault:"true"`
+
+	Env map[string]string
 }
 
 // WithGoImageRepo sets whether to enable go module caching. Optional, defaults to docker.io/golang.
@@ -55,6 +57,14 @@ func WithArgs(args ...string) daggers.Option[config] {
 func WithMountWorkDir(mount bool) daggers.Option[config] {
 	return func(c config) config {
 		c.MountWorkDir = mount
+		return c
+	}
+}
+
+// WithEnv sets the environment variables to pass to go.
+func WithEnv(envMap map[string]string) daggers.Option[config] {
+	return func(c config) config {
+		c.Env = envMap
 		return c
 	}
 }
