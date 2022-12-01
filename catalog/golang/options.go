@@ -3,9 +3,11 @@ package golang
 import "github.com/mesosphere/daggers/daggers"
 
 type config struct {
-	GoImageRepo string   `env:"GO_IMAGE_REPO,notEmpty" envDefault:"docker.io/golang"`
-	GoImageTag  string   `env:"GO_IMAGE_TAG,notEmpty" envDefault:"1.19"`
-	Args        []string `env:"GO_ARGS" envDefault:""  envSeparator:" "`
+	GoImageRepo       string   `env:"GO_IMAGE_REPO,notEmpty" envDefault:"docker.io/golang"`
+	GoImageTag        string   `env:"GO_IMAGE_TAG,notEmpty" envDefault:"1.19"`
+	GoModCacheEnabled bool     `env:"GO_MOD_CACHE_ENABLE" envDefault:"true"`
+	GoModDir          string   `env:"GO_MOD_DIR" envDefault:"."`
+	Args              []string `env:"GO_ARGS" envDefault:""  envSeparator:" "`
 
 	Env map[string]string
 }
@@ -22,6 +24,22 @@ func WithGoImageRepo(repo string) daggers.Option[config] {
 func WithGoImageTag(tag string) daggers.Option[config] {
 	return func(c config) config {
 		c.GoImageTag = tag
+		return c
+	}
+}
+
+// WithGoModCacheEnabled sets whether to enable go module caching. Optional, defaults to true.
+func WithGoModCacheEnabled(enable bool) daggers.Option[config] {
+	return func(c config) config {
+		c.GoModCacheEnabled = enable
+		return c
+	}
+}
+
+// WithGoModDir sets the go module directory to use for the container. Optional, defaults to the current directory.
+func WithGoModDir(dir string) daggers.Option[config] {
+	return func(c config) config {
+		c.GoModDir = dir
 		return c
 	}
 }

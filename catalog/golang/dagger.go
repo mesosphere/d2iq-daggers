@@ -42,8 +42,12 @@ func GetContainer(
 
 	var (
 		image       = fmt.Sprintf("%s:%s", cfg.GoImageRepo, cfg.GoImageTag)
-		customizers = []containers.ContainerCustomizerFn{containers.WithMountedGoCache(ctx, ".")}
+		customizers []containers.ContainerCustomizerFn
 	)
+
+	if cfg.GoModCacheEnabled {
+		customizers = append(customizers, containers.WithMountedGoCache(ctx, cfg.GoModDir))
+	}
 
 	container, err := containers.CustomizedContainerFromImage(runtime, image, true, customizers...)
 	if err != nil {
