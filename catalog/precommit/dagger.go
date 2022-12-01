@@ -23,8 +23,11 @@ func Run(ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[c
 	var (
 		url         = "https://github.com/pre-commit/pre-commit/releases/download/v2.20.0/pre-commit-2.20.0.pyz"
 		dest        = "/usr/local/bin/pre-commit-2.20.0.pyz"
-		customizers = cfg.ContainerCustomizers
+		envFn       = containers.WithEnvVariables(cfg.Env)
+		customizers = []containers.ContainerCustomizerFn{envFn}
 	)
+
+	customizers = append(customizers, cfg.ContainerCustomizers...)
 
 	// Configure pre-commit to use the cache volume
 	cacheVol, err := containers.NewCacheVolumeWithFileHashKeys(

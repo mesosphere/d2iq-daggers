@@ -6,7 +6,9 @@ import (
 )
 
 type config struct {
-	BaseImage            string `env:"PRECOMMIT_BASE_IMAGE" envDefault:"python:3.12.0a1-bullseye"`
+	BaseImage string `env:"PRECOMMIT_BASE_IMAGE" envDefault:"python:3.12.0a1-bullseye"`
+
+	Env                  map[string]string
 	ContainerCustomizers []containers.ContainerCustomizerFn
 }
 
@@ -14,6 +16,14 @@ type config struct {
 func BaseImage(img string) daggers.Option[config] {
 	return func(c config) config {
 		c.BaseImage = img
+		return c
+	}
+}
+
+// WithEnv sets the environment variables to pass to go.
+func WithEnv(envMap map[string]string) daggers.Option[config] {
+	return func(c config) config {
+		c.Env = envMap
 		return c
 	}
 }
