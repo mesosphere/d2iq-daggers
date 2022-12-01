@@ -3,6 +3,8 @@ package containers
 import (
 	"context"
 	"fmt"
+	"os"
+	"strings"
 
 	"dagger.io/dagger"
 
@@ -197,6 +199,93 @@ func WithEnvVariables(env map[string]string) ContainerCustomizerFn {
 	return func(runtime *daggers.Runtime, c *dagger.Container) (*dagger.Container, error) {
 		for k, v := range env {
 			c = c.WithEnvVariable(k, v)
+		}
+
+		return c, nil
+	}
+}
+
+// WithHostEnvVariable sets the given environment variable in the container from the host.
+func WithHostEnvVariable(ctx context.Context, name string) ContainerCustomizerFn {
+	return func(runtime *daggers.Runtime, c *dagger.Container) (*dagger.Container, error) {
+		val, err := runtime.Client().Host().EnvVariable(name).Value(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get host env variable %q: %w", name, err)
+		}
+
+		return c.WithEnvVariable(name, val), nil
+	}
+}
+
+// WithHostEnvVariables sets the given environment variables in the container from the host.
+func WithHostEnvVariables(ctx context.Context, include ...string) ContainerCustomizerFn {
+	return func(runtime *daggers.Runtime, c *dagger.Container) (*dagger.Container, error) {
+		var err error
+
+		for _, name := range include {
+			c, err = WithHostEnvVariable(ctx, name)(runtime, c)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		return c, nil
+	}
+}
+
+// WithHostEnvVariablesWithPrefix sets the given environment variables in the container from the host, using the given
+// prefix to filter the host environment variables. If a ignore list is given, the variables in the ignore list are
+// explicitly ignored to avoid leaking sensitive information and/or to avoid conflicts.
+//
+// For example, if the prefix is "FOO_" and the ignore list is "FOO_PASSWORD", the environment variable "FOO_PASSWORD"
+// from the host will be ignored, but "FOO_USERNAME" will be set in the container.
+func WithHostEnvVariablesWithPrefix(ctx context.Context, prefix string, ignore ...string) ContainerCustomizerFn {
+	return func(runtime *daggers.Runtime, c *dagger.Container) (*dagger.Container, error) {
+		// convert ignore list to a map for faster lookup
+		ignoreMap := sliceToKeyMap(ignore)
+
+		var include []string
+
+		for _, name := range os.Environ() {
+			// skip if the variable is not prefixed with the given prefix, or it's explicitly ignored
+			if !strings.HasPrefix(name, prefix) || ignoreMap[name] {
+				continue
+			}
+
+			// it seems that, collecting the variables to include in a slice and then calling WithHostEnvVariables
+			// is lower cognitive complexity than calling WithHostEnvVariable in a loop, so we do that.
+			include = append(include, name)
+		}
+
+		return WithHostEnvVariables(ctx, include...)(runtime, c)
+	}
+}
+
+// sliceToKeyMap returns a map with the given keys and a true value.
+func sliceToKeyMap(keys []string) map[string]bool {
+	keyMap := make(map[string]bool, len(keys))
+
+	for _, name := range keys {
+		keyMap[name] = true
+	}
+
+	return keyMap
+}
+
+// WithHostEnvSecret sets the given environment variable in the container from the host as a secret.
+func WithHostEnvSecret(name string) ContainerCustomizerFn {
+	return func(runtime *daggers.Runtime, c *dagger.Container) (*dagger.Container, error) {
+		secret := runtime.Client().Host().EnvVariable(name).Secret()
+
+		return c.WithSecretVariable(name, secret), nil
+	}
+}
+
+// WithHostEnvSecrets sets the given environment variables in the container from the host as secrets.
+func WithHostEnvSecrets(include ...string) ContainerCustomizerFn {
+	return func(runtime *daggers.Runtime, c *dagger.Container) (*dagger.Container, error) {
+		for _, name := range include {
+			c = c.WithSecretVariable(name, runtime.Client().Host().EnvVariable(name).Secret())
 		}
 
 		return c, nil
