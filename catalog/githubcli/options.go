@@ -8,6 +8,7 @@ type config struct {
 	GithubCliVersion string   `env:"GH_VERSION,notEmpty" envDefault:"2.20.2"`
 	Extensions       []string `env:"GH_EXTENSIONS" envDefault:""`
 	Args             []string `env:"GH_ARGS" envDefault:""  envSeparator:" "`
+	MountWorkDir     bool     `env:"GH_MOUNT_WORKDIR" envDefault:"true"`
 }
 
 // WithGoImageRepo sets whether to enable go module caching. Optional, defaults to docker.io/golang.
@@ -46,6 +47,14 @@ func WithExtensions(extensions ...string) daggers.Option[config] {
 func WithArgs(args ...string) daggers.Option[config] {
 	return func(c config) config {
 		c.Args = args
+		return c
+	}
+}
+
+// WithMountWorkDir sets whether to mount runtime workdir to the container. Optional, defaults to true.
+func WithMountWorkDir(mount bool) daggers.Option[config] {
+	return func(c config) config {
+		c.MountWorkDir = mount
 		return c
 	}
 }

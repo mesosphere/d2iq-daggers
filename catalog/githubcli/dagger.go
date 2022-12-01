@@ -52,7 +52,7 @@ func GetContainer(
 		customizers = []containers.ContainerCustomizerFn{containers.InstallGithubCli(cfg.GithubCliVersion)}
 	)
 
-	container, err := containers.CustomizedContainerFromImage(runtime, image, true, customizers...)
+	container, err := containers.CustomizedContainerFromImage(runtime, image, cfg.MountWorkDir, customizers...)
 	if err != nil {
 		return nil, err
 	}
