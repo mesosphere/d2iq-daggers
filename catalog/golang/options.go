@@ -3,24 +3,25 @@ package golang
 import "github.com/mesosphere/daggers/daggers"
 
 type config struct {
-	GoBaseImage string   `env:"GO_BASE_IMAGE,notEmpty" envDefault:"docker.io/golang"`
-	GoVersion   string   `env:"GO_VERSION,notEmpty" envDefault:"1.19"`
+	GoImageRepo string   `env:"GO_IMAGE_REPO,notEmpty" envDefault:"docker.io/golang"`
+	GoImageTag  string   `env:"GO_IMAGE_TAG,notEmpty" envDefault:"1.19"`
 	Args        []string `env:"GO_ARGS" envDefault:""  envSeparator:" "`
-	Env         map[string]string
+
+	Env map[string]string
 }
 
-// WithGoBaseImage sets the go base image to use for the container.
-func WithGoBaseImage(image string) daggers.Option[config] {
+// WithGoImageRepo sets whether to enable go module caching. Optional, defaults to docker.io/golang.
+func WithGoImageRepo(repo string) daggers.Option[config] {
 	return func(c config) config {
-		c.GoBaseImage = image
+		c.GoImageRepo = repo
 		return c
 	}
 }
 
-// WithGoVersion sets the go version to use for the container.
-func WithGoVersion(version string) daggers.Option[config] {
+// WithGoImageTag sets the go image tag to use for the container. Optional, defaults to 1.19.
+func WithGoImageTag(tag string) daggers.Option[config] {
 	return func(c config) config {
-		c.GoVersion = version
+		c.GoImageTag = tag
 		return c
 	}
 }
