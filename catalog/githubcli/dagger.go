@@ -48,7 +48,7 @@ func GetContainer(
 	}
 
 	var (
-		image       = fmt.Sprintf("%s:%s", cfg.GoBaseImage, cfg.GoVersion)
+		image       = fmt.Sprintf("%s:%s", cfg.GoImageRepo, cfg.GoImageTag)
 		customizers = []containers.ContainerCustomizerFn{containers.InstallGithubCli(cfg.GithubCliVersion)}
 	)
 
