@@ -43,7 +43,7 @@ func Run(ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[c
 		containers.WithMountedCache(cacheVol, cacheDir, precommitHomeEnvVar),
 	)
 
-	container, err := containers.CustomizedContainerFromImage(runtime, cfg.BaseImage, true, customizers...)
+	container, err := containers.CustomizedContainerFromImage(ctx, runtime, cfg.BaseImage, true, customizers...)
 	if err != nil {
 		return "", err
 	}

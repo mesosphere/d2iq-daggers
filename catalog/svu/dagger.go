@@ -29,7 +29,7 @@ func Run(ctx context.Context, runtime *daggers.Runtime, options ...daggers.Optio
 		svuFlags = cfg.toArgs()
 	)
 
-	container, err := containers.CustomizedContainerFromImage(runtime, image, true)
+	container, err := containers.CustomizedContainerFromImage(ctx, runtime, image, true)
 	if err != nil {
 		return nil, err
 	}
