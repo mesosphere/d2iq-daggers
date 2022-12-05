@@ -3,6 +3,23 @@
 <!-- Release notes generated using configuration in .github/release.yaml at main -->
 
 ## What's Changed
+### Exciting New Features 🎉
+* feat: add default version option to asdf plugin versions by @aweris in https://github.com/mesosphere/daggers/pull/65
+* feat: add ssh and docker socket support by @aweris in https://github.com/mesosphere/daggers/pull/67
+* feat: add Github auth helpers by @aweris in https://github.com/mesosphere/daggers/pull/68
+### Fixes 🔧
+* fix: do not add empty args to container by @aweris in https://github.com/mesosphere/daggers/pull/66
+### Other Changes
+* build(deps): bump dagger version by @aweris in https://github.com/mesosphere/daggers/pull/63
+
+
+**Full Changelog**: https://github.com/mesosphere/daggers/compare/v0.5.0...v0.5.1
+
+## Changelog
+
+<!-- Release notes generated using configuration in .github/release.yaml at main -->
+
+## What's Changed
 ### Breaking Changes 🛠
 * refactor!: restructure container operations by @aweris in https://github.com/mesosphere/daggers/pull/49
 * refactor!: remove help package by @aweris in https://github.com/mesosphere/daggers/pull/51
