@@ -340,12 +340,74 @@ func WithSSHSocket(ctx context.Context) ContainerCustomizerFn {
 
 // WithDockerSocket mounts the Docker socket from the host and sets the DOCKER_HOST environment variable in
 // the container.
-func WithDockerSocket(ctx context.Context) ContainerCustomizerFn {
+func WithDockerSocket() ContainerCustomizerFn {
 	return func(runtime *daggers.Runtime, c *dagger.Container) (*dagger.Container, error) {
 		path := "/var/run/docker.sock"
 
 		socket := runtime.Client().Host().UnixSocket(path)
 
 		return c.WithEnvVariable("DOCKER_HOST", "unix://"+path).WithUnixSocket(path, socket), nil
+	}
+}
+
+// WithGithubAuth sets the GitHub authentication for git commands in the container.
+//
+// if SSH_AUTH_SOCK is exist, ssh authentication will be used, otherwise, https authentication with GITHUB_TOKEN,
+// will be used.
+//
+// This function is expects to be used with WithSSHSocket or WithGitHubEnvs in order to work properly. It does not
+// mount the SSH socket.
+func WithGithubAuth() ContainerCustomizerFn {
+	return func(runtime *daggers.Runtime, c *dagger.Container) (*dagger.Container, error) {
+		if _, ok := os.LookupEnv("SSH_AUTH_SOCK"); !ok {
+			return withGithubAuthUsingToken()(runtime, c)
+		}
+
+		if _, ok := os.LookupEnv("GITHUB_TOKEN"); !ok {
+			return withGithubAuthUsingSSH()(runtime, c)
+		}
+
+		return nil, fmt.Errorf("%w: GITHUB_TOKEN or SSH_AUTH_SOCK must be set", ErrMissingRequiredArgument)
+	}
+}
+
+// WithGithubAuthUsingSSH sets up GitHub authentication in the container using SSH_AUTH_SOCK forwarding.
+//
+// This function is expects to be used with WithSSHSocket in order to work properly. It does not check if it's
+// configured.
+func withGithubAuthUsingSSH() ContainerCustomizerFn {
+	return func(runtime *daggers.Runtime, c *dagger.Container) (*dagger.Container, error) {
+		// add github.com to known hosts
+		c = c.WithExec(
+			[]string{
+				"sh", "-c", "mkdir -p /root/.ssh && ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts",
+			},
+		)
+
+		// configure git to use ssh
+		c = c.WithExec(
+			[]string{
+				"sh", "-c", "git config --global url.\"git@github.com:\".insteadOf \"https://github.com/\"",
+			},
+		)
+
+		return c, nil
+	}
+}
+
+// WithGithubAuthUsingToken sets up GitHub authentication in the container using GITHUB_TOKEN.
+//
+// This function is expects to be used with WithGitHubEnvs or GITHUB_TOKEN in order to work properly. It does not
+// set the GITHUB_TOKEN environment variable to the container.
+func withGithubAuthUsingToken() ContainerCustomizerFn {
+	return func(runtime *daggers.Runtime, c *dagger.Container) (*dagger.Container, error) {
+		// configure git to use ssh
+		c = c.WithExec(
+			[]string{
+				"sh", "-c", "git config --global url.https://$GITHUB_TOKEN@github.com/.insteadOf https://github.com/",
+			},
+		)
+
+		return c, nil
 	}
 }
