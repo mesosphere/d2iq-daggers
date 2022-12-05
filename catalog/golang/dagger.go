@@ -57,5 +57,11 @@ func GetContainer(
 		return nil, err
 	}
 
-	return container.WithEntrypoint([]string{"go"}).WithExec(cfg.Args), nil
+	container = container.WithEntrypoint([]string{"go"})
+
+	if len(cfg.Args) > 0 {
+		container = container.WithExec(cfg.Args)
+	}
+
+	return container, nil
 }
