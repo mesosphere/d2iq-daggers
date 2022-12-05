@@ -3,7 +3,7 @@ module github.com/mesosphere/daggers
 go 1.19
 
 require (
-	dagger.io/dagger v0.4.1
+	dagger.io/dagger v0.4.2
 	github.com/caarlos0/env/v6 v6.10.1
 	github.com/magefile/mage v1.14.0
 	github.com/stretchr/testify v1.8.1
