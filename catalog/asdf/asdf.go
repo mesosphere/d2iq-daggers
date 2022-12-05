@@ -117,3 +117,25 @@ func traverseNonCommentLines(r io.Reader, visit func(line string)) {
 		visit(line)
 	}
 }
+
+// GetVersionOrDefault returns the version of the plugin with given prefix if it exists in the map, otherwise returns
+// the default version.
+//
+// withPrefix is used to specify the prefix of the plugin version. For example, if the plugin version is 1.2.3, then
+// withPrefix is `v` and the returned version will be `v1.2.3`. If withPrefix is empty, then the returned version will
+// be `1.2.3`. This is useful when the plugin version is prefixed with a `v` and the plugin doesn't support it.
+//
+// WithPrefix only applies to the returned version, not applied the default version.
+func (p PluginVersions) GetVersionOrDefault(plugin, withPrefix, defaultVersion string) string {
+	version := defaultVersion
+
+	if v, ok := p[plugin]; ok {
+		if !strings.HasPrefix(v.Version, withPrefix) {
+			version = withPrefix + v.Version
+		} else {
+			version = v.Version
+		}
+	}
+
+	return version
+}
