@@ -323,3 +323,29 @@ func WithGitHubEnvs(ctx context.Context) ContainerCustomizerFn {
 		return c, nil
 	}
 }
+
+// WithSSHSocket mounts the SSH socket from the host into the container and sets the SSH_AUTH_SOCK environment variable.
+func WithSSHSocket(ctx context.Context) ContainerCustomizerFn {
+	return func(runtime *daggers.Runtime, c *dagger.Container) (*dagger.Container, error) {
+		path, err := runtime.Client().Host().EnvVariable("SSH_AUTH_SOCK").Value(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get host env variable %q: %w", "SSH_AUTH_SOCK", err)
+		}
+
+		socket := runtime.Client().Host().UnixSocket(path)
+
+		return c.WithEnvVariable("SSH_AUTH_SOCK", path).WithUnixSocket(path, socket), nil
+	}
+}
+
+// WithDockerSocket mounts the Docker socket from the host and sets the DOCKER_HOST environment variable in
+// the container.
+func WithDockerSocket(ctx context.Context) ContainerCustomizerFn {
+	return func(runtime *daggers.Runtime, c *dagger.Container) (*dagger.Container, error) {
+		path := "/var/run/docker.sock"
+
+		socket := runtime.Client().Host().UnixSocket(path)
+
+		return c.WithEnvVariable("DOCKER_HOST", "unix://"+path).WithUnixSocket(path, socket), nil
+	}
+}
