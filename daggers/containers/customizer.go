@@ -359,12 +359,12 @@ func WithDockerSocket() ContainerCustomizerFn {
 // mount the SSH socket.
 func WithGithubAuth() ContainerCustomizerFn {
 	return func(runtime *daggers.Runtime, c *dagger.Container) (*dagger.Container, error) {
-		if _, ok := os.LookupEnv("SSH_AUTH_SOCK"); !ok {
-			return withGithubAuthUsingToken()(runtime, c)
+		if _, ok := os.LookupEnv("SSH_AUTH_SOCK"); ok {
+			return withGithubAuthUsingSSH()(runtime, c)
 		}
 
-		if _, ok := os.LookupEnv("GITHUB_TOKEN"); !ok {
-			return withGithubAuthUsingSSH()(runtime, c)
+		if _, ok := os.LookupEnv("GITHUB_TOKEN"); ok {
+			return withGithubAuthUsingToken()(runtime, c)
 		}
 
 		return nil, fmt.Errorf("%w: GITHUB_TOKEN or SSH_AUTH_SOCK must be set", ErrMissingRequiredArgument)

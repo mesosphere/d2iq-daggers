@@ -9,7 +9,6 @@ import (
 
 	"github.com/mesosphere/daggers/catalog/golang"
 	"github.com/mesosphere/daggers/daggers"
-	"github.com/mesosphere/daggers/daggers/containers"
 )
 
 // Test is a collection of test targets.
@@ -27,9 +26,6 @@ func (Test) Go(ctx context.Context) error {
 		runtime,
 		golang.WithArgs(args...),
 		golang.WithEnv(map[string]string{"GOPRIVATE": "github.com/mesosphere"}),
-		golang.WithContainerCustomizers(
-			containers.WithGithubAuth(),
-		),
 	)
 	if err != nil {
 		return err
