@@ -5,9 +5,8 @@ import (
 )
 
 type runtimeConfig struct {
-	verbose     bool
-	workdir     string
-	workdirOpts dagger.HostDirectoryOpts
+	verbose   bool
+	workdirFn func(client *dagger.Client) *dagger.Directory
 }
 
 // WithVerbose sets the verbose option for the runtime config.
@@ -18,18 +17,22 @@ func WithVerbose(verbose bool) Option[runtimeConfig] {
 	}
 }
 
-// WithWorkdir sets the workdir option for the runtime config.
-func WithWorkdir(workdir string) Option[runtimeConfig] {
+// WithWorkdir sets the workdir options for the runtime config.
+func WithWorkdir(workdir *dagger.Directory) Option[runtimeConfig] {
 	return func(rc runtimeConfig) runtimeConfig {
-		rc.workdir = workdir
+		rc.workdirFn = func(client *dagger.Client) *dagger.Directory {
+			return workdir
+		}
 		return rc
 	}
 }
 
-// WithWorkdirOpts sets the workdir options for the runtime config.
-func WithWorkdirOpts(workdirOpts dagger.HostDirectoryOpts) Option[runtimeConfig] {
+// WithWorkdirFromHostPath sets the workdir option from host path for the runtime config.
+func WithWorkdirFromHostPath(workdir string, opts ...dagger.HostDirectoryOpts) Option[runtimeConfig] {
 	return func(rc runtimeConfig) runtimeConfig {
-		rc.workdirOpts = workdirOpts
+		rc.workdirFn = func(client *dagger.Client) *dagger.Directory {
+			return client.Host().Directory(workdir, opts...)
+		}
 		return rc
 	}
 }
