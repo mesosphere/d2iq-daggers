@@ -17,12 +17,10 @@ func WithVerbose(verbose bool) Option[runtimeConfig] {
 	}
 }
 
-// WithWorkdir sets the workdir options for the runtime config.
-func WithWorkdir(workdir *dagger.Directory) Option[runtimeConfig] {
+// WithWorkdirFn sets the workdir function for getting workdir information.
+func WithWorkdirFn(workdirFn func(client *dagger.Client) *dagger.Directory) Option[runtimeConfig] {
 	return func(rc runtimeConfig) runtimeConfig {
-		rc.workdirFn = func(client *dagger.Client) *dagger.Directory {
-			return workdir
-		}
+		rc.workdirFn = workdirFn
 		return rc
 	}
 }
