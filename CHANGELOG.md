@@ -3,6 +3,19 @@
 <!-- Release notes generated using configuration in .github/release.yaml at main -->
 
 ## What's Changed
+### Fixes 🔧
+* fix: reverse condition for github auth config by @aweris in https://github.com/mesosphere/daggers/pull/69
+### Other Changes
+* refactor: except external directories as workdir as well by @aweris in https://github.com/mesosphere/daggers/pull/71
+
+
+**Full Changelog**: https://github.com/mesosphere/daggers/compare/v0.5.1...v0.5.2
+
+## Changelog
+
+<!-- Release notes generated using configuration in .github/release.yaml at main -->
+
+## What's Changed
 ### Exciting New Features 🎉
 * feat: add default version option to asdf plugin versions by @aweris in https://github.com/mesosphere/daggers/pull/65
 * feat: add ssh and docker socket support by @aweris in https://github.com/mesosphere/daggers/pull/67
