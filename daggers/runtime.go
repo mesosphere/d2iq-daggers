@@ -27,16 +27,15 @@ func NewRuntime(ctx context.Context, opts ...Option[runtimeConfig]) (*Runtime, e
 
 	return &Runtime{
 		client:  client,
-		workdir: client.Host().Directory(rc.workdir, rc.workdirOpts),
+		workdir: rc.workdirFn(client),
 	}, nil
 }
 
 // getRuntimeConfig initializes a runtime config with default values and applies given options before returning it.
 func getRuntimeConfig(opts []Option[runtimeConfig]) runtimeConfig {
 	rc := runtimeConfig{
-		verbose:     false,
-		workdir:     ".",
-		workdirOpts: dagger.HostDirectoryOpts{},
+		verbose:   false,
+		workdirFn: func(client *dagger.Client) *dagger.Directory { return client.Host().Directory(".") },
 	}
 
 	for _, o := range opts {
