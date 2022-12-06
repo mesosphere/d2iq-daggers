@@ -4,6 +4,17 @@
 
 ## What's Changed
 ### Fixes 🔧
+* fix: use fn to configure to avoid chicken egg dependency by @aweris in https://github.com/mesosphere/daggers/pull/72
+
+
+**Full Changelog**: https://github.com/mesosphere/daggers/compare/v0.5.2...v0.5.3
+
+## Changelog
+
+<!-- Release notes generated using configuration in .github/release.yaml at main -->
+
+## What's Changed
+### Fixes 🔧
 * fix: reverse condition for github auth config by @aweris in https://github.com/mesosphere/daggers/pull/69
 ### Other Changes
 * refactor: except external directories as workdir as well by @aweris in https://github.com/mesosphere/daggers/pull/71
