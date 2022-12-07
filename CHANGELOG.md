@@ -4,6 +4,17 @@
 
 ## What's Changed
 ### Fixes 🔧
+* fix: configure ssh socket and github token as well by @aweris in https://github.com/mesosphere/daggers/pull/74
+
+
+**Full Changelog**: https://github.com/mesosphere/daggers/compare/v0.5.3...v0.5.4
+
+## Changelog
+
+<!-- Release notes generated using configuration in .github/release.yaml at main -->
+
+## What's Changed
+### Fixes 🔧
 * fix: use fn to configure to avoid chicken egg dependency by @aweris in https://github.com/mesosphere/daggers/pull/72
 
 
