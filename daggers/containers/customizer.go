@@ -354,17 +354,14 @@ func WithDockerSocket() ContainerCustomizerFn {
 //
 // if SSH_AUTH_SOCK is exist, ssh authentication will be used, otherwise, https authentication with GITHUB_TOKEN,
 // will be used.
-//
-// This function is expects to be used with WithSSHSocket or WithGitHubEnvs in order to work properly. It does not
-// mount the SSH socket.
-func WithGithubAuth() ContainerCustomizerFn {
+func WithGithubAuth(ctx context.Context) ContainerCustomizerFn {
 	return func(runtime *daggers.Runtime, c *dagger.Container) (*dagger.Container, error) {
 		if _, ok := os.LookupEnv("SSH_AUTH_SOCK"); ok {
-			return withGithubAuthUsingSSH()(runtime, c)
+			return ApplyCustomizations(runtime, c, WithSSHSocket(ctx), withGithubAuthUsingSSH())
 		}
 
 		if _, ok := os.LookupEnv("GITHUB_TOKEN"); ok {
-			return withGithubAuthUsingToken()(runtime, c)
+			return ApplyCustomizations(runtime, c, WithHostEnvSecret("GITHUB_TOKEN"), withGithubAuthUsingToken())
 		}
 
 		return nil, fmt.Errorf("%w: GITHUB_TOKEN or SSH_AUTH_SOCK must be set", ErrMissingRequiredArgument)
