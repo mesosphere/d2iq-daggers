@@ -3,6 +3,17 @@
 <!-- Release notes generated using configuration in .github/release.yaml at main -->
 
 ## What's Changed
+### Other Changes
+* build: bump dagger to v0.4.4 by @aweris in https://github.com/mesosphere/daggers/pull/80
+
+
+**Full Changelog**: https://github.com/mesosphere/daggers/compare/v0.5.4...v0.5.5
+
+## Changelog
+
+<!-- Release notes generated using configuration in .github/release.yaml at main -->
+
+## What's Changed
 ### Fixes 🔧
 * fix: configure ssh socket and github token as well by @aweris in https://github.com/mesosphere/daggers/pull/74
 
