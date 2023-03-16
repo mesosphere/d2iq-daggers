@@ -4,6 +4,22 @@
 
 ## What's Changed
 ### Other Changes
+* build: bump dagger v0.4.5 by @aweris in https://github.com/mesosphere/daggers/pull/82
+* build(deps): bump github.com/stretchr/testify from 1.8.1 to 1.8.2 by @dependabot in https://github.com/mesosphere/daggers/pull/84
+* build(deps): bump dagger.io/dagger from 0.4.5 to 0.4.6 by @dependabot in https://github.com/mesosphere/daggers/pull/85
+* build(deps): bump dagger.io/dagger from 0.4.6 to 0.5.0 by @dependabot in https://github.com/mesosphere/daggers/pull/86
+
+## New Contributors
+* @dependabot made their first contribution in https://github.com/mesosphere/daggers/pull/84
+
+**Full Changelog**: https://github.com/mesosphere/daggers/compare/v0.5.5...v0.5.6
+
+## Changelog
+
+<!-- Release notes generated using configuration in .github/release.yaml at main -->
+
+## What's Changed
+### Other Changes
 * build: bump dagger to v0.4.4 by @aweris in https://github.com/mesosphere/daggers/pull/80
 
 
