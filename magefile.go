@@ -12,6 +12,9 @@ import (
 
 	"github.com/mesosphere/daggers/catalog/golang"
 	"github.com/mesosphere/daggers/daggers"
+
+	// mage:import precommit
+	_ "github.com/mesosphere/daggers/catalog/precommit"
 )
 
 // Test is a collection of test targets.
