@@ -5,16 +5,25 @@ package precommit
 
 import (
 	"context"
+	"embed"
+	"fmt"
+	"io"
+
+	"dagger.io/dagger"
 
 	"github.com/mesosphere/daggers/daggers"
 	"github.com/mesosphere/daggers/daggers/containers"
 )
 
 const (
-	configFileName      = ".pre-commit-config.yaml"
+	configFileName      = "pre-commit-config.yaml"
 	cacheDir            = "/pre-commit-cache"
 	precommitHomeEnvVar = "PRE_COMMIT_HOME"
+	precommitVersion    = "3.2.1"
 )
+
+//go:embed pre-commit-config.yaml
+var configFile embed.FS
 
 // Run runs the precommit checks.
 func Run(ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[config]) (string, error) {
@@ -24,26 +33,20 @@ func Run(ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[c
 	}
 
 	var (
-		url         = "https://github.com/pre-commit/pre-commit/releases/download/v2.20.0/pre-commit-2.20.0.pyz"
-		dest        = "/usr/local/bin/pre-commit-2.20.0.pyz"
+		url = fmt.Sprintf(
+			"https://github.com/pre-commit/pre-commit/releases/download/v%[1]s/pre-commit-%[1]s.pyz",
+			precommitVersion,
+		)
+		dest        = fmt.Sprintf("/usr/local/bin/pre-commit-%s.pyz", precommitVersion)
 		envFn       = containers.WithEnvVariables(cfg.Env)
 		customizers = []containers.ContainerCustomizerFn{envFn}
 	)
 
 	customizers = append(customizers, cfg.ContainerCustomizers...)
 
-	// Configure pre-commit to use the cache volume
-	cacheVol, err := containers.NewCacheVolumeWithFileHashKeys(
-		ctx, runtime.Client(), "pre-commit-", runtime.Workdir(), configFileName,
-	)
-	if err != nil {
-		return "", err
-	}
-
 	customizers = append(
 		customizers,
 		containers.DownloadFile(url, dest),
-		containers.WithMountedCache(cacheVol, cacheDir, precommitHomeEnvVar),
 	)
 
 	container, err := containers.CustomizedContainerFromImage(ctx, runtime, cfg.BaseImage, true, customizers...)
@@ -51,11 +54,27 @@ func Run(ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[c
 		return "", err
 	}
 
+	config, err := configFile.Open(configFileName)
+	if err != nil {
+		return "", err
+	}
+
+	configContent, err := io.ReadAll(config)
+	if err != nil {
+		return "", err
+	}
+
 	container = container.
 		WithEnvVariable(precommitHomeEnvVar, cacheDir).
-		WithMountedCache(cacheDir, cacheVol).
+		WithNewFile("."+configFileName, dagger.ContainerWithNewFileOpts{
+			Contents: string(configContent),
+		}).
 		WithExec(
-			[]string{"python", "/usr/local/bin/pre-commit-2.20.0.pyz", "run", "--all-files", "--show-diff-on-failure"},
+			[]string{
+				"python",
+				fmt.Sprintf("/usr/local/bin/pre-commit-%s.pyz", precommitVersion),
+				"run", "--all-files", "--show-diff-on-failure",
+			},
 		)
 
 	// Run container and get Exit code
