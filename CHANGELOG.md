@@ -3,6 +3,21 @@
 <!-- Release notes generated using configuration in .github/release.yaml at main -->
 
 ## What's Changed
+### Exciting New Features 🎉
+* feat: Include pre-commit configuraiton into a container by @mikolajb in https://github.com/mesosphere/daggers/pull/90
+* feat: Add gotest target to mage catalog by @mikolajb in https://github.com/mesosphere/daggers/pull/91
+### Other Changes
+* build(deps): Bump dagger.io/dagger from 0.5.0 to 0.5.1 by @dependabot in https://github.com/mesosphere/daggers/pull/87
+* build(deps): Bump dagger.io/dagger from 0.5.1 to 0.5.2 by @dependabot in https://github.com/mesosphere/daggers/pull/89
+
+
+**Full Changelog**: https://github.com/mesosphere/daggers/compare/v0.5.6...v0.6.0
+
+## Changelog
+
+<!-- Release notes generated using configuration in .github/release.yaml at main -->
+
+## What's Changed
 ### Other Changes
 * build: bump dagger v0.4.5 by @aweris in https://github.com/mesosphere/daggers/pull/82
 * build(deps): bump github.com/stretchr/testify from 1.8.1 to 1.8.2 by @dependabot in https://github.com/mesosphere/daggers/pull/84
