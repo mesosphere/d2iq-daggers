@@ -6,6 +6,7 @@ import (
 
 	"dagger.io/dagger"
 	"github.com/magefile/mage/mg"
+
 	"github.com/mesosphere/daggers/catalog/golang"
 	"github.com/mesosphere/daggers/daggers"
 	"github.com/mesosphere/daggers/daggers/containers"
@@ -18,7 +19,7 @@ const (
 	EnvGoPrivate = "GOPRIVATE"
 )
 
-// Unit runs unit tests.
+// Gounit runs unit tests.
 func Gounit(ctx context.Context) error {
 	verbose := mg.Verbose() || mg.Debug()
 
