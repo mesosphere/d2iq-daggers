@@ -1,6 +1,6 @@
 # Daggers
 
-`daggers` is a component library for [dagger](github.com/dagger/dagger) that provides a collection of tasks and 
+`daggers` is a component library for [dagger](github.com/dagger/dagger) that provides a collection of tasks and
 utilities to make it easier to use.
 
 **WARNING:** The library is still in development and may introduce breaking changes in the future without notice.

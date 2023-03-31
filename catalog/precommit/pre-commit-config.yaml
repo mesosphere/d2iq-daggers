@@ -34,9 +34,10 @@ repos:
   - repo: https://github.com/jumanjihouse/pre-commit-hooks
     rev: 3.0.0
     hooks:
-      - id: shfmt
-        stages: [commit]
-        args: ["-s", "-i", "2"]
+      # TODO: install shfmt and reenable the hook
+      # - id: shfmt
+      #   stages: [commit]
+      #   args: ["-s", "-i", "2"]
       - id: script-must-have-extension
         stages: [commit]
   - repo: https://github.com/shellcheck-py/shellcheck-py
@@ -51,3 +52,5 @@ repos:
       - id: markdownlint
         stages: [commit]
         exclude: ^CHANGELOG.md$
+        # allow long lines
+        args: ["--disable", "MD013"]
