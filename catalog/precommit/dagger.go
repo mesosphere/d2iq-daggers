@@ -10,6 +10,7 @@ import (
 	"io"
 
 	"dagger.io/dagger"
+
 	"github.com/mesosphere/daggers/daggers"
 	"github.com/mesosphere/daggers/daggers/containers"
 )
@@ -32,7 +33,10 @@ func Run(ctx context.Context, runtime *daggers.Runtime, opts ...daggers.Option[c
 	}
 
 	var (
-		url         = fmt.Sprintf("https://github.com/pre-commit/pre-commit/releases/download/v%[1]s/pre-commit-%[1]s.pyz", precommitVersion)
+		url = fmt.Sprintf(
+			"https://github.com/pre-commit/pre-commit/releases/download/v%[1]s/pre-commit-%[1]s.pyz",
+			precommitVersion,
+		)
 		dest        = fmt.Sprintf("/usr/local/bin/pre-commit-%s.pyz", precommitVersion)
 		envFn       = containers.WithEnvVariables(cfg.Env)
 		customizers = []containers.ContainerCustomizerFn{envFn}
