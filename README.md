@@ -1,6 +1,6 @@
-# Daggers
+# Daggers For DKP
 
-`daggers` is a component library for [dagger](github.com/dagger/dagger) that provides a collection of tasks and
+`daggers-for-dkp` is a component library for [dagger](https://github.com/dagger/dagger) that provides a collection of tasks and
 utilities to make it easier to use.
 
 **WARNING:** The library is still in development and may introduce breaking changes in the future without notice.
@@ -10,7 +10,7 @@ utilities to make it easier to use.
 To install daggers, use the go command:
 
 ```bash
-$ go get github.com/mesosphere/daggers
+$ go get github.com/mesosphere/daggers-for-dkp
 ```
 
 ## Usage
@@ -18,7 +18,7 @@ $ go get github.com/mesosphere/daggers
 To use daggers, import the package into your project:
 
 ```go
-import "github.com/mesosphere/daggers/daggers"
+import "github.com/mesosphere/daggers-for-dkp/daggers"
 ```
 
 Then, use the `daggers` package to create a new Runtime:
