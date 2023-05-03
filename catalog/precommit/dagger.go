@@ -11,8 +11,8 @@ import (
 
 	"dagger.io/dagger"
 
-	"github.com/mesosphere/daggers/daggers"
-	"github.com/mesosphere/daggers/daggers/containers"
+	"github.com/mesosphere/d2iq-daggers/daggers"
+	"github.com/mesosphere/d2iq-daggers/daggers/containers"
 )
 
 const (

@@ -7,8 +7,8 @@ package main
 
 import (
 	// mage:import precommit
-	_ "github.com/mesosphere/daggers/catalog/precommit"
+	_ "github.com/mesosphere/d2iq-daggers/catalog/precommit"
 
 	// mage:import test
-	_ "github.com/mesosphere/daggers/catalog/gotest"
+	_ "github.com/mesosphere/d2iq-daggers/catalog/gotest"
 )

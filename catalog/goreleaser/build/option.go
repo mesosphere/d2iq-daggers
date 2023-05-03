@@ -3,7 +3,7 @@
 
 package build
 
-import "github.com/mesosphere/daggers/daggers"
+import "github.com/mesosphere/d2iq-daggers/daggers"
 
 type config struct {
 	Env map[string]string

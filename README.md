@@ -1,6 +1,6 @@
-# Daggers For DKP
+# D2iQ Daggers
 
-`daggers-for-dkp` is a component library for [dagger](https://github.com/dagger/dagger) that provides a collection of tasks and
+`d2iq-daggers` is a component library for [dagger](https://github.com/dagger/dagger) that provides a collection of tasks and
 utilities to make it easier to use.
 
 **WARNING:** The library is still in development and may introduce breaking changes in the future without notice.
@@ -10,7 +10,7 @@ utilities to make it easier to use.
 To install daggers, use the go command:
 
 ```bash
-$ go get github.com/mesosphere/daggers-for-dkp
+$ go get github.com/mesosphere/d2iq-daggers
 ```
 
 ## Usage
@@ -18,7 +18,7 @@ $ go get github.com/mesosphere/daggers-for-dkp
 To use daggers, import the package into your project:
 
 ```go
-import "github.com/mesosphere/daggers-for-dkp/daggers"
+import "github.com/mesosphere/d2iq-daggers/daggers"
 ```
 
 Then, use the `daggers` package to create a new Runtime:
@@ -33,7 +33,7 @@ if err != nil {
 With the runtime, you can then use the catalog to create tasks:
 
 ```go
-import "github.com/mesosphere/daggers/catalog/golang"
+import "github.com/mesosphere/d2iq-daggers/catalog/golang"
 ```
 
 ```go

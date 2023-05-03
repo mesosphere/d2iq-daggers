@@ -48,7 +48,7 @@ linters-settings:
       - Standard
       - Default
       - Prefix(github.com/mesosphere)
-      - Prefix(github.com/mesosphere/daggers)
+      - Prefix(github.com/mesosphere/d2iq-daggers)
   gocritic:
     enabled-tags:
       - diagnostic
