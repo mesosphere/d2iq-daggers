@@ -9,7 +9,7 @@ import (
 
 	"github.com/magefile/mage/mg"
 
-	"github.com/mesosphere/daggers/daggers"
+	"github.com/mesosphere/daggers-for-dkp/daggers"
 )
 
 // Current runs svu current.

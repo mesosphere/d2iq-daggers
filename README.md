@@ -33,7 +33,7 @@ if err != nil {
 With the runtime, you can then use the catalog to create tasks:
 
 ```go
-import "github.com/mesosphere/daggers/catalog/golang"
+import "github.com/mesosphere/daggers-for-dkp/catalog/golang"
 ```
 
 ```go

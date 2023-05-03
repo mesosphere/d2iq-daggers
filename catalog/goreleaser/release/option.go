@@ -3,7 +3,7 @@
 
 package release
 
-import "github.com/mesosphere/daggers/daggers"
+import "github.com/mesosphere/daggers-for-dkp/daggers"
 
 type config struct {
 	Env map[string]string

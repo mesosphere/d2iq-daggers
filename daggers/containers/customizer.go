@@ -11,7 +11,7 @@ import (
 
 	"dagger.io/dagger"
 
-	"github.com/mesosphere/daggers/daggers"
+	"github.com/mesosphere/daggers-for-dkp/daggers"
 )
 
 // ContainerCustomizerFn is a function that customizes a container.

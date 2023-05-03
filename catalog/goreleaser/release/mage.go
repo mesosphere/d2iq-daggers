@@ -9,8 +9,8 @@ import (
 
 	"github.com/magefile/mage/mg"
 
-	"github.com/mesosphere/daggers/catalog/goreleaser"
-	"github.com/mesosphere/daggers/daggers"
+	"github.com/mesosphere/daggers-for-dkp/catalog/goreleaser"
+	"github.com/mesosphere/daggers-for-dkp/daggers"
 )
 
 // Release runs goreleaser release with --rm-dist flags.
