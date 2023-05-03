@@ -6,7 +6,7 @@ package precommit
 import (
 	"context"
 
-	"github.com/mesosphere/daggers/daggers"
+	"github.com/mesosphere/daggers-for-dkp/daggers"
 )
 
 // Precommit runs all the precommit checks. Run `mage help:precommit` for information on available options.

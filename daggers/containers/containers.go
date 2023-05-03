@@ -9,7 +9,7 @@ import (
 
 	"dagger.io/dagger"
 
-	"github.com/mesosphere/daggers/daggers"
+	"github.com/mesosphere/daggers-for-dkp/daggers"
 )
 
 // ErrMissingRequiredArgument is returned when a required argument is missing.

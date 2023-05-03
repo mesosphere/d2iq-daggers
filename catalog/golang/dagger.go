@@ -9,8 +9,8 @@ import (
 
 	"dagger.io/dagger"
 
-	"github.com/mesosphere/daggers/daggers"
-	"github.com/mesosphere/daggers/daggers/containers"
+	"github.com/mesosphere/daggers-for-dkp/daggers"
+	"github.com/mesosphere/daggers-for-dkp/daggers/containers"
 )
 
 // standard source path.
