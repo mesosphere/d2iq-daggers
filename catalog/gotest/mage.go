@@ -7,9 +7,9 @@ import (
 	"dagger.io/dagger"
 	"github.com/magefile/mage/mg"
 
-	"github.com/mesosphere/daggers-for-dkp/catalog/golang"
-	"github.com/mesosphere/daggers-for-dkp/daggers"
-	"github.com/mesosphere/daggers-for-dkp/daggers/containers"
+	"github.com/mesosphere/d2iq-daggers/catalog/golang"
+	"github.com/mesosphere/d2iq-daggers/daggers"
+	"github.com/mesosphere/d2iq-daggers/daggers/containers"
 )
 
 const (

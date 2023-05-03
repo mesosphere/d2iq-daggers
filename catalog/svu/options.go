@@ -3,7 +3,7 @@
 
 package svu
 
-import "github.com/mesosphere/daggers-for-dkp/daggers"
+import "github.com/mesosphere/d2iq-daggers/daggers"
 
 // Command is represents the svu sub-command.
 type Command string
