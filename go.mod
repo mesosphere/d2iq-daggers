@@ -1,4 +1,4 @@
-module github.com/mesosphere/daggers
+module github.com/mesosphere/daggers-for-dkp
 
 go 1.20
 
@@ -14,6 +14,7 @@ require (
 	github.com/adrg/xdg v0.4.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/iancoleman/strcase v0.2.0 // indirect
+	github.com/mesosphere/daggers v0.6.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/vektah/gqlparser/v2 v2.5.1 // indirect
 	golang.org/x/mod v0.6.0-dev.0.20220106191415-9b9b3d81d5e3 // indirect
