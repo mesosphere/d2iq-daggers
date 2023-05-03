@@ -1,4 +1,4 @@
-module github.com/mesosphere/daggers-for-dkp
+module github.com/mesosphere/d2iq-daggers
 
 go 1.20
 
