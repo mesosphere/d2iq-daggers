@@ -3,6 +3,28 @@
 <!-- Release notes generated using configuration in .github/release.yaml at main -->
 
 ## What's Changed
+### Fixes 🔧
+* fix: renamed again by @tillt in https://github.com/mesosphere/d2iq-daggers/pull/98
+### Other Changes
+* build(deps): Bump dagger.io/dagger from 0.5.2 to 0.6.0 by @dependabot in https://github.com/mesosphere/d2iq-daggers/pull/93
+* build(deps): Bump github.com/stretchr/testify from 1.8.2 to 1.8.3 by @dependabot in https://github.com/mesosphere/d2iq-daggers/pull/102
+* build(deps): Bump dagger.io/dagger from 0.6.0 to 0.6.3 by @dependabot in https://github.com/mesosphere/d2iq-daggers/pull/101
+* build(deps): Bump github.com/magefile/mage from 1.14.0 to 1.15.0 by @dependabot in https://github.com/mesosphere/d2iq-daggers/pull/99
+* build(deps): Bump github.com/stretchr/testify from 1.8.3 to 1.8.4 by @dependabot in https://github.com/mesosphere/d2iq-daggers/pull/104
+* build(deps): Bump dagger.io/dagger from 0.6.3 to 0.7.1 by @dependabot in https://github.com/mesosphere/d2iq-daggers/pull/105
+* build(deps): Bump dagger.io/dagger from 0.7.1 to 0.7.3 by @dependabot in https://github.com/mesosphere/d2iq-daggers/pull/107
+
+## New Contributors
+* @Azhovan made their first contribution in https://github.com/mesosphere/d2iq-daggers/pull/96
+* @tillt made their first contribution in https://github.com/mesosphere/d2iq-daggers/pull/98
+
+**Full Changelog**: https://github.com/mesosphere/d2iq-daggers/compare/v0.6.0...v0.6.1
+
+## Changelog
+
+<!-- Release notes generated using configuration in .github/release.yaml at main -->
+
+## What's Changed
 ### Exciting New Features 🎉
 * feat: Include pre-commit configuraiton into a container by @mikolajb in https://github.com/mesosphere/d2iq-daggers/pull/90
 * feat: Add gotest target to mage catalog by @mikolajb in https://github.com/mesosphere/d2iq-daggers/pull/91
