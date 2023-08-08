@@ -14,6 +14,8 @@ import (
 	"github.com/mesosphere/d2iq-daggers/daggers"
 )
 
+const ghTokenEnvVarName = "GITHUB_TOKEN"
+
 // ContainerCustomizerFn is a function that customizes a container.
 type ContainerCustomizerFn func(*daggers.Runtime, *dagger.Container) (*dagger.Container, error)
 
@@ -161,7 +163,7 @@ func InstallGithubCli(version string, extensions ...string) ContainerCustomizerF
 			return nil, err
 		}
 
-		token := runtime.Client().Host().EnvVariable("GITHUB_TOKEN").Secret()
+		token := runtime.Client().SetSecret(ghTokenEnvVarName, os.Getenv(ghTokenEnvVarName))
 
 		c = c.WithSecretVariable("GITHUB_TOKEN", token).
 			WithExec([]string{"tar", "-xf", dest, "-C", extractDir}).
@@ -211,9 +213,9 @@ func WithEnvVariables(env map[string]string) ContainerCustomizerFn {
 // WithHostEnvVariable sets the given environment variable in the container from the host.
 func WithHostEnvVariable(ctx context.Context, name string) ContainerCustomizerFn {
 	return func(runtime *daggers.Runtime, c *dagger.Container) (*dagger.Container, error) {
-		val, err := runtime.Client().Host().EnvVariable(name).Value(ctx)
-		if err != nil {
-			return nil, fmt.Errorf("failed to get host env variable %q: %w", name, err)
+		val, ok := os.LookupEnv(name)
+		if !ok {
+			return nil, fmt.Errorf("failed to get host env variable %q", name)
 		}
 
 		return c.WithEnvVariable(name, val), nil
@@ -278,7 +280,7 @@ func sliceToKeyMap(keys []string) map[string]bool {
 // WithHostEnvSecret sets the given environment variable in the container from the host as a secret.
 func WithHostEnvSecret(name string) ContainerCustomizerFn {
 	return func(runtime *daggers.Runtime, c *dagger.Container) (*dagger.Container, error) {
-		secret := runtime.Client().Host().EnvVariable(name).Secret()
+		secret := runtime.Client().SetSecret(name, os.Getenv(name))
 
 		return c.WithSecretVariable(name, secret), nil
 	}
@@ -288,7 +290,9 @@ func WithHostEnvSecret(name string) ContainerCustomizerFn {
 func WithHostEnvSecrets(include ...string) ContainerCustomizerFn {
 	return func(runtime *daggers.Runtime, c *dagger.Container) (*dagger.Container, error) {
 		for _, name := range include {
-			c = c.WithSecretVariable(name, runtime.Client().Host().EnvVariable(name).Secret())
+			secret := runtime.Client().SetSecret(name, os.Getenv(name))
+
+			c = c.WithSecretVariable(name, secret)
 		}
 
 		return c, nil
@@ -330,9 +334,9 @@ func WithGitHubEnvs(ctx context.Context) ContainerCustomizerFn {
 // WithSSHSocket mounts the SSH socket from the host into the container and sets the SSH_AUTH_SOCK environment variable.
 func WithSSHSocket(ctx context.Context) ContainerCustomizerFn {
 	return func(runtime *daggers.Runtime, c *dagger.Container) (*dagger.Container, error) {
-		path, err := runtime.Client().Host().EnvVariable("SSH_AUTH_SOCK").Value(ctx)
-		if err != nil {
-			return nil, fmt.Errorf("failed to get host env variable %q: %w", "SSH_AUTH_SOCK", err)
+		path, ok := os.LookupEnv("SSH_AUTH_SOCK")
+		if !ok {
+			return nil, fmt.Errorf("failed to get host env variable %q", "SSH_AUTH_SOCK")
 		}
 
 		socket := runtime.Client().Host().UnixSocket(path)
