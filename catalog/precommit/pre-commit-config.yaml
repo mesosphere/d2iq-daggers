@@ -12,8 +12,6 @@ repos:
         args: ["-f", "lf"]
         exclude: \.bat$
         stages: [commit]
-      - id: no-commit-to-branch
-        stages: [commit]
       - id: check-added-large-files
         stages: [commit]
       - id: check-case-conflict
