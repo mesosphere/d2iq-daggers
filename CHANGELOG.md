@@ -4,6 +4,21 @@
 
 ## What's Changed
 ### Fixes 🔧
+* fix: remove no-commit-to-branch linter by @mstruebing in https://github.com/mesosphere/d2iq-daggers/pull/111
+### Other Changes
+* build(deps): Bump dagger.io/dagger from 0.7.3 to 0.7.4 by @dependabot in https://github.com/mesosphere/d2iq-daggers/pull/108
+
+## New Contributors
+* @mstruebing made their first contribution in https://github.com/mesosphere/d2iq-daggers/pull/111
+
+**Full Changelog**: https://github.com/mesosphere/d2iq-daggers/compare/v0.6.1...v0.6.2
+
+## Changelog
+
+<!-- Release notes generated using configuration in .github/release.yaml at main -->
+
+## What's Changed
+### Fixes 🔧
 * fix: renamed again by @tillt in https://github.com/mesosphere/d2iq-daggers/pull/98
 ### Other Changes
 * build(deps): Bump dagger.io/dagger from 0.5.2 to 0.6.0 by @dependabot in https://github.com/mesosphere/d2iq-daggers/pull/93
