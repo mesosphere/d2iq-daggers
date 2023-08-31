@@ -64,9 +64,9 @@ func GetContainer(
 		return nil, err
 	}
 
-	_, err = container.ExitCode(ctx)
+	container, err = container.Sync(ctx)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error while syncing with container: %w", err)
 	}
 
 	return container.WithEntrypoint([]string{"gh"}), nil

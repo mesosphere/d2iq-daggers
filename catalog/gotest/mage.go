@@ -2,6 +2,7 @@ package gotest
 
 import (
 	"context"
+	"fmt"
 	"os"
 
 	"dagger.io/dagger"
@@ -53,9 +54,9 @@ func runUnitTests(ctx context.Context, container *dagger.Container) error {
 		WithExec([]string{"test", "-v", "-race", "-coverprofile", "coverage.txt", "-covermode", "atomic", "./..."}).
 		WithExec([]string{"tool", "cover", "-html=coverage.txt", "-o", "coverage.html"})
 
-	_, err := testContainer.ExitCode(ctx) // execute all steps and return the exit code
+	testContainer, err := testContainer.Sync(ctx) // execute all steps and return the exit code
 	if err != nil {
-		return err
+		return fmt.Errorf("error while syncing with container: %w", err)
 	}
 
 	srcDir := testContainer.Directory("/src")
