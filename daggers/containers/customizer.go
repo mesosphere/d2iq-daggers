@@ -14,7 +14,7 @@ import (
 	"github.com/mesosphere/d2iq-daggers/daggers"
 )
 
-const ghTokenEnvVarName = "GITHUB_TOKEN"
+const ghTokenEnvVarName = "GITHUB_TOKEN" //nolint:gosec // just an env variable name
 
 // ContainerCustomizerFn is a function that customizes a container.
 type ContainerCustomizerFn func(*daggers.Runtime, *dagger.Container) (*dagger.Container, error)
@@ -251,11 +251,17 @@ func WithHostEnvVariablesWithPrefix(ctx context.Context, prefix string, ignore .
 
 		var include []string
 
-		for _, name := range os.Environ() {
+		for _, nameValue := range os.Environ() {
 			// skip if the variable is not prefixed with the given prefix, or it's explicitly ignored
-			if !strings.HasPrefix(name, prefix) || ignoreMap[name] {
+			if !strings.HasPrefix(nameValue, prefix) || ignoreMap[nameValue] {
 				continue
 			}
+
+			separated := strings.SplitN(nameValue, "=", 2)
+			if len(separated) != 2 {
+				continue
+			}
+			name := separated[0]
 
 			// it seems that, collecting the variables to include in a slice and then calling WithHostEnvVariables
 			// is lower cognitive complexity than calling WithHostEnvVariable in a loop, so we do that.
