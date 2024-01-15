@@ -10,7 +10,7 @@ import (
 
 type config struct {
 	GoImageRepo       string   `env:"GO_IMAGE_REPO,notEmpty" envDefault:"docker.io/golang"`
-	GoImageTag        string   `env:"GO_IMAGE_TAG,notEmpty" envDefault:"1.20"`
+	GoImageTag        string   `env:"GO_IMAGE_TAG,notEmpty" envDefault:"1.21"`
 	GoModCacheEnabled bool     `env:"GO_MOD_CACHE_ENABLE" envDefault:"true"`
 	GoModDir          string   `env:"GO_MOD_DIR" envDefault:"."`
 	Args              []string `env:"GO_ARGS" envDefault:""  envSeparator:" "`
