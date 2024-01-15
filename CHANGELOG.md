@@ -3,6 +3,19 @@
 <!-- Release notes generated using configuration in .github/release.yaml at main -->
 
 ## What's Changed
+### Other Changes
+* ci: Enable dependabot for GHA by @mikolajb in https://github.com/mesosphere/d2iq-daggers/pull/124
+* build(deps): Bump actions/checkout from 3 to 4 by @dependabot in https://github.com/mesosphere/d2iq-daggers/pull/128
+* build(deps): Bump pascalgn/size-label-action from 0.4.3 to 0.5.0 by @dependabot in https://github.com/mesosphere/d2iq-daggers/pull/127
+
+
+**Full Changelog**: https://github.com/mesosphere/d2iq-daggers/compare/v0.7.0...v0.7.1
+
+## Changelog
+
+<!-- Release notes generated using configuration in .github/release.yaml at main -->
+
+## What's Changed
 ### Exciting New Features 🎉
 * feat: Go 1.21 as default by @mikolajb in https://github.com/mesosphere/d2iq-daggers/pull/123
 ### Other Changes
