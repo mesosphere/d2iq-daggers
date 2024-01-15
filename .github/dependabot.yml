@@ -11,3 +11,9 @@ updates:
       - "mesosphere/kommander"
     reviewers:
       - "mesosphere/kommander"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    assignees:
+      - "mesosphere/kommander"
