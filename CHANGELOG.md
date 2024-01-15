@@ -3,6 +3,24 @@
 <!-- Release notes generated using configuration in .github/release.yaml at main -->
 
 ## What's Changed
+### Exciting New Features 🎉
+* feat: Go 1.21 as default by @mikolajb in https://github.com/mesosphere/d2iq-daggers/pull/123
+### Other Changes
+* build(deps): Bump dagger.io/dagger from 0.7.4 to 0.8.1 by @dependabot in https://github.com/mesosphere/d2iq-daggers/pull/110
+* build(deps): Bump dagger.io/dagger from 0.8.1 to 0.8.4 by @dependabot in https://github.com/mesosphere/d2iq-daggers/pull/113
+* build(deps): Bump dagger.io/dagger from 0.8.4 to 0.8.7 by @dependabot in https://github.com/mesosphere/d2iq-daggers/pull/115
+* build(deps): Bump dagger.io/dagger from 0.8.7 to 0.9.0 by @dependabot in https://github.com/mesosphere/d2iq-daggers/pull/117
+* build(deps): Bump dagger.io/dagger from 0.9.0 to 0.9.3 by @dependabot in https://github.com/mesosphere/d2iq-daggers/pull/119
+* build(deps): Bump dagger.io/dagger from 0.9.3 to 0.9.6 by @dependabot in https://github.com/mesosphere/d2iq-daggers/pull/122
+
+
+**Full Changelog**: https://github.com/mesosphere/d2iq-daggers/compare/v0.6.2...v0.7.0
+
+## Changelog
+
+<!-- Release notes generated using configuration in .github/release.yaml at main -->
+
+## What's Changed
 ### Fixes 🔧
 * fix: remove no-commit-to-branch linter by @mstruebing in https://github.com/mesosphere/d2iq-daggers/pull/111
 ### Other Changes
