@@ -6,7 +6,7 @@ require (
 	dagger.io/dagger v0.9.8
 	github.com/caarlos0/env/v6 v6.10.1
 	github.com/magefile/mage v1.15.0
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 )
 
 require (
