@@ -3,7 +3,7 @@ module github.com/mesosphere/d2iq-daggers
 go 1.21
 
 require (
-	dagger.io/dagger v0.9.8
+	dagger.io/dagger v0.10.0
 	github.com/caarlos0/env/v6 v6.10.1
 	github.com/magefile/mage v1.15.0
 	github.com/stretchr/testify v1.8.4
