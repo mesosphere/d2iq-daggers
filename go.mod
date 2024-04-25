@@ -1,6 +1,6 @@
 module github.com/mesosphere/d2iq-daggers
 
-go 1.21
+go 1.22
 
 require (
 	dagger.io/dagger v0.10.1
